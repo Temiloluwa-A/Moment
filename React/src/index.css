@@ -1,0 +1,319 @@
+@import url('https://fonts.googleapis.com/css2?family=Cabin:ital,wght@0,400..700;1,400..700&family=Cormorant+Garamond:ital,wght@0,300..700;1,300..700&family=DM+Sans:ital,opsz,wght@0,9..40,100..1000;1,9..40,100..1000&family=DM+Serif+Display:ital@0;1&family=Fraunces:ital,opsz,wght@0,9..144,100..900;1,9..144,100..900&family=Licorice&family=Noto+Serif:ital,wght@0,100..900;1,100..900&family=Nunito:ital,wght@0,200..1000;1,200..1000&family=Playfair+Display:ital,wght@0,400..900;1,400..900&family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&family=Xanh+Mono:ital@0;1&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Cabin:ital,wght@0,400..700;1,400..700&family=Cormorant+Garamond:ital,wght@0,300..700;1,300..700&family=DM+Sans:ital,opsz,wght@0,9..40,100..1000;1,9..40,100..1000&family=DM+Serif+Display:ital@0;1&family=Fraunces:ital,opsz,wght@0,9..144,100..900;1,9..144,100..900&family=Licorice&family=Noto+Serif:ital,wght@0,100..900;1,100..900&family=Playfair+Display:ital,wght@0,400..900;1,400..900&family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&family=Xanh+Mono:ital@0;1&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Cabin:ital,wght@0,400..700;1,400..700&family=Cormorant+Garamond:ital,wght@0,300..700;1,300..700&family=DM+Sans:ital,opsz,wght@0,9..40,100..1000;1,9..40,100..1000&family=Fraunces:ital,opsz,wght@0,9..144,100..900;1,9..144,100..900&family=Licorice&family=Noto+Serif:ital,wght@0,100..900;1,100..900&family=Playfair+Display:ital,wght@0,400..900;1,400..900&family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&family=Xanh+Mono:ital@0;1&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Cabin:ital,wght@0,400..700;1,400..700&family=Cormorant+Garamond:ital,wght@0,300..700;1,300..700&family=DM+Sans:ital,opsz,wght@0,9..40,100..1000;1,9..40,100..1000&family=Licorice&family=Noto+Serif:ital,wght@0,100..900;1,100..900&family=Playfair+Display:ital,wght@0,400..900;1,400..900&family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&family=Xanh+Mono:ital@0;1&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Cabin:ital,wght@0,400..700;1,400..700&family=Cormorant+Garamond:ital,wght@0,300..700;1,300..700&family=Licorice&family=Noto+Serif:ital,wght@0,100..900;1,100..900&family=Playfair+Display:ital,wght@0,400..900;1,400..900&family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&family=Xanh+Mono:ital@0;1&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Cabin:ital,wght@0,400..700;1,400..700&family=Cormorant+Garamond:ital,wght@0,300..700;1,300..700&family=Licorice&family=Noto+Serif:ital,wght@0,100..900;1,100..900&family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&family=Xanh+Mono:ital@0;1&display=swap');
+
+:root {
+    --ink-black: #03071eff;
+    --night-bordeaux: #370617ff;
+    --black-cherry: #6a040fff;
+    --oxblood: #9d0208ff;
+    --brick-ember: #d00000ff;
+    --red-ochre: #dc2f02ff;
+    --cayenne-red: #e85d04ff;
+    --deep-saffron: #f48c06ff;
+    --orange: #faa307ff;
+    --amber-flame: #ffba08ff;
+    --hero-color: #f3e9dc;
+    --floral-white: #faf6ef;
+    --deep-sauce-blue: #1a2a3b;
+    --light-bronze: #c8956a;
+    --deep-red: #c62828;
+    --orange: #f4511e;
+    --dark-brown: #8d4b20;
+    --pale-gold: #d6c27a;
+    --soft-purple: #b388eb;
+    --white: #ffffff;
+    --dark: #3e2f1c;
+    --muted-gold: #c0a000;
+    --dark-cocoa: #3b2a1f;
+}
+
+* {
+    box-sizing: border-box;
+    margin:0;
+    padding: 0;
+    /* background-color: black; */
+    /* color: white; */
+}
+.hero {
+    background-color: var(--hero-color);
+    height: 100vh;
+}
+.liveTime {
+    background: rgba(255, 255, 255, 0.1);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    padding: 20px 30px;
+    border-radius: 12px;
+    box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
+    font-size: 1.5rem;
+    margin: 10px 0;
+}
+
+.liveTime h3 {
+    font-family: Playfair Display, serif;
+    color: #d1ac99;
+}
+.liveTime p {
+    font-family: Cabin, sans-serif;
+    font-size: 0.7rem;
+    color: var(--light-bronze);
+}
+.countUp {
+    background-color: var(--deep-sauce-blue);
+    color: var(--floral-white);
+    border: none;
+}
+.countDown {
+    background-color: var(--light-bronze);
+    color: var(--floral-white);
+    border: none;
+}
+
+.create-page {
+    min-height: 100vh;
+    padding: 4rem 1.5rem;
+    background-color: var(--hero-color);
+    color: var(--ink-black);
+}
+
+.create-card {
+    max-width: 900px;
+    margin: 0 auto;
+    padding: 2.5rem 2rem;
+    border-radius: 28px;
+    background: rgba(255, 255, 255, 0.94);
+    box-shadow: 0 24px 80px rgba(0, 0, 0, 0.12);
+    border: 1px solid rgba(0, 0, 0, 0.08);
+}
+
+.create-header {
+    display: grid;
+    gap: 1rem;
+    margin-bottom: 2rem;
+}
+
+.create-header h1 {
+    font-size: clamp(2.3rem, 3vw, 3.5rem);
+    line-height: 1.05;
+    margin: 0;
+    color: var(--ink-black);
+}
+
+.create-copy {
+    font-size: 1.05rem;
+    color: var(--dark-cocoa);
+    max-width: 720px;
+}
+
+.mode-pill {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.85rem 1.25rem;
+    border-radius: 999px;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    font-size: 0.85rem;
+    font-weight: 700;
+}
+
+.mode-countup {
+    background: rgba(26, 42, 59, 0.12);
+    color: var(--deep-sauce-blue);
+    border: 1px solid rgba(26, 42, 59, 0.18);
+}
+
+.mode-countdown {
+    background: rgba(200, 149, 106, 0.14);
+    color: var(--light-bronze);
+    border: 1px solid rgba(200, 149, 106, 0.18);
+}
+
+.create-details p {
+    margin: 0;
+    line-height: 1.8;
+    color: var(--dark-brown);
+}
+
+.create-actions {
+    margin-top: 2rem;
+    display: flex;
+    gap: 1rem;
+    flex-wrap: wrap;
+}
+
+.create-actions .btn {
+    min-width: 150px;
+}
+
+.create-mode-panel {
+    margin-top: 2rem;
+    display: grid;
+    gap: 1.5rem;
+}
+
+.countup-panel .mode-preview,
+.countdown-panel .mode-preview {
+    padding: 1.75rem;
+    border-radius: 24px;
+    background: rgba(255, 255, 255, 0.92);
+    border: 1px solid rgba(0,0,0,0.06);
+}
+
+.countup-panel .mode-clock {
+    font-size: 3rem;
+    font-family: 'DM Sans', sans-serif;
+    color: var(--deep-sauce-blue);
+    margin-bottom: 1rem;
+}
+
+.mood-card {
+    display: grid;
+    gap: 1rem;
+    padding: 1.75rem;
+    border-radius: 24px;
+    background: rgba(246, 246, 246, 0.95);
+    border: 1px solid rgba(0, 0, 0, 0.08);
+}
+
+.waiting-message {
+    color: var(--dark-brown);
+    font-size: 0.95rem;
+    line-height: 1.6;
+}
+
+.mood-textarea {
+    width: 100%;
+    min-height: 160px;
+    border-radius: 18px;
+    border: 1px solid rgba(0, 0, 0, 0.12);
+    padding: 1rem;
+    resize: vertical;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 1rem;
+    background: #ffffff;
+    color: var(--ink-black);
+}
+
+.mood-footer {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 1rem;
+    flex-wrap: wrap;
+    color: var(--dark-cocoa);
+}
+
+.countdown-form {
+    display: grid;
+    gap: 1rem;
+    padding: 1.75rem;
+    border-radius: 24px;
+    background: rgba(255, 255, 255, 0.92);
+    border: 1px solid rgba(0,0,0,0.06);
+}
+
+.countdown-form label {
+    font-weight: 700;
+    color: var(--ink-black);
+}
+
+.countdown-form input {
+    width: 100%;
+    padding: 0.95rem 1rem;
+    border-radius: 14px;
+    border: 1px solid rgba(0,0,0,0.12);
+    background: #ffffff;
+}
+
+.countdown-form small {
+    color: var(--dark-brown);
+}
+
+.create-countup .create-card {
+    border-color: rgba(26, 42, 59, 0.16);
+}
+
+.create-countdown .create-card {
+    border-color: rgba(200, 149, 106, 0.18);
+}
+
+.create-countdown .create-card {
+    border-color: rgba(200, 149, 106, 0.18);
+}
+
+/* CSS HEX
+--ink-black: #03071eff;
+--night-bordeaux: #370617ff;
+--black-cherry: #6a040fff;
+--oxblood: #9d0208ff;
+--brick-ember: #d00000ff;
+--red-ochre: #dc2f02ff;
+--cayenne-red: #e85d04ff;
+--deep-saffron: #f48c06ff;
+--orange: #faa307ff;
+--amber-flame: #ffba08ff;
+
+/* CSS HSL 
+--ink-black: hsla(231, 82%, 6%, 1);
+--night-bordeaux: hsla(339, 80%, 12%, 1);
+--black-cherry: hsla(354, 93%, 22%, 1);
+--oxblood: hsla(358, 97%, 31%, 1);
+--brick-ember: hsla(0, 100%, 41%, 1);
+--red-ochre: hsla(12, 98%, 44%, 1);
+--cayenne-red: hsla(23, 97%, 46%, 1);
+--deep-saffron: hsla(34, 95%, 49%, 1);
+--orange: hsla(39, 96%, 50%, 1);
+--amber-flame: hsla(43, 100%, 52%, 1);
+
+/* SCSS HEX 
+$ink-black: #03071eff;
+$night-bordeaux: #370617ff;
+$black-cherry: #6a040fff;
+$oxblood: #9d0208ff;
+$brick-ember: #d00000ff;
+$red-ochre: #dc2f02ff;
+$cayenne-red: #e85d04ff;
+$deep-saffron: #f48c06ff;
+$orange: #faa307ff;
+$amber-flame: #ffba08ff;
+
+/* SCSS HSL 
+$ink-black: hsla(231, 82%, 6%, 1);
+$night-bordeaux: hsla(339, 80%, 12%, 1);
+$black-cherry: hsla(354, 93%, 22%, 1);
+$oxblood: hsla(358, 97%, 31%, 1);
+$brick-ember: hsla(0, 100%, 41%, 1);
+$red-ochre: hsla(12, 98%, 44%, 1);
+$cayenne-red: hsla(23, 97%, 46%, 1);
+$deep-saffron: hsla(34, 95%, 49%, 1);
+$orange: hsla(39, 96%, 50%, 1);
+$amber-flame: hsla(43, 100%, 52%, 1);
+
+/* SCSS RGB 
+$ink-black: rgba(3, 7, 30, 1);
+$night-bordeaux: rgba(55, 6, 23, 1);
+$black-cherry: rgba(106, 4, 15, 1);
+$oxblood: rgba(157, 2, 8, 1);
+$brick-ember: rgba(208, 0, 0, 1);
+$red-ochre: rgba(220, 47, 2, 1);
+$cayenne-red: rgba(232, 93, 4, 1);
+$deep-saffron: rgba(244, 140, 6, 1);
+$orange: rgba(250, 163, 7, 1);
+$amber-flame: rgba(255, 186, 8, 1);
+
+/* SCSS Gradient 
+$gradient-top: linear-gradient(0deg, #03071eff, #370617ff, #6a040fff, #9d0208ff, #d00000ff, #dc2f02ff, #e85d04ff, #f48c06ff, #faa307ff, #ffba08ff);
+$gradient-right: linear-gradient(90deg, #03071eff, #370617ff, #6a040fff, #9d0208ff, #d00000ff, #dc2f02ff, #e85d04ff, #f48c06ff, #faa307ff, #ffba08ff);
+$gradient-bottom: linear-gradient(180deg, #03071eff, #370617ff, #6a040fff, #9d0208ff, #d00000ff, #dc2f02ff, #e85d04ff, #f48c06ff, #faa307ff, #ffba08ff);
+$gradient-left: linear-gradient(270deg, #03071eff, #370617ff, #6a040fff, #9d0208ff, #d00000ff, #dc2f02ff, #e85d04ff, #f48c06ff, #faa307ff, #ffba08ff);
+$gradient-top-right: linear-gradient(45deg, #03071eff, #370617ff, #6a040fff, #9d0208ff, #d00000ff, #dc2f02ff, #e85d04ff, #f48c06ff, #faa307ff, #ffba08ff);
+$gradient-bottom-right: linear-gradient(135deg, #03071eff, #370617ff, #6a040fff, #9d0208ff, #d00000ff, #dc2f02ff, #e85d04ff, #f48c06ff, #faa307ff, #ffba08ff);
+$gradient-top-left: linear-gradient(225deg, #03071eff, #370617ff, #6a040fff, #9d0208ff, #d00000ff, #dc2f02ff, #e85d04ff, #f48c06ff, #faa307ff, #ffba08ff);
+$gradient-bottom-left: linear-gradient(315deg, #03071eff, #370617ff, #6a040fff, #9d0208ff, #d00000ff, #dc2f02ff, #e85d04ff, #f48c06ff, #faa307ff, #ffba08ff);
+$gradient-radial: radial-gradient(#03071eff, #370617ff, #6a040fff, #9d0208ff, #d00000ff, #dc2f02ff, #e85d04ff, #f48c06ff, #faa307ff, #ffba08ff); */
