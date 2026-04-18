@@ -1,38 +1,21 @@
 import React from 'react'
+import { Navigate, useNavigate } from 'react-router-dom'
 
-const navbar = () => {
+const Navbar = () => {
+  const Navigate = useNavigate()
   return (
-    <div>
-      <nav className="navbar navbar-expand-lg bg-body-tertiary">
-        <div className="container-fluid">
-          <a className="navbar-brand" href="#">Moment</a>
-          <button className="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
-            <span className="navbar-toggler-icon"></span>
-          </button>
-          <div className="collapse navbar-collapse" id="navbarSupportedContent">
-            <ul className="navbar-nav me-auto mb-2 mb-lg-0">
-              <li className="nav-item">
-                <a className="nav-link active" aria-current="page" href="#">About</a>
-              </li>
-              <li className="nav-item">
-                <a className="nav-link" href="#">Link</a>
-              </li>
-
-            </ul>
-            <div className='gap-3 '>
-              <button className='btn btn-success'>Log In</button>
-              <button>Sign Up</button>
-            </div>
-
-            {/* <form className="d-flex" role="search">
-        <input className="form-control me-2" type="search" placeholder="Search" aria-label="Search"/>
-        <button className="btn btn-outline-success" type="submit">Search</button>
-      </form> */}
-          </div>
-        </div>
-      </nav>
-    </div>
+    <nav className="fixed top-0 left-0 right-0 z-50 flex justify-between items-center px-8 h-16 bg-stone-900/40 backdrop-blur-xl rounded-full mt-4 mx-auto max-w-7xl transition-all duration-500 hover:backdrop-blur-3xl hover:bg-stone-800/50">
+      <div className="text-2xl font-serif italic text-orange-100">Moments</div>
+      <div className="hidden md:flex items-center space-gap-8 gap-8">
+        <a className="text-orange-200 font-bold border-b-2 border-orange-200/50 pb-1 font-label text-sm uppercase tracking-widest" href="#">Explore</a>
+        <a className="text-orange-100/70 font-label text-sm uppercase tracking-widest hover:text-orange-200 transition-colors" href="#">Feed</a>
+        <a className="text-orange-100/70 font-label text-sm uppercase tracking-widest hover:text-orange-200 transition-colors" href="#">My Moments</a>
+      </div>
+      <div className="flex items-center gap-4">
+        <button className="material-symbols-outlined text-orange-200 text-2xl">account_circle</button>
+      </div>
+    </nav>
   )
 }
 
-export default navbar
+export default Navbar
