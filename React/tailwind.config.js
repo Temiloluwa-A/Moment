@@ -10,7 +10,7 @@ export default {
             "colors": {
                 "inverse-primary": "#b02e00",
                 "on-primary-container": "#761c00",
-                "surface-dim": "#19120d",
+                "surface-dim": "#19120d", 
                 "surface-variant": "#3c332d",
                 "outline-variant": "#564334",
                 "surface-bright": "#403731",

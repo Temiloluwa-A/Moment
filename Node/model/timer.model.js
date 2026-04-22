@@ -4,7 +4,7 @@ const backgroundSchema = new mongoose.Schema({
     type: {type: String, enum:["solid", "gradient", "wallpaper", "image"], required: true},
     value: {type: string, required:true}
 }, {_id:false})
-// _id is false so mongodb doesn't create a sub-object since its a small part of somethign big
+// _id is false so mongodb doesn't create a sub-object since its a small part of something big
 
 
 const borderStyleSchema = new mongoose.Schema({

@@ -1,14 +1,29 @@
 import React, { useState, useEffect } from 'react'
 import { useMode } from '../context/ModeContext'
 import { Link } from 'react-router-dom'
+import Customize from '../components/Customize'
 
-const formatElapsedTime = (seconds) => {
+const formatElapsedTime = (seconds, units = ['days', 'hours', 'minutes', 'seconds']) => {
   const days = Math.floor(seconds / 86400)
   const hours = Math.floor((seconds % 86400) / 3600)
   const minutes = Math.floor((seconds % 3600) / 60)
   const secs = seconds % 60
 
-  return `Day ${days} ${String(hours).padStart(2, '0')}:${String(minutes).padStart(2, '0')}:${String(secs).padStart(2, '0')}`
+  const values = {
+    days: `${days}d`,
+    hours: String(hours).padStart(2, '0'),
+    minutes: String(minutes).padStart(2, '0'),
+    seconds: String(secs).padStart(2, '0'),
+  }
+
+  const enabled = units.filter((unit) => values[unit] !== undefined)
+  if (enabled.length === 0) return '0s'
+
+  const formatted = enabled.map((unit) => values[unit])
+  if (enabled[0] === 'days') {
+    return [formatted[0], formatted.slice(1).join(':')].filter(Boolean).join(' ')
+  }
+  return formatted.join(':')
 }
 
 const countWords = (text) => {
@@ -22,6 +37,12 @@ const CreateCountUp = () => {
   const [elapsedSeconds, setElapsedSeconds] = useState(0)
   const [isRunning, setIsRunning] = useState(false)
   const [moodText, setMoodText] = useState('')
+  const [timerTitle, setTimerTitle] = useState('')
+  const [targetDate, setTargetDate] = useState('')
+  const [targetTime, setTargetTime] = useState('')
+  const [noEndDate, setNoEndDate] = useState(false)
+  const [timezone, setTimezone] = useState('Africa/Lagos')
+  const [displayUnits, setDisplayUnits] = useState(['days', 'hours', 'minutes', 'seconds'])
 
   const maxWords = 280
   const wordCount = countWords(moodText)
@@ -64,7 +85,7 @@ const CreateCountUp = () => {
 
         <div className="create-mode-panel countup-panel">
           <div className="mode-preview" onClick={() => isValid && setIsRunning(true)}>
-            <div className="mode-clock">{formatElapsedTime(elapsedSeconds)}</div>
+            <div className="mode-clock">{formatElapsedTime(elapsedSeconds, displayUnits)}</div>
             <p>{isRunning ? 'Timer is running. Keep your mood flowing.' : 'Tap the clock to start counting.'}</p>
           </div>
 
@@ -88,16 +109,31 @@ const CreateCountUp = () => {
             </div>
           </div>
 
-          <div className="create-actions">
-            <button className="btn btn-secondary" disabled>
-              Customize
-            </button>
-            {!isValid && (
+          <Customize
+            isValid={isValid}
+            moodText={moodText}
+            onMoodChange={handleMoodChange}
+            displayUnits={displayUnits}
+            setDisplayUnits={setDisplayUnits}
+            timerTitle={timerTitle}
+            setTimerTitle={setTimerTitle}
+            targetDate={targetDate}
+            setTargetDate={setTargetDate}
+            targetTime={targetTime}
+            setTargetTime={setTargetTime}
+            noEndDate={noEndDate}
+            setNoEndDate={setNoEndDate}
+            timezone={timezone}
+            setTimezone={setTimezone}
+          />
+
+          {!isValid && (
+            <div className="create-actions">
               <Link className="btn btn-secondary" to="/">
                 Back to landing
               </Link>
-            )}
-          </div>
+            </div>
+          )}
         </div>
       </section>
     </main>
