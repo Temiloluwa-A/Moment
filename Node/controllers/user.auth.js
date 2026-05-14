@@ -4,7 +4,7 @@ const jwt = require('jsonwebtoken')
 
 // dont forget to do session timeout(logging out)
 const register = async (req, res) => {
-    const {firstName, lastName, userName, email, password, gender} = req.body
+    const {fullName, userName, email, password, gender} = req.body
     try {
         
         console.log(req.body);
@@ -19,13 +19,11 @@ const register = async (req, res) => {
         }
 
         const user = await User.create({
-            firstName,
-            lastName,
+            fullName,
             userName,
+            gender,
             email,
             password: hashedPassword,
-            gender
-
         })
 
         const token = await jwt.sign({id:user._id}, process.env.APP_TOKEN, {expiresIn: "5hr"})
@@ -46,9 +44,14 @@ const register = async (req, res) => {
 }
 
 const loginUser = async (req, res) => {
-    const { email, password} = req.body
+    const { identifier, password} = req.body
     try {
-        const isSignedIn = await User.findOne({email})
+        const isSignedIn = await User.findOne({
+            $or:[
+                {email: req.body.identifier },
+                {userName:req.body.identifier}
+            ]
+        })
         if(!isSignedIn) {
             res.status(404).send ({
                 message: "invalid email or password"
@@ -111,5 +114,19 @@ const deleteUser =  async (req, res) => {
     }
 }
 
-//  
-module.exports = {register, loginUser, deleteUser}
+const getUserProfile = async (req, res) => {
+    try {
+        // req.user.id comes from the authMiddleware
+        const user = await User.findById(req.user.id).select('-password'); // Exclude password
+        if (!user) {
+            return res.status(404).send({ message: "User not found" });
+        }
+        res.status(200).send({ message: "Profile fetched successfully", data: user });
+    } catch (error) {
+        console.log(error);
+        res.status(500).send({ message: "Failed to fetch profile" });
+    }
+};
+
+// Export the new controller
+module.exports = {register, loginUser, deleteUser, getUserProfile}

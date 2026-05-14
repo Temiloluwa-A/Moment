@@ -1,0 +1,305 @@
+@import "tailwindcss";
+
+@theme {
+  /* ═══════════════════════════════════
+     PALETTE — Raw colors
+  ═══════════════════════════════════ */
+
+  /* Amber — primary accent */
+  --color-amber-100: #F5DEB8;
+  --color-amber-200: #E8C48A;
+  --color-amber-300: #DBA85C;
+  --color-amber-400: #D4924A;
+  --color-amber-500: #C9873A;
+  --color-amber-600: #A06928;
+  --color-amber-700: #7A4E1E;
+  --color-amber-800: #523414;
+  --color-amber-900: #2E1D0A;
+
+  /* Parchment — text and light mode */
+  --color-parchment-50:  #FDFAF5;
+  --color-parchment-100: #FAF5EE;
+  --color-parchment-200: #F5ECD9;
+  --color-parchment-300: #F2E8D9;
+  --color-parchment-400: #E8D9C0;
+  --color-parchment-500: #D4C4A8;
+  --color-parchment-600: #B8A484;
+
+  /* Tawny — secondary text and borders */
+  --color-tawny-300: #C4A882;
+  --color-tawny-400: #A8896A;
+  --color-tawny-500: #8C7355;
+  --color-tawny-600: #705C42;
+  --color-tawny-700: #5C4A35;
+  --color-tawny-800: #3D3020;
+
+  /* Espresso — backgrounds */
+  --color-espresso-700: #3D2B1A;
+  --color-espresso-800: #2E2016;
+  --color-espresso-900: #1C1410;
+  --color-espresso-950: #0D0A08;
+
+  /* ═══════════════════════════════════
+     SEMANTIC TOKENS
+  ═══════════════════════════════════ */
+
+  /* Backgrounds */
+  --color-bg:              var(--color-espresso-900);
+  --color-bg-deep:         var(--color-espresso-950);
+  --color-surface:         var(--color-espresso-800);
+  --color-surface-high:    var(--color-espresso-700);
+
+  /* Primary */
+  --color-primary:         var(--color-amber-500);
+  --color-primary-hover:   var(--color-amber-400);
+  --color-primary-pressed: var(--color-amber-600);
+  --color-primary-subtle:  var(--color-amber-900);
+  --color-on-primary:      var(--color-espresso-900);
+
+  /* Text */
+  --color-text:            var(--color-parchment-300);
+  --color-text-muted:      var(--color-parchment-500);
+  --color-text-subtle:     var(--color-tawny-500);
+
+  /* Borders */
+  --color-border:          var(--color-tawny-800);
+  --color-border-mid:      var(--color-tawny-700);
+  --color-border-strong:   var(--color-tawny-600);
+  --color-focus:           var(--color-amber-500);
+
+  /* Inputs */
+  --color-input-bg:        var(--color-espresso-950);
+  --color-input-border:    var(--color-tawny-700);
+  --color-input-text:      var(--color-parchment-300);
+  --color-placeholder:     var(--color-tawny-500);
+
+  /* Status */
+  --color-error:           #C0392B;
+  --color-error-subtle:    #2E0D0A;
+  --color-success:         #7A9B7A;
+  --color-success-subtle:  #0D2010;
+
+  /* Light mode */
+  --color-bg-light:         var(--color-parchment-100);
+  --color-surface-light:    var(--color-parchment-200);
+  --color-text-light:       var(--color-espresso-900);
+  --color-text-muted-light: var(--color-tawny-600);
+  --color-border-light:     var(--color-tawny-400);
+
+  /* ═══════════════════════════════════
+     TYPOGRAPHY
+  ═══════════════════════════════════ */
+
+  --font-headline: "Cormorant Garamond", serif;
+  --font-body:     "DM Sans", sans-serif;
+
+  /* ═══════════════════════════════════
+     BORDER RADIUS
+  ═══════════════════════════════════ */
+
+    --border-radius-default: 1rem;
+    --border-radius-lg: 2rem;
+    --border-radius-xl: 3rem;
+    --border-radius-full: 9999px;
+
+   
+}
+
+/* ═══════════════════════════════════
+   BASE STYLES
+═══════════════════════════════════ */
+
+html body {
+    background: #2f1e16;
+    color: #F2E8D9;
+    overflow-x: hidden !important;
+    
+}
+/* Text selection */
+::selection {
+  background: rgba(201, 135, 58, 0.3);
+  color: #F2E8D9;
+}
+
+/* ═══════════════════════════════════
+   CUSTOM UTILITIES
+   Things Tailwind can't do alone
+═══════════════════════════════════ */
+
+/* Glass effect — used on cards and panels */
+.glass {
+  backdrop-filter: blur(20px);
+  background: rgba(46, 32, 22, 0.6);
+  border: 1px solid rgba(93, 74, 53, 0.25);
+}
+
+/* Subtle warm glow — used on hero sections */
+.glow-amber {
+  box-shadow: 0 0 60px rgba(201, 135, 58, 0.08);
+}
+
+/* Text glow for headlines */
+.text-glow {
+  text-shadow: 0 0 40px rgba(201, 135, 58, 0.25);
+}
+
+/* Scrollbar */
+::-webkit-scrollbar {
+  width: 4px;
+}
+::-webkit-scrollbar-track {
+  background: #1C1410;
+}
+::-webkit-scrollbar-thumb {
+  background: #3D3020;
+  border-radius: 9999px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: #8C7355;
+}
+
+/* Hide scrollbar but keep scroll */
+.scrollbar-hide {
+  scrollbar-width: none;
+}
+.scrollbar-hide::-webkit-scrollbar {
+  display: none;
+}
+input:-webkit-autofi
+
+/* Range input styling */
+input[type=range] {
+  -webkit-appearance: none;
+  width: 100%;
+  height: 3px;
+  background: #3D3020;
+  border-radius: 9999px;
+  outline: none;
+}
+input[type=range]::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  background: #C9873A;
+  cursor: pointer;
+  box-shadow: 0 2px 8px rgba(201, 135, 58, 0.4);
+  transition: transform 0.15s, box-shadow 0.15s;
+}
+input[type=range]::-webkit-slider-thumb:hover {
+  transform: scale(1.2);
+  box-shadow: 0 4px 16px rgba(201, 135, 58, 0.5);
+}
+
+/* Date and time inputs */
+input[type="date"],
+input[type="time"] {
+  color-scheme: dark;
+}
+
+/* Breathing animation — used on background blobs */
+@
+
+/* Fade up — entrance animation */
+@keyframes fadeUp {
+  from { opacity: 0; transform: translateY(24px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+.animate-fade-up {
+  animation: fadeUp 0.7s cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
+/* Pulse — waiting state on timer */
+@keyframes pulse-subtle {
+  0%, 100% { opacity: 0.4; }
+  50%       { opacity: 0.7; }
+}
+.animate-pulse-subtle {
+  animation: pulse-subtle 3s ease-in-out infinite;
+}
+.material-symbols-outlined {
+    font-variation-settings:
+        FILL 0 wght 400 GRAD 0 opsz 24;
+}
+
+.text-glow {
+    text-shadow: 0 0 30px rgba(255 181 160 0.4);
+}
+
+.glass-effect {
+    backdrop-filter: blur(20px);
+    background: rgba(60 51 45 0.4);
+}
+
+.hero-gradient {
+    background: linear-gradient(180deg rgba(23 16 11 0) 0% rgba(25 18 13 1) 100%);
+}
+
+.sunset-gradient {
+    background: linear-gradient(135deg #fb8c00 0% #c62828 50% #8d4b20 100%);
+}
+
+.text-glow {
+    text-shadow: 0 0 20px rgba(255 181 160 0.3);
+}
+
+.glass-bubble {
+    background: rgba(255 255 255 0.05);
+    backdrop-filter: blur(24px);
+    border: 2px solid rgba(255 255 255 0.1);
+}
+
+.glass-panel {
+    background: rgba(60 51 45 0.4);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+}
+
+.ethereal-glow {
+    filter: blur(60px);
+    opacity: 0.12;
+    pointer-events: none;
+}
+
+
+
+@keyframes breathing {
+
+    0%,
+    100% {
+        transform: scale(1);
+        opacity: 0.6;
+    }
+
+    50% {
+        transform: scale(1.05);
+        opacity: 0.8;
+    }
+}
+
+.animate-breathing {
+    animation: breathing 6s ease-in-out infinite;
+}
+
+/* Specific version for background elements that already have opacity and shouldn't scale too much */
+@keyframes breathing-bg {
+
+    0%,
+    100% {
+        transform: scale(1);
+        opacity: 0.12;
+    }
+
+    50% {
+        transform: scale(1.08);
+        opacity: 0.18;
+    }
+}
+
+.animate-breathing-bg {
+    animation: breathing-bg 8s ease-in-out infinite;
+}
+
+.form {
+    padding: 20px 30px;
+}

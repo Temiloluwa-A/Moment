@@ -3,13 +3,17 @@ const mongoose = require("mongoose")
 const express = require("express")
 const app = express()
 const dotenv = require("dotenv")
+const cors = require('cors')
+app.use(cors())
 dotenv.config()
 app.use(express.urlencoded({extended:true})) //to interpret the data sent from the client in the form of urlencoded data, extended:true allows us to send nested objects in the form of urlencoded data
 app.use(express.json()) 
 const path = require("path")
 
 const UserRoutes = require("./routes/user.routes")
+ const MomentRoutes = require("./routes/moment.routes")
 app.use("/api/v1", UserRoutes)
+app.use("/api/v1", MomentRoutes)
 
 mongoose.connect(process.env.DB_URI)
 .then(() => {
@@ -34,4 +38,3 @@ app.listen(process.env.PORT, (err)=> {
     }
 
 })
-

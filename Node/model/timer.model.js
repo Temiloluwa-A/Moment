@@ -2,15 +2,15 @@ const mongoose = require ('mongoose');
 
 const backgroundSchema = new mongoose.Schema({
     type: {type: String, enum:["solid", "gradient", "wallpaper", "image"], required: true},
-    value: {type: string, required:true}
+    value: {type: String, required:true}
 }, {_id:false})
 // _id is false so mongodb doesn't create a sub-object since its a small part of something big
 
 
 const borderStyleSchema = new mongoose.Schema({
     width: {type:Number, default:1},
-    color: {type:string, default:'transparent'},
-    style: {type:string, enum:['solid', 'dotted', 'dashed'], default:solid}
+    color: {type: String, default:'transparent'},
+    style: {type: String, enum:['solid', 'dotted', 'dashed'], default:'solid'}
 
 }, {_id:false})
 
@@ -24,8 +24,9 @@ const triggerSchema = new mongoose.Schema({
 
 
 const customizationSchema = new mongoose.Schema({
-    font: {type:string, default:'Cormorant Garamond'}, // change when you check fonts used in stitch
-    backgound: {type:backgroundSchema, default:{
+    // timerId:{}
+    font: {type: String, default:'Cormorant Garamond'}, // change when you check fonts used in stitch
+    background: {type:backgroundSchema, default:{
         type: 'solid',
         value: '#1a2b3c' // change with stitch
     }},
@@ -44,12 +45,14 @@ const customizationSchema = new mongoose.Schema({
 
 
 const timerSchema = new mongoose.Schema ({
-    userId: {type:mongoose.Schema.Types.ObjectId, ref:"user", required:true, unique:true, index:true},
+    userId: {type:mongoose.Schema.Types.ObjectId, ref:"User", required:true, index:true},
+    // no unique true because that simply means one timer per user and we want multiple timers per user but we still want an index for faster searching through timers that belong to a specific user
     slug: {type:String, required:true, unique:true},
     mode: {type:String, required:true, enum:["countup", "countdown"]},
     title: {type:String, default: '', maxlength: 80},
     startAt: {type:Date, default:Date.now, required:true},
-    endAt: {type:Date, required:true, default: null},
+    // Removed required:true so Count-Ups can successfully save with no milestone!
+    endAt: {type:Date, default: null},
     timeZone: {type:String, required:true},
     units:{
         days: {type:Boolean, default:true},
@@ -60,18 +63,17 @@ const timerSchema = new mongoose.Schema ({
     isGift: {type:Boolean, default:false},
     isPublic: {type:Boolean, default:false},
     rootCount: {type:Number, default: 0},
-    notify: {type:Boolean, deafult:true},
+    notify: {type:Boolean, default:true},
     customization: {type:customizationSchema, default:{}}
 }, {timestamps:true})
  
-timerSchema.index({userId: 1}) //creates an index on userId field in ascending order,it
-//pulls all timers belonging to that specific id without earching through everyoneelde's data
-timerSchema.index({slug: 1}, {unique:true})
+// timerSchema.index({userId: 1}) //creates an index on userId field in ascending order,it
+// //pulls all timers belonging to that specific id without earching through everyoneelde's data
+// timerSchema.index({slug: 1}, {unique:true})
 
-timerSchema.index({rootCount: -1}, {isPublic:1})
-//with index instead of the database reading through every single document it does it 
-//collection scan by looking at a sorted list and jumps straight to the data to 
-//be found 
+// Both fields must go in the first object to create a valid compound index!
+timerSchema.index({ isPublic: 1, rootCount: -1 })
+// This index allows us to efficiently query for public timers sorted by rootCount in descending order, which is useful for features like displaying popular public timers.
 
 
 const timer = mongoose.model("timer", timerSchema)
