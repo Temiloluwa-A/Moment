@@ -15,7 +15,7 @@ const authMiddleware = (req, res, next) => {
     }
 
     try {
-        // Verify the token using your secret key and attach the decoded user data to the request
+        // Verify the token using secret key and attach the decoded user data to the request
         const verified = jwt.verify(token, process.env.APP_TOKEN);
         req.user = verified; // This contains the user's { id: ... }
         next(); // Move on to the next function

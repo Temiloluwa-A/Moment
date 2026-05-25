@@ -1,8 +1,9 @@
 const mongoose = require ('mongoose');
 
 const backgroundSchema = new mongoose.Schema({
-    type: {type: String, enum:["solid", "gradient", "wallpaper", "image"], required: true},
-    value: {type: String, required:true}
+    type: {type: String, enum:["solid", "gradient", "image"], required: true},
+    value: {type: String, required:true},
+    publicId: {type:String, default:null},
 }, {_id:false})
 // _id is false so mongodb doesn't create a sub-object since its a small part of something big
 
@@ -19,7 +20,11 @@ const triggerSchema = new mongoose.Schema({
     type: {type:String, enum:['preset', 'custom'], required:true},
     preset: {type:String, default:null, required:true}, //check back and make it the confetti rain 
     //you checked,  you didn't because null lets you be able to set anything later
-    custom: {type:String, default:null}
+    media: {
+        secure_url: {type:String, default:null},
+        publicId: {type:String, default:null},
+        resourceType: {type:String, enum:['image', 'video'], default:null}
+    }
 }, {_id:false})
 
 
@@ -64,6 +69,7 @@ const timerSchema = new mongoose.Schema ({
     isPublic: {type:Boolean, default:false},
     rootCount: {type:Number, default: 0},
     notify: {type:Boolean, default:true},
+    members: [{ type: mongoose.Schema.Types.ObjectId, ref: 'User', default: [] }],
     customization: {type:customizationSchema, default:{}}
 }, {timestamps:true})
  

@@ -20,7 +20,7 @@ export function TimerProvider({children}) {
         notify: true,
         customization: {
             font: 'noto',
-            background: { type: 'solid', value: '#1a2b3c' },
+            background: { type: 'solid', value: '#1a2b3c', publicId: null, format: null },
             timerSize: 80,
             borderRadius: 50,
             borderStyle: { width: 1, color: 'transparent', style: 'solid' },

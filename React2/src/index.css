@@ -165,40 +165,9 @@ html body {
 .scrollbar-hide::-webkit-scrollbar {
   display: none;
 }
-input:-webkit-autofi
-
-/* Range input styling */
-input[type=range] {
-  -webkit-appearance: none;
-  width: 100%;
-  height: 3px;
-  background: #3D3020;
-  border-radius: 9999px;
-  outline: none;
-}
-input[type=range]::-webkit-slider-thumb {
-  -webkit-appearance: none;
-  width: 18px;
-  height: 18px;
-  border-radius: 50%;
-  background: #C9873A;
-  cursor: pointer;
-  box-shadow: 0 2px 8px rgba(201, 135, 58, 0.4);
-  transition: transform 0.15s, box-shadow 0.15s;
-}
-input[type=range]::-webkit-slider-thumb:hover {
-  transform: scale(1.2);
-  box-shadow: 0 4px 16px rgba(201, 135, 58, 0.5);
-}
-
-/* Date and time inputs */
-input[type="date"],
-input[type="time"] {
-  color-scheme: dark;
-}
 
 /* Breathing animation — used on background blobs */
-@
+
 
 /* Fade up — entrance animation */
 @keyframes fadeUp {

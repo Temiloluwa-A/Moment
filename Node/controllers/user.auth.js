@@ -48,8 +48,8 @@ const loginUser = async (req, res) => {
     try {
         const isSignedIn = await User.findOne({
             $or:[
-                {email: req.body.identifier },
-                {userName:req.body.identifier}
+                {email: identifier },
+                {userName: identifier}
             ]
         })
         if(!isSignedIn) {
@@ -71,8 +71,7 @@ const loginUser = async (req, res) => {
         res.status(200).send ({
             message: "User logged in successfully",
             Data: {
-                firstName: isSignedIn.firstName,
-                lastName: isSignedIn.lastName,
+                fullName: isSignedIn.fullName,
                 userName: isSignedIn.userName,
                 email: isSignedIn.email,
                 gender: isSignedIn.gender,
@@ -102,17 +101,26 @@ const deleteUser =  async (req, res) => {
             })
         }
         res.status(200).send({
-            message: "User logged out successfully"
+            message: "User deleted successfully"
         })
 
         
     } catch (error) {
         console.log(error);
         res.status(400).send({
-            message: "Unable to logout, try again"
+            message: "Unable to delete user, try again"
         })
     }
 }
+
+const logoutUser = async (req, res) => {
+    try {
+        res.status(200).send({ message: "Logged out successfully" });
+    } catch (error) {
+        console.log(error);
+        res.status(500).send({ message: "Unable to logout" });
+    }
+};
 
 const getUserProfile = async (req, res) => {
     try {
@@ -129,4 +137,4 @@ const getUserProfile = async (req, res) => {
 };
 
 // Export the new controller
-module.exports = {register, loginUser, deleteUser, getUserProfile}
+module.exports = {register, loginUser, deleteUser, logoutUser, getUserProfile}

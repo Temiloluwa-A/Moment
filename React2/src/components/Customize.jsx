@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useRef } from 'react';
 import axios from 'axios';
 import Cookies from 'js-cookie';
 import { useLocation } from 'react-router-dom';
@@ -12,6 +12,9 @@ const Customize = () => {
     const isCountUp = location.pathname.includes('count-up');
     const [isSaving, setIsSaving] = useState(false);
     
+    const fileInputRef = useRef(null);
+    const [selectedFile, setSelectedFile] = useState(null);
+
 
     const handleDateChange = (e, field) => {
         const currentDate = config[field] ? new Date(config[field]) : new Date();
@@ -94,13 +97,34 @@ const Customize = () => {
             // We create a copy of config so we don't mutate React state directly
             const payload = { ...config, mode: isCountUp ? 'countup' : 'countdown' };
 
+            let dataToSend = payload;
+
+            // If an image is selected, we MUST package it as FormData instead of standard JSON
+            if (selectedFile) {
+                const formData = new FormData();
+                formData.append('title', payload.title || '');
+                formData.append('mode', payload.mode);
+                if (payload.startAt) formData.append('startAt', payload.startAt);
+                if (payload.endAt) formData.append('endAt', payload.endAt);
+                formData.append('isPublic', payload.isPublic || false);
+                
+                // Nested objects must be stringified so Multer doesn't destroy them
+                formData.append('customization', JSON.stringify(payload.customization));
+                formData.append('units', JSON.stringify(payload.units));
+                
+                // Append the actual file using the exact field name Multer expects
+                formData.append('backgroundImage', selectedFile);
+                
+                dataToSend = formData;
+            }
+
             if (config._id) {
-                await axios.put(`http://localhost:3000/api/v1/moments/${config._id}`, payload, {
+                await axios.patch(`http://localhost:3000/api/v1/moments/${config._id}`, dataToSend, {
                     headers: { Authorization: `Bearer ${token}` }
                 });
                 alert("Moment updated successfully!");
             } else {
-                await axios.post('http://localhost:3000/api/v1/moments', payload, {
+                await axios.post('http://localhost:3000/api/v1/moments', dataToSend, {
                     headers: { Authorization: `Bearer ${token}` }
                 });
                 alert("Moment created successfully!");
@@ -185,32 +209,12 @@ const Customize = () => {
                             <p className="text-[10px] opacity-50 font-light ml-7">If checked, this moment will appear on the Explore page for others to see and root for.</p>
                         </div>
 
-                        {/* Conditionally render the custom emoji picker! */}
-                        {config.customization.trigger.preset === 'emoji' && (
-                            <div className="mt-3 flex items-center justify-between bg-white/5 border border-white/10 rounded-xl p-4">
-                                <label className="text-xs font-label uppercase tracking-widest opacity-70">Custom Emoji</label>
-                                <div className="flex items-center gap-3">
-                                    <input
-                                        type="text"
-                                        placeholder="✨"
-                                        value={config.customization.trigger.custom || ''}
-                                        onChange={(e) => update('customization.trigger.custom', e.target.value)}
-                                        className="bg-transparent border-b border-orange-200/50 text-2xl text-center w-12 focus:outline-none"
-                                    />
-                                    <button
-                                        onClick={() => triggerCelebration('emoji', config.customization.trigger.custom)}
-                                        className="text-[10px] uppercase tracking-widest border border-white/20 px-3 py-2 rounded hover:bg-white/10 transition-colors"
-                                    >
-                                        Test
-                                    </button>
-                                </div>
-                            </div>
-                        )}
+
                     </div>
 
                     <div className="flex flex-col gap-2 mt-6">
                         <label className="text-xs uppercase tracking-widest opacity-70">CELEBRATION TRIGGER</label>
-                        <div className='grid grid-cols-2 md:grid-cols-4 gap-3 py-2'>
+                        <div className='grid grid-cols-2 md:grid-cols-5 gap-3 py-2'>
                             {TRIGGER.map((trigger) => (
                                 <button
                                     key={trigger.key}
@@ -221,7 +225,27 @@ const Customize = () => {
                                     {trigger.tag}
                                 </button>
                             ))}
+                             {config.customization.trigger.type === 'custom' && (
+                            <div className="flex flex-col gap-2 mt-4 ">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" className="bi bi-camera py-3 px-2 rounded-xl border transition-all text-xs font-label uppercase tracking-widest flex flex-col items-center gap-1 ${config.customization.trigger.custom === trigger.key ? 'bg-orange-200/20 border-orange-300' : 'bg-white/5 border-white/10 hover:bg-white/10'" viewBox="0 0 16 16">
+                                    <path d="M15 12a1 1 0 0 1-1 1H2a1 1 0 0 1-1-1V6a1 1 0 0 1 1-1h1.172a3 3 0 0 0 2.12-.879l.83-.828A1 1 0 0 1 6.827 3h2.344a1 1 0 0 1 .707.293l.828.828A3 3 0 0 0 12.828 5H14a1 1 0 0 1 1 1zM2 4a2 2 0 0 0-2 2v6a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V6a2 2 0 0 0-2-2h-1.172a2 2 0 0 1-1.414-.586l-.828-.828A2 2 0 0 0 9.172 2H6.828a2 2 0 0 0-1.414.586l-.828.828A2 2 0 0 1 3.172 4z" />
+                                    <path d="M8 11a2.5 2.5 0 1 1 0-5 2.5 2.5 0 0 1 0 5m0 1a3.5 3.5 0 1 0 0-7 3.5 3.5 0 0 0 0 7M3 6.5a.5.5 0 1 1-1 0 .5.5 0 0 1 1 0" />
+                                </svg>
+                                {/* <label className="text-xs uppercase tracking-widest opacity-70">CUSTOM CELEBRATION</label> */}
+                            </div>
+                        )}
                         </div>
+                    </div>
+                    <div>
+                        {config.customization.trigger.type === 'custom' && (
+                            <div className="flex flex-col gap-2 mt-4 ">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-camera" viewBox="0 0 16 16">
+                                    <path d="M15 12a1 1 0 0 1-1 1H2a1 1 0 0 1-1-1V6a1 1 0 0 1 1-1h1.172a3 3 0 0 0 2.12-.879l.83-.828A1 1 0 0 1 6.827 3h2.344a1 1 0 0 1 .707.293l.828.828A3 3 0 0 0 12.828 5H14a1 1 0 0 1 1 1zM2 4a2 2 0 0 0-2 2v6a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V6a2 2 0 0 0-2-2h-1.172a2 2 0 0 1-1.414-.586l-.828-.828A2 2 0 0 0 9.172 2H6.828a2 2 0 0 0-1.414.586l-.828.828A2 2 0 0 1 3.172 4z" />
+                                    <path d="M8 11a2.5 2.5 0 1 1 0-5 2.5 2.5 0 0 1 0 5m0 1a3.5 3.5 0 1 0 0-7 3.5 3.5 0 0 0 0 7M3 6.5a.5.5 0 1 1-1 0 .5.5 0 0 1 1 0" />
+                                </svg>
+                                {/* <label className="text-xs uppercase tracking-widest opacity-70">CUSTOM CELEBRATION</label> */}
+                            </div>
+                        )}
                     </div>
                 </div>
 
@@ -248,6 +272,54 @@ const Customize = () => {
                                     <option key={font.key} value={font.key} className="text-stone-900">{font.family}</option>
                                 ))}
                             </select>
+                        </div>
+                    </div>
+                    <div className="flex flex-col gap-2 mt-4">
+                        <label className="text-xs uppercase tracking-widest opacity-70">BACKGROUND IMAGE</label>
+                        
+                        {/* Hidden file input */}
+                        <input 
+                            type="file" 
+                            accept="image/*" 
+                            ref={fileInputRef} 
+                            onChange={(e) => {
+                                if (e.target.files && e.target.files[0]) {
+                                    setSelectedFile(e.target.files[0]);
+                                    update('customization.background.type', 'image');
+                                }
+                            }} 
+                            style={{ display: 'none' }} 
+                        />
+                        
+                        <div className="flex items-center gap-2">
+                            <button 
+                                type="button"
+                                onClick={() => fileInputRef.current.click()}
+                                className="flex-1 py-3 px-4 rounded-xl border border-white/10 bg-white/5 hover:bg-white/10 transition-all text-sm flex items-center justify-center gap-2 text-orange-100"
+                            >
+                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" className="bi bi-camera" viewBox="0 0 16 16">
+                                    <path d="M15 12a1 1 0 0 1-1 1H2a1 1 0 0 1-1-1V6a1 1 0 0 1 1-1h1.172a3 3 0 0 0 2.12-.879l.83-.828A1 1 0 0 1 6.827 3h2.344a1 1 0 0 1 .707.293l.828.828A3 3 0 0 0 12.828 5H14a1 1 0 0 1 1 1zM2 4a2 2 0 0 0-2 2v6a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V6a2 2 0 0 0-2-2h-1.172a2 2 0 0 1-1.414-.586l-.828-.828A2 2 0 0 0 9.172 2H6.828a2 2 0 0 0-1.414.586l-.828.828A2 2 0 0 1 3.172 4z" />
+                                    <path d="M8 11a2.5 2.5 0 1 1 0-5 2.5 2.5 0 0 1 0 5m0 1a3.5 3.5 0 1 0 0-7 3.5 3.5 0 0 0 0 7M3 6.5a.5.5 0 1 1-1 0 .5.5 0 0 1 1 0" />
+                                </svg>
+                                {selectedFile ? selectedFile.name : (config.customization.background?.type === 'image' ? 'Change Image' : 'Choose from Gallery/Camera')}
+                            </button>
+                            
+                            {(selectedFile || config.customization.background?.type === 'image') && (
+                                <button
+                                    type="button"
+                                    onClick={() => {
+                                        setSelectedFile(null);
+                                        if (fileInputRef.current) fileInputRef.current.value = '';
+                                        update('customization.background.type', 'solid');
+                                    }}
+                                    className="p-3 rounded-xl border border-white/10 bg-red-500/10 hover:bg-red-500/20 text-red-400 transition-all flex items-center justify-center"
+                                    title="Remove Image"
+                                >
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" className="bi bi-x-lg" viewBox="0 0 16 16">
+                                      <path d="M2.146 2.854a.5.5 0 1 1 .708-.708L8 7.293l5.146-5.147a.5.5 0 0 1 .708.708L8.707 8l5.147 5.146a.5.5 0 0 1-.708.708L8 8.707l-5.146 5.147a.5.5 0 0 1-.708-.708L7.293 8 2.146 2.854Z"/>
+                                    </svg>
+                                </button>
+                            )}
                         </div>
                     </div>
                     <div>

@@ -1,27 +1,14 @@
 import { useState, useEffect } from 'react';
 import axios from 'axios';
-import Cookies from 'js-cookie';
-import { useNavigate } from 'react-router-dom';
 
 const Explore = () => {
   const [publicMoments, setPublicMoments] = useState([]);
   const [loading, setLoading] = useState(true);
-  const navigate = useNavigate();
 
   useEffect(() => {
       const fetchPublicMoments = async () => {
-          const token = Cookies.get('token');
-          
-          if (!token) {
-              alert('Please login to explore moments');
-              navigate('/login');
-              return;
-          }
-
           try {
-              const response = await axios.get('http://localhost:3000/api/v1/moments/public', {
-                  headers: { Authorization: `Bearer ${token}` }
-              });
+              const response = await axios.get('http://localhost:3000/api/v1/moments/public');
               setPublicMoments(response.data.data);
           } catch (error) {
               console.error("Error fetching public moments:", error);
@@ -31,7 +18,7 @@ const Explore = () => {
       };
 
       fetchPublicMoments();
-  }, [navigate]);
+  }, []);
 
   if (loading) return <div className="text-orange-50 text-center mt-32 animate-pulse">Loading the collective...</div>;
 
@@ -45,9 +32,6 @@ const Explore = () => {
       ) : (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 pb-20">
               {publicMoments.map(moment => {
-                  const target = moment.endAt ? new Date(moment.endAt) : null;
-                  const isCompleted = moment.mode === 'countdown' && target ? new Date() >= target : false;
-
                   return (
                   <div key={moment._id} className="relative glass-panel p-6 rounded-2xl border border-white/10 shadow-lg hover:bg-white/5 transition-all duration-300">
                       
