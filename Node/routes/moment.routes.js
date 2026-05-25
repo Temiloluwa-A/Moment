@@ -2,13 +2,13 @@ const express = require('express');
 const router = express.Router();
 const { createMoment, getMoments, getPublicMoments, deleteMoment, updateMoment, getSharedMoment, joinMoment, removeMember } = require('../controllers/moment.controller');
 const authMiddleware = require('../middleware/auth.middleware');
-const { upload } = require('../middleware/cloudinary');
-
-router.post('/moments', authMiddleware, upload.single('backgroundImage'), createMoment);
+// const { upload } = require('../middleware/cloudinary');
+// upload.single('backgroundImage') insert in first post and patch routes to handle image uploads for moment creation and updates
+router.post('/moments', authMiddleware, createMoment);
 router.get('/moments', authMiddleware, getMoments);
 router.get('/moments/public', getPublicMoments);
 router.delete('/moments/:id', authMiddleware, deleteMoment);
-router.patch('/moments/:id', authMiddleware, upload.single('backgroundImage'), updateMoment);
+router.patch('/moments/:id', authMiddleware, updateMoment);
 router.get('/moments/shared/:slug', getSharedMoment); // New route for fetching shared moment by slug
 router.post('/moments/:slug/join', authMiddleware, joinMoment); // Route for accepting collaboration
 router.delete('/moments/:slug/members/:memberId', authMiddleware, removeMember); // Route for leaving/removing a member
