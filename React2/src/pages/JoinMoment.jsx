@@ -22,7 +22,7 @@ const JoinMoment = () => {
             }
 
             try {
-                const res = await axios.get(`http://localhost:3000/api/v1/moments/shared/${slug}`);
+                const res = await axios.get(`https://moment-1-h67x.onrender.com/api/v1/moments/shared/${slug}`);
                 setMoment(res.data.data);
             } catch (err) {
                 setError(err.response?.data?.message || "Could not find this moment. The link may be invalid or the moment is no longer public.");
@@ -37,7 +37,7 @@ const JoinMoment = () => {
         setIsJoining(true);
         try {
             const token = Cookies.get('token');
-            await axios.post(`http://localhost:3000/api/v1/moments/${slug}/join`, {}, {
+            await axios.post(`https://moment-1-h67x.onrender.com/api/v1/moments/${slug}/join`, {}, {
                 headers: { Authorization: `Bearer ${token}` }
             });
             

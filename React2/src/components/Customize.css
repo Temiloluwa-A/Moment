@@ -1,0 +1,160 @@
+/* Mobile-first responsive design */
+.customize-container {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    height: 100%;
+}
+
+/* Timer full screen on mobile */
+.timer-full-screen {
+    position: relative;
+    width: 100%;
+    height: 100dvh;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+}
+
+.timer-content {
+    flex: 1;
+    overflow: auto;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+/* Floating Customize Button */
+.floating-customize-btn {
+    position: fixed;
+    bottom: 2rem;
+    right: 50%;
+    transform: translateX(50%);
+    z-index: 35;
+    
+    /* Button styling */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    
+    padding: 0.875rem 1.5rem;
+    background: linear-gradient(135deg, #f59e0b 0%, #f97316 100%);
+    color: #1f2937;
+    
+    border: none;
+    border-radius: 9999px;
+    
+    font-weight: 700;
+    font-size: 0.875rem;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    
+    box-shadow: 0 10px 25px rgba(245, 158, 11, 0.3);
+    cursor: pointer;
+    
+    transition: all 0.3s ease;
+}
+
+.floating-customize-btn:hover {
+    background: linear-gradient(135deg, #f97316 0%, #ea580c 100%);
+    transform: translateX(50%) scale(1.05);
+    box-shadow: 0 15px 35px rgba(245, 158, 11, 0.4);
+}
+
+.floating-customize-btn:active {
+    transform: translateX(50%) scale(0.95);
+}
+
+.floating-customize-btn svg {
+    width: 1.25rem;
+    height: 1.25rem;
+}
+
+/* Tablet and Desktop - Side panel layout */
+@media (min-width: 1024px) {
+    .customize-container {
+        flex-direction: row;
+    }
+
+    .timer-full-screen {
+        flex: 1;
+        height: 100vh;
+        border-right: 1px solid rgba(255, 255, 255, 0.1);
+    }
+
+    /* Hide floating button on desktop */
+    .floating-customize-btn {
+        display: none;
+    }
+
+    /* Show side panel content on desktop */
+    .customize-sidebar {
+        flex: 0 0 400px;
+        overflow-y: auto;
+        background: linear-gradient(180deg, #292524 0%, #1f2937 100%);
+        padding: 2rem;
+    }
+}
+
+/* Drawer content wrapper for tab animations */
+.drawer-content-wrapper {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+}
+
+/* Tab content animation */
+.tab-content {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    animation: springIn 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+@keyframes springIn {
+    0% {
+        opacity: 0;
+        transform: translateY(10px);
+    }
+    60% {
+        opacity: 1;
+        transform: translateY(-2px);
+    }
+    80% {
+        transform: translateY(1px);
+    }
+    100% {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* Prevent body scroll when drawer is open */
+body.drawer-open {
+    overflow: hidden;
+    height: 100dvh;
+}
+
+/* Mobile-specific touch optimizations */
+@media (max-width: 768px) {
+    .floating-customize-btn {
+        font-size: 0.75rem;
+        padding: 0.75rem 1rem;
+        bottom: 1.5rem;
+    }
+
+    .floating-customize-btn svg {
+        width: 1rem;
+        height: 1rem;
+    }
+}
+
+/* Landscape mobile adjustments */
+@media (max-height: 600px) and (orientation: landscape) {
+    .floating-customize-btn {
+        bottom: 1rem;
+        padding: 0.5rem 1rem;
+        font-size: 0.7rem;
+    }
+}

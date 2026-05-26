@@ -1,4 +1,5 @@
 const Timer = require('../model/timer.model');
+const { Root, Shared } = require('../model/shared.model');
 const crypto = require('crypto');
 const { cloudinary } = require('../middleware/cloudinary');
 
@@ -54,7 +55,7 @@ const getPublicMoments = async (req, res) => {
         // Fetch all moments that are marked public.
         // .populate() fetches the linked User document so we can display their userName!
         const publicMoments = await Timer.find({ isPublic: true }).populate('userId', 'userName').sort({ createdAt: -1 });
-        
+
         res.status(200).send({ message: "Public moments fetched successfully", data: publicMoments });
     } catch (error) {
         console.log(error);
@@ -146,7 +147,7 @@ const getSharedMoment = async (req, res) => {
         const slug = req.params.slug;
         // Removed isPublic: true so that anyone with the direct link can view and join!
         const moment = await Timer.findOne({ slug }).populate('userId', 'userName').populate('members', 'userName email avatarStyle avatarOptions');
-        
+
         if (!moment) {
             return res.status(404).send({ message: "Shared moment not found" });
         }
@@ -211,4 +212,53 @@ const removeMember = async (req, res) => {
     }
 };
 
-module.exports = { createMoment, getMoments, getPublicMoments, deleteMoment, updateMoment, getSharedMoment, joinMoment, removeMember };
+const toggleRoot = async (req, res) => {
+    try {
+        const { timerId } = req.params; // Or req.body, depending on your route
+        const userId = req.user._id;    // Assuming your auth middleware attaches the user to req
+
+        // 1. Find the root document for this specific timer
+        let rootDoc = await Root.findOne({ timerId });
+
+        // 2. If the document doesn't exist yet, create it and add the first root
+        if (!rootDoc) {
+            rootDoc = await Root.create({
+                timerId,
+                users: [userId]
+            });
+            return res.status(200).json({
+                message: "Successfully rooted!",
+                rootCount: 1
+            });
+        }
+
+        // 3. Check if the user's ID is already in the array
+        const hasRooted = rootDoc.users.includes(userId);
+
+        if (hasRooted) {
+            // UNROOT: User is in the array, so we remove them
+            rootDoc.users.pull(userId);
+            await rootDoc.save();
+
+            return res.status(200).json({
+                message: "Unrooted moment.",
+                rootCount: rootDoc.users.length
+            });
+        } else {
+            // ROOT: User is not in the array, so we add them
+            rootDoc.users.push(userId);
+            await rootDoc.save();
+
+            return res.status(200).json({
+                message: "Successfully rooted!",
+                rootCount: rootDoc.users.length
+            });
+        }
+
+    } catch (error) {
+        console.error("Error toggling root:", error);
+        res.status(500).json({ message: "Internal server error" });
+    }
+};
+
+module.exports = { createMoment, getMoments, getPublicMoments, deleteMoment, updateMoment, getSharedMoment, joinMoment, removeMember, toggleRoot };

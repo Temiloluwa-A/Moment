@@ -9,8 +9,8 @@ const ShareModal = ({ isOpen, onClose, slug, isOwner }) => {
     const [members, setMembers] = useState([]);
 
     // Construct the live link
-    const shareLink = `http://localhost:5173/moment/${slug}`;
-    const collabLink = `http://localhost:5173/join/${slug}`; // Special route for adding members!
+    const shareLink = `https://moment-1-h67x.onrender.com/moment/${slug}`;
+    const collabLink = `https://moment-1-h67x.onrender.com/join/${slug}`; // Special route for adding members!
 
     const handleCopy = () => {
         navigator.clipboard.writeText(shareLink);
@@ -30,7 +30,7 @@ const ShareModal = ({ isOpen, onClose, slug, isOwner }) => {
 
         const token = Cookies.get('token');
         try {
-            await axios.delete(`http://localhost:3000/api/v1/moments/${slug}/members/${memberId}`, {
+            await axios.delete(`https://moment-1-h67x.onrender.com/api/v1/moments/${slug}/members/${memberId}`, {
                 headers: { Authorization: `Bearer ${token}` }
             });
             setMembers(prev => prev.filter(m => m._id !== memberId));
@@ -43,7 +43,7 @@ const ShareModal = ({ isOpen, onClose, slug, isOwner }) => {
     // Fetch the latest members when the modal opens!
     useEffect(() => {
         if (isOpen && slug) {
-            axios.get(`http://localhost:3000/api/v1/moments/shared/${slug}`)
+            axios.get(`https://moment-1-h67x.onrender.com/api/v1/moments/shared/${slug}`)
                 .then(res => {
                     setMembers(res.data.data.members || []);
                 })

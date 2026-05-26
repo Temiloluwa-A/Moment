@@ -1,0 +1,103 @@
+/* Spring animation keyframes */
+@keyframes springIn {
+    0% {
+        transform: translateY(10px);
+        opacity: 0;
+    }
+    60% {
+        transform: translateY(-2px);
+        opacity: 1;
+    }
+    80% {
+        transform: translateY(1px);
+    }
+    100% {
+        transform: translateY(0);
+        opacity: 1;
+    }
+}
+
+@keyframes springSnap {
+    0% {
+        transform: translateY(0);
+    }
+    60% {
+        transform: translateY(-3px);
+    }
+    80% {
+        transform: translateY(1px);
+    }
+    100% {
+        transform: translateY(0);
+    }
+}
+
+/* Drawer snap states */
+.snap-half {
+    animation: springSnap 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+.snap-full {
+    animation: springSnap 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+.snap-closed {
+    animation: springIn 0.3s cubic-bezier(0.34, 1.56, 0.64, 1) reverse;
+}
+
+/* Drawer drag handle */
+.drawer-handle {
+    user-select: none;
+    touch-action: none;
+}
+
+/* Custom scrollbar for drawer content */
+.custom-scrollbar {
+    scrollbar-width: thin;
+    scrollbar-color: rgba(255, 255, 255, 0.2) transparent;
+}
+
+.custom-scrollbar::-webkit-scrollbar {
+    width: 4px;
+}
+
+.custom-scrollbar::-webkit-scrollbar-track {
+    background: transparent;
+}
+
+.custom-scrollbar::-webkit-scrollbar-thumb {
+    background: rgba(255, 255, 255, 0.2);
+    border-radius: 2px;
+}
+
+.custom-scrollbar::-webkit-scrollbar-thumb:hover {
+    background: rgba(255, 255, 255, 0.3);
+}
+
+/* Smooth transitions for drawer content */
+.tab-content {
+    animation: springIn 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+/* Prevent layout shift during tab switching */
+.drawer-content-wrapper {
+    min-height: 100%;
+}
+
+/* Mobile-specific styles */
+@media (max-width: 768px) {
+    .drawer-handle {
+        padding-top: 0.75rem;
+        padding-bottom: 1rem;
+    }
+
+    .custom-scrollbar {
+        scroll-behavior: smooth;
+    }
+}
+
+/* Prevent scrolling behind drawer when open */
+body.drawer-open {
+    overflow: hidden;
+    height: 100dvh;
+}

@@ -1,12 +1,10 @@
 const mongoose = require('mongoose');
 
 const rootSchema = new mongoose.Schema({
-    userId: {type:mongoose.Schema.Types.ObjectId, ref:'user' },
-    timerId: {type:String, required:true, unique:true}
+    timerId: {type:String, required:true, unique:true},
+    users: [{ type: mongoose.Schema.Types.ObjectId, ref: 'user' }]
 }, {timestamps:true})
 
-rootSchema.index({ timerId:1, userId:1  }, { unique: true})
-//one root per user per timer
 
 const memberSchema = new mongoose.Schema({
     userId: {type:mongoose.Schema.Types.ObjectId, ref:'user' },
@@ -22,4 +20,6 @@ const groupSchema = new mongoose.Schema({
 
 }, {timestamps:true})
 const Shared = mongoose.model("Shared", groupSchema)
-module.exports = Shared
+const Root = mongoose.model("Root", rootSchema)
+module.exports = {Root, Shared}
+//
