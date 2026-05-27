@@ -25,7 +25,6 @@ const App = () => {
             <Route path="/" element={<Navigate to="/landing-page" replace={true} />} />
             {/* replace true means that the current page will be replaced in the history stack */}
             <Route path="/landing-page" element={<Hero />} />
-            <Route path="*" element={<h1>404 page not found</h1>} />
             <Route path="/create" element={<Create />} >
               <Route index element={<Navigate to= 'count-up' replace={true} />} />
               <Route path="count-up" element={<CreateCountUp />} />
@@ -38,6 +37,7 @@ const App = () => {
             {/* dynamic routing */}
             <Route path='/moment/:slug' element={<SharedMoment />} />
             <Route path='/join/:slug' element={<JoinMoment />} />
+            <Route path="*" element={<h1>404 page not found</h1>} />
           </Routes>
         </BrowserRouter>
       </TimerProvider>

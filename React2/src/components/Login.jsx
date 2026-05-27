@@ -38,8 +38,8 @@ const Login = () => {
 
 
       } catch (error) {
-        console.log(error);
-        alert("Error logging user")
+        console.log(error.response?.data?.message);
+        alert(error.response?.data?.message || "Error logging user")
 
 
       }
