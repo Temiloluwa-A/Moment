@@ -32,7 +32,7 @@ export const triggerCelebration = (preset) => {
         confetti({
             particleCount: 150,
             scalar,
-            spread: 180,
+            spread: 360,
             angle: 270,
             startVelocity: 15,
             origin: { y: -0.1 },
@@ -40,6 +40,6 @@ export const triggerCelebration = (preset) => {
         });
     } else {
         // Standard 'confetti' rain falling from the top
-        confetti({ particleCount: 300, spread: 180, angle: 270, startVelocity: 15, origin: { y: -0.1 } });
+        confetti({ particleCount: 300, spread: 360, angle: 270, startVelocity: 15, origin: { y: -0.1 } });
     }
 };
