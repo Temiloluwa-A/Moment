@@ -42,7 +42,16 @@ const Create = () => {
         </div>
       </div>
 
-      {/* Top Right: floating button removed here; Customize handles mobile toggle */}
+      {/* Top Right: Desktop Customize button (visible on lg and up) */}
+      {!isCompleted && (
+        <button
+          onClick={() => setisPanelOpen(!isPanelOpen)}
+          className={`hidden lg:flex absolute top-24 z-[70] bg-stone-800/80 backdrop-blur-md text-orange-200 border border-white/10 px-6 py-2.5 rounded-full shadow-2xl hover:bg-stone-700 hover:scale-105 transition-all duration-500 items-center gap-2 font-label text-sm tracking-widest uppercase ${isPanelOpen ? 'right-6 lg:right-[calc(40%+1.5rem)]' : 'right-8'}`}
+        >
+          <span className="material-symbols-outlined text-xs">{isPanelOpen ? 'close' : 'tune'}</span>
+          {isPanelOpen ? 'Close' : 'Customize'}
+        </button>
+      )}
 
       {/* Main Content Area (Where the Timers will show up) */}
       <div className={`flex-1 flex justify-center items-center transition-all duration-500 ease-in-out pb-10 ${isPanelOpen ? 'w-full lg:w-[60%]' : 'w-full'}`}>
