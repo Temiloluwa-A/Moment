@@ -1,20 +1,29 @@
-import { useState, useRef, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import axios from 'axios';
 import Cookies from 'js-cookie';
 import { useLocation } from 'react-router-dom';
 import { useTimer } from '../context/TimerContext';
-import BottomDrawer from './BottomDrawer';
 import BasicsTab from './BasicsTab';
 import LookTab from './LookTab';
 import MomentTab from './MomentTab';
+import BottomDrawer from './BottomDrawer';
 import './Customize.css';
 
 const Customize = () => {
     const { config } = useTimer();
     const location = useLocation();
     const [isSaving, setIsSaving] = useState(false);
-    const [isDrawerOpen, setIsDrawerOpen] = useState(false);
     const [activeTab, setActiveTab] = useState('basics');
+    const [isDesktop, setIsDesktop] = useState(false);
+    const [isDrawerOpen, setIsDrawerOpen] = useState(false);
+
+    useEffect(() => {
+        const mq = window.matchMedia('(min-width: 1024px)');
+        const update = () => setIsDesktop(mq.matches);
+        update();
+        mq.addEventListener('change', update);
+        return () => mq.removeEventListener('change', update);
+    }, []);
 
     const handleSave = async () => {
         setIsSaving(true);
@@ -64,16 +73,60 @@ const Customize = () => {
         }
     };
 
-    return (
-        <div className="customize-container">
-            {/* Mobile: Full screen Timer view with floating button */}
-            <div className="timer-full-screen">
-                {/* Timer component takes full height on mobile */}
-                <div className="timer-content">
-                    {/* Timer component will be rendered here by parent */}
+    // Render desktop side panel when large viewport; otherwise render mobile drawer + floating button
+    if (isDesktop) {
+        return (
+            <div className="customize-panel h-full flex flex-col text-orange-50">
+                {/* Header */}
+                <div className="border-b border-white/10 pb-4 px-6 pt-6">
+                    <h2 className="text-sm font-label tracking-[0.2em] text-orange-100/50 uppercase">Create</h2>
+                    <h5 className="text-2xl font-headline italic mt-1 text-orange-100">Customize your moment</h5>
                 </div>
 
-                {/* Floating Customize Button */}
+                {/* Tab Navigation */}
+                <div className="flex gap-4 border-b border-white/10 px-6 pt-4">
+                    {['Basics', 'Look', 'Moment'].map((tab) => (
+                        <button
+                            key={tab}
+                            onClick={() => setActiveTab(tab.toLowerCase())}
+                            className={`py-3 px-4 text-sm font-label uppercase tracking-widest transition-all border-b-2 ${
+                                activeTab === tab.toLowerCase()
+                                    ? 'text-orange-300 border-orange-300'
+                                    : 'text-orange-100/60 border-transparent hover:text-orange-100/80'
+                            }`}
+                        >
+                            {tab}
+                        </button>
+                    ))}
+                </div>
+
+                {/* Content Area */}
+                <div className="flex-1 overflow-y-auto custom-scrollbar p-6">
+                    <div className="tab-content">
+                        {renderTabContent()}
+                    </div>
+                </div>
+
+                {/* Save Button */}
+                <div className="border-t border-white/10 p-6">
+                    <button
+                        onClick={handleSave}
+                        disabled={isSaving}
+                        className="w-full py-4 bg-amber-400 text-espresso-900 font-bold tracking-widest uppercase text-sm rounded-full shadow-lg hover:bg-amber-300 hover:scale-[1.02] active:scale-95 transition-all duration-300 disabled:opacity-70 disabled:cursor-not-allowed"
+                    >
+                        {isSaving ? "Saving..." : "Apply Changes"}
+                    </button>
+                </div>
+            </div>
+        );
+    }
+
+    // Mobile / small screens: show floating button that opens BottomDrawer
+    return (
+        <div className="customize-container">
+            <div className="timer-full-screen">
+                <div className="timer-content" />
+
                 <button
                     onClick={() => setIsDrawerOpen(true)}
                     className="floating-customize-btn"
@@ -86,7 +139,6 @@ const Customize = () => {
                 </button>
             </div>
 
-            {/* Bottom Drawer */}
             <BottomDrawer
                 isOpen={isDrawerOpen}
                 onClose={() => setIsDrawerOpen(false)}
@@ -97,7 +149,6 @@ const Customize = () => {
                     {renderTabContent()}
                 </div>
 
-                {/* Save Button at Bottom of Drawer */}
                 <div className="sticky bottom-0 bg-gradient-to-t from-stone-900 via-stone-900 to-transparent pt-6 pb-8 px-4 -mx-4">
                     <button
                         onClick={handleSave}

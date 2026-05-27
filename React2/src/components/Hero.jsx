@@ -20,7 +20,7 @@ const Hero = () => {
           <p className="font-body text-lg md:text-xl leading-relaxed w-6/12 text-parchment-400">
             Whether you're reaching for the future or cherishing the past, we provide the space to visualize your most meaningful milestones.
           </p>
-          <button className='py-3 bg-amber-500 w-2xs border border-tawny-500 rounded-3xl md:text-lg sm:mt-4 ' >Get Started</button>
+          <button className='py-3 bg-amber-500 w-2xs border border-tawny-500 rounded-3xl md:text-lg sm:mt-4 cursor-pointer' onClick={() => navigate('/sign-up')}>Get Started</button>
         </div>
 
 
