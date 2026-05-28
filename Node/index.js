@@ -29,11 +29,11 @@ mongoose.connect(process.env.DB_URI)
     
 })
 
-app.use(express.static(path.join(__dirname, 'dist')));
 
 // THE CATCH-ALL ROUTE (Must be the very last route in your file!)
+
 app.get('/{*splat}', (req, res) => {
-  res.sendFile(path.join(__dirname, 'dist', 'index.html'));
+  res.status(404).json({ message: "This route does not exist on the API backend." });
 });
 
 
