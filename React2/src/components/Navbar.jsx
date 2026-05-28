@@ -13,7 +13,7 @@ const Navbar = () => {
   // Fetch the user's profile to display their Avatar in the Navbar!
   useEffect(() => {
     if (token) {
-        axios.get('https://moment-sandy.vercel.app/api/v1/profile', {
+        axios.get('https://moment-1-h67x.onrender.com/api/v1/profile', {
             headers: { Authorization: `Bearer ${token}` }
         })
         .then(res => {

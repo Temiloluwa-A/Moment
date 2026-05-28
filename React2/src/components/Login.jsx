@@ -19,7 +19,7 @@ const Login = () => {
       setloader(true);
       console.log(values);
       try {
-        const response = await axios.post("https://moment-sandy.vercel.app/api/v1/login", values)
+        const response = await axios.post("https://moment-1-h67x.onrender.com/api/v1/login", values)
         console.log(response.data);
         if (response.status === 400) {
           alert("Invalid credentials")

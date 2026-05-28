@@ -5,7 +5,7 @@ const app = express()
 const dotenv = require("dotenv")
 const cors = require('cors')
 app.use(cors({
-    origin: 'https://moment-sandy.vercel.app',
+    origin: 'https://moment-temiloluwas-projects-0eaac135.vercel.app',
     credentials: true 
 }));
 dotenv.config()
