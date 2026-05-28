@@ -40,12 +40,12 @@ const Customize = () => {
             let dataToSend = payload;
 
             if (config._id) {
-                await axios.patch(`https://moment-1-h67x.onrender.com/api/v1/moments/${config._id}`, dataToSend, {
+                await axios.patch(`https://moment-sandy.vercel.app/api/v1/moments/${config._id}`, dataToSend, {
                     headers: { Authorization: `Bearer ${token}` }
                 });
                 alert("Moment updated successfully!");
             } else {
-                await axios.post('https://moment-1-h67x.onrender.com/api/v1/moments', dataToSend, {
+                await axios.post('https://moment-sandy.vercel.app/api/v1/moments', dataToSend, {
                     headers: { Authorization: `Bearer ${token}` }
                 });
                 alert("Moment created successfully!");

@@ -8,7 +8,7 @@ const Explore = () => {
   useEffect(() => {
       const fetchPublicMoments = async () => {
           try {
-              const response = await axios.get('https://moment-1-h67x.onrender.com/api/v1/moments/public');
+              const response = await axios.get('https://moment-sandy.vercel.app/api/v1/moments/public');
               setPublicMoments(response.data.data);
           } catch (error) {
               console.error("Error fetching public moments:", error);

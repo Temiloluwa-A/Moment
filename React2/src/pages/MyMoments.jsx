@@ -22,7 +22,7 @@ const MyMoments = () => {
           }
 
           try {
-              const response = await axios.get('https://moment-1-h67x.onrender.com/api/v1/moments', {
+              const response = await axios.get('https://moment-sandy.vercel.app/api/v1/moments', {
                   headers: { Authorization: `Bearer ${token}` }
               });
               setMoments(response.data.data);
@@ -44,7 +44,7 @@ const MyMoments = () => {
 
       const token = Cookies.get('token');
       try {
-          await axios.delete(`https://moment-1-h67x.onrender.com/api/v1/moments/${slug}/members/${currentUserId}`, {
+          await axios.delete(`https://moment-sandy.vercel.app/api/v1/moments/${slug}/members/${currentUserId}`, {
               headers: { Authorization: `Bearer ${token}` }
           });
           

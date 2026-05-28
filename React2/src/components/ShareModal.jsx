@@ -30,7 +30,7 @@ const ShareModal = ({ isOpen, onClose, slug, isOwner }) => {
 
         const token = Cookies.get('token');
         try {
-            await axios.delete(`https://moment-1-h67x.onrender.com/api/v1/moments/${slug}/members/${memberId}`, {
+            await axios.delete(`https://moment-sandy.vercel.app/api/v1/moments/${slug}/members/${memberId}`, {
                 headers: { Authorization: `Bearer ${token}` }
             });
             setMembers(prev => prev.filter(m => m._id !== memberId));
@@ -43,7 +43,7 @@ const ShareModal = ({ isOpen, onClose, slug, isOwner }) => {
     // Fetch the latest members when the modal opens!
     useEffect(() => {
         if (isOpen && slug) {
-            axios.get(`https://moment-1-h67x.onrender.com/api/v1/moments/shared/${slug}`)
+            axios.get(`https://moment-sandy.vercel.app/api/v1/moments/shared/${slug}`)
                 .then(res => {
                     setMembers(res.data.data.members || []);
                 })

@@ -4,7 +4,10 @@ const express = require("express")
 const app = express()
 const dotenv = require("dotenv")
 const cors = require('cors')
-app.use(cors())
+app.use(cors({
+    origin: 'https://moment-sandy.vercel.app',
+    credentials: true 
+}));
 dotenv.config()
 app.use(express.urlencoded({extended:true})) //to interpret the data sent from the client in the form of urlencoded data, extended:true allows us to send nested objects in the form of urlencoded data
 app.use(express.json()) 
@@ -26,6 +29,12 @@ mongoose.connect(process.env.DB_URI)
     
 })
 
+app.use(express.static(path.join(__dirname, 'dist')));
+
+// THE CATCH-ALL ROUTE (Must be the very last route in your file!)
+app.get('*', (req, res) => {
+  res.sendFile(path.join(__dirname, 'dist', 'index.html'));
+});
 
 
 app.listen(process.env.PORT, (err)=> {

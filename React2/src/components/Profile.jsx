@@ -16,7 +16,7 @@ const Profile = () => {
 
             try {
                 // Makes a secure GET request to the backend, passing the token in the headers for authentication.
-                const result = await axios.get('https://moment-1-h67x.onrender.com/api/v1/profile', {
+                const result = await axios.get('https://moment-sandy.vercel.app/api/v1/profile', {
                     headers: { Authorization: `Bearer ${token}` }
                 })
                 

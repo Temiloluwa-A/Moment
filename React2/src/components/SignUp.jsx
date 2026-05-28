@@ -25,7 +25,7 @@ const SignUp = () => {
             setloader(true);
             console.log(values)
             try {
-                const result = await axios.post('https://moment-1-h67x.onrender.com/api/v1/signup', values)
+                const result = await axios.post('https://moment-sandy.vercel.app/api/v1/signup', values)
                 console.log(result.status);
 
                 if(result.status == 201 || result.status == 200){
