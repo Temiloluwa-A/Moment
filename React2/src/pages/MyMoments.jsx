@@ -3,6 +3,7 @@ import axios from 'axios';
 import Cookies from 'js-cookie';
 import { useNavigate } from 'react-router-dom';
 import ShareModal from '../components/ShareModal';
+import { useToast } from '../context/ToastContext';
 
 const MyMoments = () => {
   const [moments, setMoments] = useState([]);
@@ -10,19 +11,20 @@ const MyMoments = () => {
   const [shareSlug, setShareSlug] = useState(null);
   const [currentUserId, setCurrentUserId] = useState(null);
   const navigate = useNavigate();
+  const { showToast } = useToast();
 
   useEffect(() => {
       const fetchMoments = async () => {
           const token = Cookies.get('token');
           
           if (!token) {
-              alert('Please login to view your moments');
+              showToast({ type: 'warning', title: 'Login required', description: 'Please login to view your moments' });
               navigate('/login');
               return;
           }
 
           try {
-              const response = await axios.get('https://moment-1-h67x.onrender.com/api/v1/moments', {
+              const response = await axios.get(`${import.meta.env.VITE_API_URL}/api/v1/moments`, {
                   headers: { Authorization: `Bearer ${token}` }
               });
               setMoments(response.data.data);
@@ -44,7 +46,7 @@ const MyMoments = () => {
 
       const token = Cookies.get('token');
       try {
-          await axios.delete(`https://moment-1-h67x.onrender.com/api/v1/moments/${slug}/members/${currentUserId}`, {
+          await axios.delete(`${import.meta.env.VITE_API_URL}/api/v1/moments/${slug}/members/${currentUserId}`, {
               headers: { Authorization: `Bearer ${token}` }
           });
           
@@ -52,7 +54,7 @@ const MyMoments = () => {
           setMoments(prevMoments => prevMoments.filter(m => m.slug !== slug));
       } catch (error) {
           console.error("Error leaving moment:", error);
-          alert("Failed to leave moment. Please try again.");
+          showToast({ type: 'error', title: 'Leave failed', description: 'Failed to leave moment. Please try again.' });
       }
   };
 
@@ -64,7 +66,7 @@ const MyMoments = () => {
 
       const token = Cookies.get('token');
       try {
-          await axios.delete(`https://moment-1-h67x.onrender.com/api/v1/moments/${id}`, {
+          await axios.delete(`${import.meta.env.VITE_API_URL}/api/v1/moments/${id}`, {
               headers: { Authorization: `Bearer ${token}` }
           });
           
@@ -72,7 +74,7 @@ const MyMoments = () => {
           setMoments(prevMoments => prevMoments.filter(m => m._id !== id));
       } catch (error) {
           console.error("Error deleting moment:", error);
-          alert("Failed to delete moment. Please try again.");
+          showToast({ type: 'error', title: 'Delete failed', description: 'Failed to delete moment. Please try again.' });
       }
   };
 

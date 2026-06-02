@@ -10,7 +10,7 @@ const MomentTab = () => {
     return (
         <div className="tab-content space-y-6">
             <div className="flex flex-col gap-2">
-                <label htmlFor="moodNote" className="text-xs uppercase tracking-widest opacity-70">Moment Note</label>
+                <label htmlFor="moodNote" className="text-xs uppercase tracking-widest opacity-70 ">Moment Note</label>
                 <textarea
                     id="moodNote"
                     placeholder="What's this moment about?"

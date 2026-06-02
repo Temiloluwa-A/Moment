@@ -2,15 +2,17 @@ import { useState, useEffect } from 'react';
 import axios from 'axios';
 import Cookies from 'js-cookie';
 import Avatar from './Avatar';
+import { useToast } from '../context/ToastContext';
 
 const ShareModal = ({ isOpen, onClose, slug, isOwner }) => {
+    const { showToast } = useToast();
     const [copied, setCopied] = useState(false);
     const [collabCopied, setCollabCopied] = useState(false);
     const [members, setMembers] = useState([]);
 
     // Construct the live link
-    const shareLink = `https://moment-1-h67x.onrender.com/moment/${slug}`;
-    const collabLink = `https://moment-1-h67x.onrender.com/join/${slug}`; // Special route for adding members!
+    const shareLink = `${import.meta.env.VITE_API_URL}/moment/${slug}`;
+    const collabLink = `${import.meta.env.VITE_API_URL}/join/${slug}`; // Special route for adding members!
 
     const handleCopy = () => {
         navigator.clipboard.writeText(shareLink);
@@ -30,20 +32,21 @@ const ShareModal = ({ isOpen, onClose, slug, isOwner }) => {
 
         const token = Cookies.get('token');
         try {
-            await axios.delete(`https://moment-1-h67x.onrender.com/api/v1/moments/${slug}/members/${memberId}`, {
+            await axios.delete(`${import.meta.env.VITE_API_URL}/api/v1/moments/${slug}/members/${memberId}`, {
                 headers: { Authorization: `Bearer ${token}` }
             });
             setMembers(prev => prev.filter(m => m._id !== memberId));
+            showToast({ type: 'success', title: 'Member removed', description: `${memberName} was removed from this moment.` });
         } catch (err) {
             console.error("Failed to remove member", err);
-            alert("Failed to remove member");
+            showToast({ type: 'error', title: 'Remove failed', description: 'Failed to remove member.' });
         }
     };
 
     // Fetch the latest members when the modal opens!
     useEffect(() => {
         if (isOpen && slug) {
-            axios.get(`https://moment-1-h67x.onrender.com/api/v1/moments/shared/${slug}`)
+            axios.get(`${import.meta.env.VITE_API_URL}/api/v1/moments/shared/${slug}`)
                 .then(res => {
                     setMembers(res.data.data.members || []);
                 })

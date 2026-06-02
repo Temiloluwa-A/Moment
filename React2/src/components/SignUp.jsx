@@ -3,12 +3,12 @@ import { useFormik } from 'formik'
 import * as Yup from 'yup'
 import { Link, useNavigate } from 'react-router-dom'
 import axios from 'axios'
- import Cookies from 'js-cookie'
-
-
+import Cookies from 'js-cookie'
+import { useToast } from '../context/ToastContext'
 
 const SignUp = () => {
     const navigate = useNavigate()
+    const { showToast } = useToast()
     const [loader, setloader] = useState(false)
     const [showPassword, setshowPassword] = useState(false)
     let signUpArea = useFormik({
@@ -25,11 +25,11 @@ const SignUp = () => {
             setloader(true);
             console.log(values)
             try {
-                const result = await axios.post('https://moment-1-h67x.onrender.com/api/v1/signup', values)
+                const result = await axios.post(`${import.meta.env.VITE_API_URL}/api/v1/signup`, values)
                 console.log(result.status);
 
                 if(result.status == 201 || result.status == 200){
-                    alert('Account created successfully')
+                    showToast({ type: 'success', title: 'Welcome', description: 'Account created successfully.' });
                     // Automatically log the user in by saving the token!
                     Cookies.set('token', result.data.token, { expires: 1 });
                     navigate('/create/count-down')
@@ -44,8 +44,7 @@ const SignUp = () => {
                     setFieldError('email', 'Email already exists')
                     console.log(errorMsg);
                 }else{
-                    // Use alert for general errors since setFieldError needs a specific field name
-                    alert(errorMsg || 'Something went wrong')
+                    showToast({ type: 'error', title: 'Sign up failed', description: errorMsg || 'Something went wrong' });
                 }
                 
             }
@@ -94,7 +93,7 @@ const SignUp = () => {
                     <div className="w-full max-w-md space-y-10 relative z-10">
                         <header className="text-center ">
                             <div className="inline-flex items-center justify-center mb-3">
-                                <span className=" font-serif italic text-4xl tracking-[-0.02em]">Moments</span>
+                                <span className=" font-serif italic text-4xl tracking-[-0.02em] text-amber-300">Moments</span>
                             </div>
                             <h2 className="font-display text-parchment-400 text-3xl font-bold">Create your sanctuary</h2>
                             <p className="font-light">Begin your journey into the archives of memory.</p>

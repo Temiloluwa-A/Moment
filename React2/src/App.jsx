@@ -8,6 +8,7 @@ import CreateCountUp from './pages/CreateCountUp'
 import CreateCountDown from './pages/CreateCountDown'
 import { ModeProvider } from './context/ModeContext'
 import { TimerProvider } from './context/TimerContext'
+import { ToastProvider } from './context/ToastContext'
 import SignUp from './components/SignUp'
 import Login from './components/Login'
 import Explore from './pages/Explore'
@@ -19,9 +20,10 @@ const App = () => {
   return (
     <ModeProvider>
       <TimerProvider>
-        <BrowserRouter>
-          <Navbar />
-          <Routes>
+        <ToastProvider>
+          <BrowserRouter>
+            <Navbar />
+            <Routes>
             <Route path="/" element={<Navigate to="/landing-page" replace={true} />} />
             {/* replace true means that the current page will be replaced in the history stack */}
             <Route path="/landing-page" element={<Hero />} />
@@ -40,8 +42,9 @@ const App = () => {
             <Route path="*" element={<h1>404 page not found</h1>} />
           </Routes>
         </BrowserRouter>
-      </TimerProvider>
-    </ModeProvider>
+      </ToastProvider>
+    </TimerProvider>
+  </ModeProvider>
   )
 }
 

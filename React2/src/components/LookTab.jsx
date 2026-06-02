@@ -2,6 +2,16 @@ import { useState, useRef } from 'react';
 import { useTimer } from '../context/TimerContext';
 import { FONTS, MOOD } from '../registry';
 
+const PRESET_BACKGROUNDS = [
+    { key: 'espresso', label: 'Espresso', type: 'solid', value: 'var(--color-espresso-950)' },
+    { key: 'surface', label: 'Surface', type: 'solid', value: 'var(--color-surface)' },
+    { key: 'bg', label: 'Background', type: 'solid', value: 'var(--color-bg)' },
+    { key: 'parchment', label: 'Parchment', type: 'solid', value: 'var(--color-parchment-100)' },
+    { key: 'dawn', label: 'Dawn', type: 'gradient', value: 'linear-gradient(135deg, var(--color-amber-400) 0%, var(--color-espresso-900) 100%)' },
+    { key: 'twilight', label: 'Twilight', type: 'gradient', value: 'linear-gradient(135deg, var(--color-surface-high) 0%, var(--color-amber-500) 100%)' },
+    { key: 'ember', label: 'Ember', type: 'gradient', value: 'linear-gradient(135deg, var(--color-amber-500) 0%, var(--color-tawny-700) 100%)' }
+];
+
 const LookTab = () => {
     const { config, update } = useTimer();
     const fileInputRef = useRef(null);
@@ -25,7 +35,7 @@ const LookTab = () => {
     return (
         <div className="tab-content space-y-6">
             <div className="flex flex-col gap-2">
-                <label className="text-xs uppercase tracking-widest opacity-70">Font</label>
+                <label className="text-xs uppercase tracking-widest opacity-70 ">Font</label>
                 <div className='grid grid-cols-2 gap-3 py-2'>
                     {featuredFonts.map((font) => (
                         <button
@@ -65,8 +75,18 @@ const LookTab = () => {
                     ref={fileInputRef}
                     onChange={(e) => {
                         if (e.target.files && e.target.files[0]) {
-                            setSelectedFile(e.target.files[0]);
+                            const file = e.target.files[0];
+                            setSelectedFile(file);
+                            // Keep a reference to the File so Customize can send it to the server (Cloudinary middleware)
                             update('customization.background.type', 'image');
+                            update('customization.background.file', file);
+                            // Use a local object URL for preview only
+                            try {
+                                const preview = URL.createObjectURL(file);
+                                update('customization.background.value', preview);
+                            } catch {
+                                // Fallback: don't set preview
+                            }
                         }
                     }}
                     style={{ display: 'none' }}
@@ -91,7 +111,9 @@ const LookTab = () => {
                             onClick={() => {
                                 setSelectedFile(null);
                                 if (fileInputRef.current) fileInputRef.current.value = '';
+                                update('customization.background.file', null);
                                 update('customization.background.type', 'solid');
+                                update('customization.background.value', config.customization.background?.value || 'var(--color-bg)');
                             }}
                             className="p-3 rounded-xl border border-white/10 bg-red-500/10 hover:bg-red-500/20 text-red-400 transition-all flex items-center justify-center"
                             title="Remove Image"
@@ -101,6 +123,30 @@ const LookTab = () => {
                             </svg>
                         </button>
                     )}
+                </div>
+
+                <div className="flex flex-col gap-2 mt-6">
+                    <label className="text-xs uppercase tracking-widest opacity-70">Background Presets</label>
+                    <div className="grid grid-cols-2 gap-3">
+                        {PRESET_BACKGROUNDS.map((preset) => {
+                            const active = config.customization.background?.value === preset.value && config.customization.background?.type === preset.type;
+                            return (
+                                <button
+                                    key={preset.key}
+                                    type="button"
+                                    onClick={() => {
+                                        update('customization.background.type', preset.type);
+                                        update('customization.background.value', preset.value);
+                                        update('customization.background.file', null);
+                                    }}
+                                    className={`h-20 rounded-3xl border transition-all duration-300 overflow-hidden ${active ? 'border-orange-300 shadow-xl' : 'border-white/10 hover:border-white/20'}`}
+                                    style={{ background: preset.value }}
+                                >
+                                    <span className="sr-only">{preset.label}</span>
+                                </button>
+                            );
+                        })}
+                    </div>
                 </div>
             </div>
 

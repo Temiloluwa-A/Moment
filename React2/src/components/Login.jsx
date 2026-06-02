@@ -4,9 +4,11 @@ import * as Yup from 'yup'
 import { Link, useNavigate } from 'react-router-dom'
 import axios from 'axios'
 import Cookies from 'js-cookie'
+import { useToast } from '../context/ToastContext'
 
 const Login = () => {
   const navigate = useNavigate()
+  const { showToast } = useToast()
   const [loader, setloader] = useState(false)
   const [showPassword, setshowPassword] = useState(false)
   const loginForm = useFormik({
@@ -19,29 +21,19 @@ const Login = () => {
       setloader(true);
       console.log(values);
       try {
-        const response = await axios.post("https://moment-1-h67x.onrender.com/api/v1/login", values)
+        const response = await axios.post(`${import.meta.env.VITE_API_URL}/api/v1/login`, values)
         console.log(response.data);
-        if (response.status === 400) {
-          alert("Invalid credentials")
-          return;
-        }
-        if (response.status == 200 || response.status == 201) {
-          navigate('/create/count-down')
-          alert("Logged in successfully")
-          console.log(response.data);
+        if (response.status === 200 || response.status === 201) {
           Cookies.set('token', response.data.Data.token, { expires: 5 / 24 }); // Expires in 5 hours
-        } else if (response.status == 400) {
-          alert("invalid credentials")
+          showToast({ type: 'success', title: 'Signed in', description: 'Logged in successfully.' });
+          navigate('/create/count-down')
         } else {
-          alert("Error logging user")
+          showToast({ type: 'error', title: 'Login failed', description: 'Error logging user.' });
         }
-
-
       } catch (error) {
-        console.log(error.response?.data?.message);
-        alert(error.response?.data?.message || "Error logging user")
-
-
+        const errorMsg = error.response?.data?.message || 'Error logging user'
+        console.log(errorMsg);
+        showToast({ type: 'error', title: 'Login failed', description: errorMsg });
       }
       finally {
         setloader(false);

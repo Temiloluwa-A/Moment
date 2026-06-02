@@ -1,3 +1,4 @@
+import { useState, useRef } from 'react';
 import { useTimer } from '../context/TimerContext';
 import { useLocation } from 'react-router-dom';
 import { TRIGGER } from '../registry';
@@ -7,6 +8,8 @@ const BasicsTab = () => {
     const { config, update } = useTimer();
     const location = useLocation();
     const isCountUp = location.pathname.includes('count-up');
+    const [selectedVideo, setSelectedVideo] = useState(null);
+    const videoInputRef = useRef(null);
 
     const handleDateChange = (e, field) => {
         const currentDate = config[field] ? new Date(config[field]) : new Date();
@@ -47,8 +50,9 @@ const BasicsTab = () => {
     };
 
     const handleTriggerChange = (trigger) => {
+        update('customization.trigger.type', 'preset');
         update('customization.trigger.preset', trigger.key);
-        triggerCelebration(trigger.key, config.customization.trigger.custom);
+        triggerCelebration(trigger.key, config.customization.trigger.media);
     };
 
     return (
@@ -159,6 +163,87 @@ const BasicsTab = () => {
                         Seconds
                     </label>
                 </div>
+            </div>
+
+            <div className="flex flex-col gap-2 pt-6">
+                <label className="flex items-center gap-3 cursor-pointer text-xs font-label uppercase tracking-widest text-orange-100 opacity-90 transition-opacity hover:opacity-100">
+                    <input
+                        type="checkbox"
+                        className="accent-orange-400 w-4 h-4 cursor-pointer"
+                        checked={config.isGift}
+                        onChange={(e) => update('isGift', e.target.checked)}
+                    />
+                    Make this a gift moment
+                </label>
+                {config.isGift && (
+                    <div className="space-y-3 bg-white/5 border border-white/10 rounded-2xl p-4">
+                        <div className="text-xs uppercase tracking-widest opacity-70">Gift celebration</div>
+                        <div className="grid grid-cols-2 gap-2">
+                            <button
+                                type="button"
+                                onClick={() => {
+                                    update('customization.trigger.type', 'preset');
+                                    update('customization.trigger.preset', 'confetti');
+                                    update('customization.trigger.media', { secure_url: null, publicId: null, resourceType: null, file: null });
+                                    setSelectedVideo(null);
+                                }}
+                                className={`py-2 rounded-xl text-xs uppercase tracking-widest transition-all ${config.customization.trigger.type === 'preset' ? 'bg-orange-200/20 border border-orange-300 text-orange-100' : 'bg-white/5 border border-white/10 text-orange-50 hover:bg-white/10'}`}
+                            >
+                                Use preset
+                            </button>
+                            <button
+                                type="button"
+                                onClick={() => {
+                                    update('customization.trigger.type', 'custom');
+                                    update('customization.trigger.preset', 'video');
+                                }}
+                                className={`py-2 rounded-xl text-xs uppercase tracking-widest transition-all ${config.customization.trigger.type === 'custom' ? 'bg-orange-200/20 border border-orange-300 text-orange-100' : 'bg-white/5 border border-white/10 text-orange-50 hover:bg-white/10'}`}
+                            >
+                                Upload gift video
+                            </button>
+                        </div>
+                        {config.customization.trigger.type === 'custom' && config.customization.trigger.preset === 'video' && (
+                            <div className="flex flex-col gap-2 pt-2">
+                                <input
+                                    type="file"
+                                    accept="video/*"
+                                    ref={videoInputRef}
+                                    onChange={(e) => {
+                                        if (e.target.files && e.target.files[0]) {
+                                            const file = e.target.files[0];
+                                            setSelectedVideo(file.name);
+                                            update('customization.trigger.type', 'custom');
+                                            update('customization.trigger.preset', 'video');
+                                            update('customization.trigger.media', { secure_url: null, publicId: null, resourceType: 'video', file });
+                                        }
+                                    }}
+                                    style={{ display: 'none' }}
+                                />
+                                <button
+                                    type="button"
+                                    onClick={() => videoInputRef.current.click()}
+                                    className="w-full py-3 rounded-xl border border-white/10 bg-white/5 hover:bg-white/10 transition-all text-sm text-orange-100"
+                                >
+                                    {selectedVideo ? selectedVideo : 'Choose gift video'}
+                                </button>
+                                {selectedVideo && (
+                                    <button
+                                        type="button"
+                                        onClick={() => {
+                                            setSelectedVideo(null);
+                                            if (videoInputRef.current) videoInputRef.current.value = '';
+                                            update('customization.trigger.media', { secure_url: null, publicId: null, resourceType: 'video', file: null });
+                                        }}
+                                        className="text-xs text-orange-100/70 hover:text-orange-100 underline"
+                                    >
+                                        Remove uploaded video
+                                    </button>
+                                )}
+                                <p className="text-[10px] opacity-50">This video will play when the gift moment completes.</p>
+                            </div>
+                        )}
+                    </div>
+                )}
             </div>
 
             <div className="flex flex-col gap-2 pt-2">

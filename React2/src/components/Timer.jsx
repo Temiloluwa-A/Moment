@@ -52,7 +52,7 @@ const Timer = ({ isPanelOpen }) => {
         const interval = setInterval(calculateTime, 1000); // Then run every second
 
         return () => clearInterval(interval);
-    }, [targetDate, startDate, isCountUp]);
+    }, [targetDate, startDate, isCountUp, config.customization.trigger.preset, config.customization.trigger.custom]);
 
     let days, hours, minutes, seconds;
 
@@ -72,10 +72,15 @@ const Timer = ({ isPanelOpen }) => {
     const pad = (num) => String(num).padStart(2, '0');
 
     const activeFont = FONTS.find(font => font.key === config.customization.font) || FONTS[0];
-    const activeMood = MOOD.find(mood => mood.key === config.customization.mood)
+    const activeMood = MOOD.find(mood => mood.key === config.customization.mood);
+    const background = config.customization.background || { type: 'solid', value: '#131418' };
+    const bgStyle = background.type === 'image'
+        ? { backgroundImage: `url(${background.value})`, backgroundSize: 'cover', backgroundPosition: 'center', backgroundRepeat: 'no-repeat' }
+        : { background: background.value };
+
     return (
-        <div className="flex flex-col items-center w-full h-full justify-center gap-4" style={{ fontFamily: activeFont.family }}>
-            {/* <section className="relative w-full h-full flex items-center justify-center bg-amber-400 py-12 overflow-hidden"> */}
+        <div className="relative flex flex-col items-center w-full min-h-screen justify-center gap-4 overflow-hidden" style={{ fontFamily: activeFont.family }}>
+            <div className="pointer-events-none fixed inset-0 -z-20" style={bgStyle} />
             <div className={`relative z-10 glass-panel w-full flex flex-col items-center justify-center border border-white/5 shadow-2xl transition-all duration-500 ${isPanelOpen ? 'max-w-2xl' : 'max-w-4xl'}`} style={{ borderRadius: `${config.customization.borderRadius}px` }}>
                 <span className="font-label text-dark-cofee-900 uppercase tracking-[0.2em] text-xs md:text-lg mb-8 mt-4">{config.title || 'untitled moment'}</span>
 

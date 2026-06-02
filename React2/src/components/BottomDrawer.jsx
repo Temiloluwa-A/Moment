@@ -1,11 +1,11 @@
-import { useState, useRef, useEffect } from 'react';
+import { useState, useRef, useEffect, useLayoutEffect, useCallback } from 'react';
 import './BottomDrawer.css';
 
 const BottomDrawer = ({ isOpen, onClose, children, activeTab, onTabChange }) => {
-    const [height, setHeight] = useState(50); // 50vh default
+    const [height, setHeight] = useState(() => (isOpen ? 50 : 0)); // 50vh default
     const [isDragging, setIsDragging] = useState(false);
     const [startY, setStartY] = useState(0);
-    const [snapState, setSnapState] = useState('half'); // 'half', 'full', 'closed'
+    const [snapState, setSnapState] = useState(() => (isOpen ? 'half' : 'closed')); // 'half', 'full', 'closed'
     const drawerRef = useRef(null);
     const contentRef = useRef(null);
 
@@ -43,9 +43,6 @@ const BottomDrawer = ({ isOpen, onClose, children, activeTab, onTabChange }) => 
     const handleTouchEnd = () => {
         setIsDragging(false);
 
-        const viewportHeight = window.innerHeight;
-        const pixels = (height / 100) * viewportHeight;
-
         // Determine snap position based on current height
         if (height < CLOSE_THRESHOLD) {
             setHeight(0);
@@ -72,7 +69,7 @@ const BottomDrawer = ({ isOpen, onClose, children, activeTab, onTabChange }) => 
         setStartY(e.clientY);
     };
 
-    const handleMouseMove = (e) => {
+    const handleMouseMove = useCallback((e) => {
         if (!isDragging) return;
 
         const currentY = e.clientY;
@@ -84,9 +81,9 @@ const BottomDrawer = ({ isOpen, onClose, children, activeTab, onTabChange }) => 
         newHeight = Math.max(0, Math.min(FULL_HEIGHT, newHeight));
         setHeight(newHeight);
         setSnapState(null);
-    };
+    }, [isDragging, startY, height]);
 
-    const handleMouseUp = () => {
+    const handleMouseUp = useCallback(() => {
         if (!isDragging) return;
         setIsDragging(false);
 
@@ -106,7 +103,7 @@ const BottomDrawer = ({ isOpen, onClose, children, activeTab, onTabChange }) => 
             setHeight(FULL_HEIGHT);
             setSnapState('full');
         }
-    };
+    }, [isDragging, height]);
 
     useEffect(() => {
         if (isDragging) {
@@ -117,18 +114,17 @@ const BottomDrawer = ({ isOpen, onClose, children, activeTab, onTabChange }) => 
                 window.removeEventListener('mouseup', handleMouseUp);
             };
         }
-    }, [isDragging, height]);
+    }, [isDragging, handleMouseMove, handleMouseUp]);
 
-    useEffect(() => {
-        // Close drawer if isOpen becomes false
-        if (!isOpen) {
+    useLayoutEffect(() => {
+        if (!isOpen && snapState !== 'closed') {
             setHeight(0);
             setSnapState('closed');
-        } else {
+        } else if (isOpen && snapState === 'closed') {
             setHeight(HALF_HEIGHT);
             setSnapState('half');
         }
-    }, [isOpen]);
+    }, [isOpen, snapState]);
 
     if (!isOpen && snapState === 'closed') {
         return null;

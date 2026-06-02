@@ -85,8 +85,49 @@
   --color-text-light:       var(--color-espresso-900);
   --color-text-muted-light: var(--color-tawny-600);
   --color-border-light:     var(--color-tawny-400);
+}
 
-  /* ═══════════════════════════════════
+:root {
+  --color-bg: var(--color-espresso-900);
+  --color-bg-deep: var(--color-espresso-950);
+  --color-surface: var(--color-espresso-800);
+  --color-surface-high: var(--color-espresso-700);
+  --color-text: var(--color-parchment-300);
+  --color-text-muted: var(--color-parchment-500);
+  --color-text-subtle: var(--color-tawny-500);
+  --color-border: var(--color-tawny-800);
+  --color-border-mid: var(--color-tawny-700);
+  --color-focus: var(--color-amber-500);
+  --color-primary: var(--color-amber-300);
+  --color-primary-hover: var(--color-amber-400);
+  --color-on-primary: var(--color-espresso-900);
+  --color-input-bg: var(--color-espresso-950);
+  --color-input-border: var(--color-tawny-700);
+  --color-input-text: var(--color-parchment-300);
+  --color-placeholder: var(--color-tawny-500);
+}
+
+:root[data-theme="light"] {
+  --color-bg: var(--color-parchment-100);
+  --color-bg-deep: var(--color-parchment-100);
+  --color-surface: var(--color-parchment-200);
+  --color-surface-high: var(--color-parchment-300);
+  --color-text: var(--color-espresso-900);
+  --color-text-muted: var(--color-tawny-600);
+  --color-text-subtle: var(--color-tawny-500);
+  --color-border: var(--color-tawny-400);
+  --color-border-mid: var(--color-tawny-700);
+  --color-focus: var(--color-amber-500);
+  --color-primary: var(--color-amber-300);
+  --color-primary-hover: var(--color-amber-400);
+  --color-on-primary: var(--color-espresso-900);
+  --color-input-bg: var(--color-parchment-100);
+  --color-input-border: var(--color-tawny-400);
+  --color-input-text: var(--color-espresso-900);
+  --color-placeholder: var(--color-tawny-500);
+
+
+/* ═══════════════════════════════════
      TYPOGRAPHY
   ═══════════════════════════════════ */
 
@@ -111,6 +152,8 @@
 
 html body {
     background: #2f1e16;
+    font-family: 'Manrope', sans-serif;
+
     color: #F2E8D9;
     overflow-x: hidden !important;
     
@@ -133,11 +176,6 @@ html body {
   border: 1px solid rgba(93, 74, 53, 0.25);
 }
 
-/* Subtle warm glow — used on hero sections */
-.glow-amber {
-  box-shadow: 0 0 60px rgba(201, 135, 58, 0.08);
-}
-
 /* Text glow for headlines */
 .text-glow {
   text-shadow: 0 0 40px rgba(201, 135, 58, 0.25);
@@ -157,7 +195,7 @@ html body {
 ::-webkit-scrollbar-thumb:hover {
   background: #8C7355;
 }
-
+ 
 /* Hide scrollbar but keep scroll */
 .scrollbar-hide {
   scrollbar-width: none;
@@ -204,24 +242,27 @@ html body {
     background: linear-gradient(180deg rgba(23 16 11 0) 0% rgba(25 18 13 1) 100%);
 }
 
-.sunset-gradient {
-    background: linear-gradient(135deg #fb8c00 0% #c62828 50% #8d4b20 100%);
-}
-
 .text-glow {
     text-shadow: 0 0 20px rgba(255 181 160 0.3);
 }
 
 .glass-bubble {
-    background: rgba(255 255 255 0.05);
+  background: rgba(60, 51, 45, 0.4);
+  backdrop-filter: blur(24px);
+  border: 1px solid rgba(164, 140, 122, 0.15);
+    /* background: rgba(255 255 255 0.05);
     backdrop-filter: blur(24px);
     border: 2px solid rgba(255 255 255 0.1);
-}
+     */
+} 
 
 .glass-panel {
-    background: rgba(60 51 45 0.4);
-    backdrop-filter: blur(20px);
+    background: rgb(255 255 255 / 0.05);
+    backdrop-filter: blur(16px);
     -webkit-backdrop-filter: blur(20px);
+    border: 1px solid rgba(255, 255, 255, 0.15);
+    border-radius: 1.5rem;
+    box-shadow: 0 4px 30px rgb(0, 0, 0 / 0.25);
 }
 
 .ethereal-glow {

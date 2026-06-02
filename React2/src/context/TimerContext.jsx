@@ -26,22 +26,30 @@ export function TimerProvider({children}) {
             borderStyle: { width: 1, color: 'transparent', style: 'solid' },
             mood: 'hopeful',
             moodNote: 'Something worth waiting for....',
-            trigger: { type: 'preset', preset: 'confetti', custom: null }
+            trigger: { type: 'preset', preset: 'confetti', media: { secure_url: null, publicId: null, resourceType: null } }
         }
     })
     function update(field, value){
         setconfig(prev => {
-            if (field.startsWith('customization.')) {
-                const key = field.split('.')[1];
-                return {
-                    ...prev,
-                    customization: {
-                        ...prev.customization,
-                        [key]: value
-                    }
+            const next = { ...prev };
+            const keys = field.split('.');
+
+            if (keys.length > 1) {
+                let cursor = next;
+                for (let i = 0; i < keys.length - 1; i++) {
+                    const key = keys[i];
+                    const existing = cursor[key];
+                    cursor[key] = existing && typeof existing === 'object' && !Array.isArray(existing)
+                        ? { ...existing }
+                        : {};
+                    cursor = cursor[key];
                 }
+                cursor[keys[keys.length - 1]] = value;
+                return next;
             }
-            return {...prev, [field]: value}
+
+            next[field] = value;
+            return next;
         })
     }
 
@@ -58,7 +66,7 @@ export function TimerProvider({children}) {
                 borderStyle: { width: 1, color: 'transparent', style: 'solid' },
                 mood: newConfig.mood || null,
                 moodNote: newConfig.moodNote || '',
-                trigger: { type: 'preset', preset: 'confetti', custom: null }
+                trigger: { type: 'preset', preset: 'confetti', media: { secure_url: null, publicId: null, resourceType: null } }
             };
         }
         setconfig(newConfig)

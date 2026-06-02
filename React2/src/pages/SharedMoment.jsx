@@ -15,7 +15,7 @@ const SharedMoment = () => {
     useEffect(() => {
         const fetchSharedMoment = async () => {
             try {
-                const response = await axios.get(`https://moment-1-h67x.onrender.com/api/v1/moments/shared/${slug}`);
+                const response = await axios.get(`${import.meta.env.VITE_API_URL}/api/v1/moments/shared/${slug}`);
                 setmomentData(response.data.data);
                 loadConfig(response.data.data); // Inject the database config into the context!
             } catch (error) {

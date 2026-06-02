@@ -3,6 +3,7 @@ import axios from 'axios';
 import Cookies from 'js-cookie';
 import { useLocation } from 'react-router-dom';
 import { useTimer } from '../context/TimerContext';
+import { useToast } from '../context/ToastContext';
 import BasicsTab from './BasicsTab';
 import LookTab from './LookTab';
 import MomentTab from './MomentTab';
@@ -25,35 +26,75 @@ const Customize = () => {
         return () => mq.removeEventListener('change', update);
     }, []);
 
+    const { showToast } = useToast();
+
     const handleSave = async () => {
         setIsSaving(true);
         try {
             const token = Cookies.get('token');
             if (!token) {
-                alert("Please log in to save your moment!");
+                showToast({ type: 'warning', title: 'Login required', description: 'Please log in to save your moment!' });
+                setIsSaving(false);
                 return;
             }
 
             const isCountUp = location.pathname.includes('count-up');
             const payload = { ...config, mode: isCountUp ? 'countup' : 'countdown' };
 
-            let dataToSend = payload;
+            const bgFile = config.customization?.background?.file;
+            const giftVideoFile = config.customization?.trigger?.media?.file;
+            const customizationCopy = JSON.parse(JSON.stringify(payload.customization || {}));
+            if (customizationCopy.background) delete customizationCopy.background.file;
+            if (customizationCopy.trigger?.media) delete customizationCopy.trigger.media.file;
 
-            if (config._id) {
-                await axios.patch(`https://moment-1-h67x.onrender.com/api/v1/moments/${config._id}`, dataToSend, {
-                    headers: { Authorization: `Bearer ${token}` }
-                });
-                alert("Moment updated successfully!");
+            if (bgFile || giftVideoFile) {
+                const formData = new FormData();
+                if (bgFile) {
+                    formData.append('backgroundImage', bgFile);
+                }
+                if (giftVideoFile) {
+                    formData.append('giftVideo', giftVideoFile);
+                }
+
+                formData.append('title', payload.title || '');
+                formData.append('mode', payload.mode || 'countdown');
+                if (payload.startAt) formData.append('startAt', payload.startAt);
+                if (payload.endAt) formData.append('endAt', payload.endAt);
+                formData.append('timeZone', payload.timeZone || '');
+                formData.append('isPublic', payload.isPublic ? 'true' : 'false');
+                formData.append('isGift', payload.isGift ? 'true' : 'false');
+                formData.append('units', JSON.stringify(payload.units || {}));
+                formData.append('customization', JSON.stringify(customizationCopy));
+
+                if (config._id) {
+                    await axios.patch(`${import.meta.env.VITE_API_URL}/api/v1/moments/${config._id}`, formData, {
+                        headers: { Authorization: `Bearer ${token}`, 'Content-Type': 'multipart/form-data' }
+                    });
+                    showToast({ type: 'success', title: 'Saved', description: 'Moment updated successfully!' });
+                } else {
+                    await axios.post(`${import.meta.env.VITE_API_URL}/api/v1/moments`, formData, {
+                        headers: { Authorization: `Bearer ${token}`, 'Content-Type': 'multipart/form-data' }
+                    });
+                    showToast({ type: 'success', title: 'Saved', description: 'Moment created successfully!' });
+                }
             } else {
-                await axios.post('https://moment-1-h67x.onrender.com/api/v1/moments', dataToSend, {
-                    headers: { Authorization: `Bearer ${token}` }
-                });
-                alert("Moment created successfully!");
+                let dataToSend = payload;
+                if (config._id) {
+                    await axios.patch(`${import.meta.env.VITE_API_URL}/api/v1/moments/${config._id}`, dataToSend, {
+                        headers: { Authorization: `Bearer ${token}` }
+                    });
+                    showToast({ type: 'success', title: 'Saved', description: 'Moment updated successfully!' });
+                } else {
+                    await axios.post(`${import.meta.env.VITE_API_URL}/api/v1/moments`, dataToSend, {
+                        headers: { Authorization: `Bearer ${token}` }
+                    });
+                    showToast({ type: 'success', title: 'Saved', description: 'Moment created successfully!' });
+                }
             }
         } catch (error) {
             console.error(error);
             const errorMsg = error.response?.data?.message || "Failed to save moment. Please try again.";
-            alert(`Backend Error: ${errorMsg}`);
+            showToast({ type: 'error', title: 'Save failed', description: errorMsg });
         } finally {
             setIsSaving(false);
         }
@@ -149,7 +190,7 @@ const Customize = () => {
                     {renderTabContent()}
                 </div>
 
-                <div className="sticky bottom-0 bg-gradient-to-t from-stone-900 via-stone-900 to-transparent pt-6 pb-8 px-4 -mx-4">
+                <div className="sticky bottom-0 bg-linear-to-t from-stone-900 via-stone-900 to-transparent pt-6 pb-8 px-4 -mx-4">
                     <button
                         onClick={handleSave}
                         disabled={isSaving}

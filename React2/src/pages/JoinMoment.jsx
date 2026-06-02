@@ -3,10 +3,12 @@ import { useParams, useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import Cookies from 'js-cookie';
 import Avatar from '../components/Avatar';
+import { useToast } from '../context/ToastContext';
 
 const JoinMoment = () => {
     const { slug } = useParams();
     const navigate = useNavigate();
+    const { showToast } = useToast();
     const [moment, setMoment] = useState(null);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
@@ -16,13 +18,13 @@ const JoinMoment = () => {
         const fetchMomentDetails = async () => {
             // A user must be logged in to accept an invite!
             if (!Cookies.get('token')) {
-                alert("Please log in to accept the invitation.");
+                showToast({ type: 'warning', title: 'Login required', description: 'Please log in to accept the invitation.' });
                 navigate('/login');
                 return;
             }
 
             try {
-                const res = await axios.get(`https://moment-1-h67x.onrender.com/api/v1/moments/shared/${slug}`);
+                const res = await axios.get(`${import.meta.env.VITE_API_URL}/api/v1/moments/shared/${slug}`);
                 setMoment(res.data.data);
             } catch (err) {
                 setError(err.response?.data?.message || "Could not find this moment. The link may be invalid or the moment is no longer public.");
@@ -37,18 +39,18 @@ const JoinMoment = () => {
         setIsJoining(true);
         try {
             const token = Cookies.get('token');
-            await axios.post(`https://moment-1-h67x.onrender.com/api/v1/moments/${slug}/join`, {}, {
+            await axios.post(`${import.meta.env.VITE_API_URL}/api/v1/moments/${slug}/join`, {}, {
                 headers: { Authorization: `Bearer ${token}` }
             });
             
-            alert("Successfully joined the moment!");
+            showToast({ type: 'success', title: 'Joined', description: 'Successfully joined the moment!' });
             navigate('/my-moments'); // Redirect them to their moments where it will now appear
         } catch (err) {
             const errorMsg = err.response?.data?.message || "Failed to join moment. Please try again.";
-            alert(errorMsg);
+            showToast({ type: 'error', title: 'Join failed', description: errorMsg });
             
             // If they are already a member or the owner, just redirect them anyway!
-            if (errorMsg.includes("already a member") || errorMsg.includes("owner")) {
+            if (typeof errorMsg === 'string' && (errorMsg.includes("already a member") || errorMsg.includes("owner"))) {
                 navigate('/my-moments');
             }
         } finally {

@@ -3,18 +3,20 @@ const { Root, Shared } = require('../model/shared.model');
 const crypto = require('crypto');
 const { cloudinary } = require('../middleware/cloudinary');
 
+const uploadBufferToCloudinary = async (file, options = {}) => {
+    const dataUri = `data:${file.mimetype};base64,${file.buffer.toString('base64')}`;
+    return await cloudinary.uploader.upload(dataUri, options);
+};
+
 const createMoment = async (req, res) => {
     try {
         const momentData = req.body;
-        // Attach the userId extracted from the JWT token in the middleware
         momentData.userId = req.user.id;
 
         if (!momentData.slug) {
             momentData.slug = crypto.randomBytes(6).toString('hex');
         }
 
-        // When uploading files, other form fields are strings.
-        // We need to parse the customization object if it exists.
         if (momentData.customization && typeof momentData.customization === 'string') {
             momentData.customization = JSON.parse(momentData.customization);
         }
@@ -22,10 +24,30 @@ const createMoment = async (req, res) => {
             momentData.units = JSON.parse(momentData.units);
         }
 
-        // If a file is uploaded and the background type is 'image', update the background fields
-        if (req.file && momentData.customization?.background?.type === 'image') {
-            momentData.customization.background.value = req.file.path; // This is the secure_url from Cloudinary
-            momentData.customization.background.publicId = req.file.filename; // This is the public_id
+        const backgroundFile = req.files?.backgroundImage?.[0];
+        const giftVideoFile = req.files?.giftVideo?.[0];
+
+        if (backgroundFile && momentData.customization?.background?.type === 'image') {
+            const uploadResult = await uploadBufferToCloudinary(backgroundFile, {
+                folder: 'moment_backgrounds',
+                resource_type: 'image',
+            });
+            momentData.customization.background.value = uploadResult.secure_url;
+            momentData.customization.background.publicId = uploadResult.public_id;
+        }
+
+        if (giftVideoFile) {
+            const uploadResult = await uploadBufferToCloudinary(giftVideoFile, {
+                folder: 'moment_gift_videos',
+                resource_type: 'video',
+            });
+            momentData.customization = momentData.customization || {};
+            momentData.customization.trigger = momentData.customization.trigger || {};
+            momentData.customization.trigger.media = {
+                secure_url: uploadResult.secure_url,
+                publicId: uploadResult.public_id,
+                resourceType: 'video',
+            };
         }
 
         const newMoment = await Timer.create(momentData);
@@ -33,7 +55,6 @@ const createMoment = async (req, res) => {
         res.status(201).send({ message: "Moment saved successfully", data: newMoment });
     } catch (error) {
         console.log(error);
-        // Send the exact Mongoose validation error to the frontend!
         res.status(500).send({ message: error.message || "Failed to save moment" });
     }
 };
@@ -108,25 +129,44 @@ const updateMoment = async (req, res) => {
         if (!existingMoment) {
             return res.status(404).send({ message: "Moment not found or unauthorized" });
         }
-        const oldPublicId = existingMoment.customization?.background?.publicId;
 
-        // Case 1: A new file is uploaded for the background image
-        if (req.file && updateData.customization?.background?.type === 'image') {
-            if (oldPublicId) {
-                await cloudinary.uploader.destroy(oldPublicId);
+        const oldBackgroundPublicId = existingMoment.customization?.background?.publicId;
+        const oldGiftPublicId = existingMoment.customization?.trigger?.media?.publicId;
+        const backgroundFile = req.files?.backgroundImage?.[0];
+        const giftVideoFile = req.files?.giftVideo?.[0];
+
+        if (backgroundFile && updateData.customization?.background?.type === 'image') {
+            if (oldBackgroundPublicId) {
+                await cloudinary.uploader.destroy(oldBackgroundPublicId);
             }
-            updateData.customization.background.value = req.file.path;
-            updateData.customization.background.publicId = req.file.filename;
-        }
-        // Case 2: The background type is changed FROM image to something else
-        else if (oldPublicId && updateData.customization?.background?.type !== 'image') {
-            await cloudinary.uploader.destroy(oldPublicId);
-            // Use dot notation to ensure we only set publicId to null
+            const uploadResult = await uploadBufferToCloudinary(backgroundFile, {
+                folder: 'moment_backgrounds',
+                resource_type: 'image',
+            });
+            updateData.customization.background.value = uploadResult.secure_url;
+            updateData.customization.background.publicId = uploadResult.public_id;
+        } else if (oldBackgroundPublicId && updateData.customization?.background?.type !== 'image') {
+            await cloudinary.uploader.destroy(oldBackgroundPublicId);
             updateData['customization.background.publicId'] = null;
         }
 
-        // Find the moment by ID & User, and apply the new data.
-        // { new: true } tells Mongoose to return the updated document!
+        if (giftVideoFile) {
+            if (oldGiftPublicId) {
+                await cloudinary.uploader.destroy(oldGiftPublicId, { resource_type: 'video' });
+            }
+            const uploadResult = await uploadBufferToCloudinary(giftVideoFile, {
+                folder: 'moment_gift_videos',
+                resource_type: 'video',
+            });
+            updateData.customization = updateData.customization || {};
+            updateData.customization.trigger = updateData.customization.trigger || {};
+            updateData.customization.trigger.media = {
+                secure_url: uploadResult.secure_url,
+                publicId: uploadResult.public_id,
+                resourceType: 'video',
+            };
+        }
+
         const updatedMoment = await Timer.findOneAndUpdate({ _id: momentId, userId: req.user.id }, updateData, { new: true });
 
         if (!updatedMoment) {
@@ -214,8 +254,8 @@ const removeMember = async (req, res) => {
 
 const toggleRoot = async (req, res) => {
     try {
-        const { timerId } = req.params; // Or req.body, depending on your route
-        const userId = req.user._id;    // Assuming your auth middleware attaches the user to req
+        const { timerId } = req.params;
+        const userId = req.user.id || req.user._id;
 
         // 1. Find the root document for this specific timer
         let rootDoc = await Root.findOne({ timerId });
@@ -226,6 +266,7 @@ const toggleRoot = async (req, res) => {
                 timerId,
                 users: [userId]
             });
+            await Timer.findByIdAndUpdate(timerId, { rootCount: 1 });
             return res.status(200).json({
                 message: "Successfully rooted!",
                 rootCount: 1
@@ -234,26 +275,26 @@ const toggleRoot = async (req, res) => {
 
         // 3. Check if the user's ID is already in the array
         const hasRooted = rootDoc.users.includes(userId);
+        let rootCount;
 
         if (hasRooted) {
             // UNROOT: User is in the array, so we remove them
             rootDoc.users.pull(userId);
             await rootDoc.save();
-
-            return res.status(200).json({
-                message: "Unrooted moment.",
-                rootCount: rootDoc.users.length
-            });
+            rootCount = rootDoc.users.length;
         } else {
             // ROOT: User is not in the array, so we add them
             rootDoc.users.push(userId);
             await rootDoc.save();
-
-            return res.status(200).json({
-                message: "Successfully rooted!",
-                rootCount: rootDoc.users.length
-            });
+            rootCount = rootDoc.users.length;
         }
+
+        await Timer.findByIdAndUpdate(timerId, { rootCount });
+
+        return res.status(200).json({
+            message: hasRooted ? "Unrooted moment." : "Successfully rooted!",
+            rootCount
+        });
 
     } catch (error) {
         console.error("Error toggling root:", error);
