@@ -11,7 +11,6 @@ app.use(cors({
     methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'OPTIONS'],
     allowedHeaders: ['Content-Type', 'Authorization'],
 }));
-app.options('*', cors());
 app.use(express.urlencoded({extended:true})) //to interpret the data sent from the client in the form of urlencoded data, extended:true allows us to send nested objects in the form of urlencoded data
 app.use(express.json()) 
 const path = require("path")
