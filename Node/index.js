@@ -15,9 +15,8 @@ app.options('*', cors());
 app.use(express.urlencoded({extended:true})) //to interpret the data sent from the client in the form of urlencoded data, extended:true allows us to send nested objects in the form of urlencoded data
 app.use(express.json()) 
 const path = require("path")
-
 const UserRoutes = require("./routes/user.routes")
- const MomentRoutes = require("./routes/moment.routes")
+const MomentRoutes = require("./routes/moment.routes")
 app.use("/api/v1", UserRoutes)
 app.use("/api/v1", MomentRoutes)
 
