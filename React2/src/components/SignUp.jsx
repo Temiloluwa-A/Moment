@@ -44,7 +44,8 @@ const SignUp = () => {
                     setFieldError('email', 'Email already exists')
                     console.log(errorMsg);
                 }else{
-                    showToast({ type: 'error', title: 'Sign up failed', description: errorMsg || 'Something went wrong' });
+                    showToast({ type: 'error', title: 'Sign up failed', description: 'Something went wrong' });
+                    console.log(errorMsg);
                 }
                 
             }
