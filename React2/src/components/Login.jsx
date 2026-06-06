@@ -31,9 +31,22 @@ const Login = () => {
           showToast({ type: 'error', title: 'Login failed', description: 'Error logging user.' });
         }
       } catch (error) {
-        const errorMsg = error.response?.data?.message || 'Error logging user'
-        console.log(errorMsg);
-        showToast({ type: 'error', title: 'Login failed', description: errorMsg });
+        // const serverMessage = error.response?.data?.message;
+        const statusCode = error.response?.status;
+
+        console.error('Login error:', {
+          message: error.message,
+          statusCode,
+          responseData: error.response?.data,
+          responseHeaders: error.response?.headers,
+          config: error.config,
+        });
+
+        showToast({
+          type: 'error',
+          title: 'Login failed',
+          description: 'Unable to sign in. Please check your credentials and try again.',
+        });
       }
       finally {
         setloader(false);

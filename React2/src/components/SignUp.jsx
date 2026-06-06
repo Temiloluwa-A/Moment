@@ -37,17 +37,31 @@ const SignUp = () => {
                 }
             }
             catch (error) {
-                // Fallback to error.message if the server doesn't respond (e.g. Network Error)
-                const errorMsg = error.response?.data?.message || error.message;
-                
-                if(typeof errorMsg === 'string' && errorMsg.toLowerCase().includes('email')){
-                    setFieldError('email', 'Email already exists')
-                    console.log(errorMsg);
-                }else{
-                    showToast({ type: 'error', title: 'Sign up failed', description: 'Something went wrong' });
-                    console.log(errorMsg);
+                const serverMessage = error.response?.data?.message;
+                const statusCode = error.response?.status;
+
+                console.error('Sign up error:', {
+                    message: error.message,
+                    statusCode,
+                    responseData: error.response?.data,
+                    responseHeaders: error.response?.headers,
+                    config: error.config,
+                });
+
+                if (typeof serverMessage === 'string' && serverMessage.toLowerCase().includes('email')) {
+                    setFieldError('email', 'Email already exists');
+                    showToast({
+                        type: 'error',
+                        title: 'Sign up failed',
+                        description: 'Email already exists. Please use a different email.',
+                    });
+                } else {
+                    showToast({
+                        type: 'error',
+                        title: 'Sign up failed',
+                        description:'Something went wrong. Please try again.',
+                    });
                 }
-                
             }
             finally {
                 setloader(false);
