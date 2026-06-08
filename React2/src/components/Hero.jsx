@@ -18,7 +18,7 @@ const Hero = () => {
             Your time,<br /> beautifully held.
           </h1>
           <p className="font-body text-lg md:text-xl leading-relaxed max-w-2xl text-parchment-400">
-            Whether you're reaching for the future or cherishing the past, we provide the space to visualize your most meaningful milestones.
+            Whether you're reaching for the future or cherishing the past, Create beautiful count-ups and count-downs for the things that matter-share them, feel them, remember them.
           </p>
           <button className='px-9 py-3 bg-amber-400 border border-tawny-500 rounded-full md:text-lg mt-6 cursor-pointer' onClick={() => navigate('/sign-up')}>Get Started</button>
         </div>

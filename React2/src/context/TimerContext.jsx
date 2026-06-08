@@ -20,7 +20,7 @@ export function TimerProvider({children}) {
         notify: true,
         customization: {
             font: 'noto',
-            background: { type: 'solid', value: '#1a2b3c', publicId: null, format: null },
+            background: { type: 'solid', value: '#2f1e16', publicId: null, format: null },
             timerSize: 80,
             borderRadius: 50,
             borderStyle: { width: 1, color: 'transparent', style: 'solid' },
@@ -60,7 +60,7 @@ export function TimerProvider({children}) {
         if (!newConfig.customization) {
             newConfig.customization = {
                 font: newConfig.font || 'noto',
-                background: newConfig.background || { type: 'solid', value: '#1a2b3c' },
+                background: newConfig.background || { type: 'solid', value: '#2f1e16' },
                 timerSize: newConfig.timersize || 80,
                 borderRadius: newConfig.borderRadius || 15,
                 borderStyle: { width: 1, color: 'transparent', style: 'solid' },
