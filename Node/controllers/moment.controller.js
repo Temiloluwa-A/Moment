@@ -269,7 +269,8 @@ const toggleRoot = async (req, res) => {
             await Timer.findByIdAndUpdate(timerId, { rootCount: 1 });
             return res.status(200).json({
                 message: "Successfully rooted!",
-                rootCount: 1
+                rootCount: 1,
+                rooted: true
             });
         }
 
@@ -293,6 +294,7 @@ const toggleRoot = async (req, res) => {
 
         return res.status(200).json({
             message: hasRooted ? "Unrooted moment." : "Successfully rooted!",
+            rooted: !hasRooted,
             rootCount
         });
 

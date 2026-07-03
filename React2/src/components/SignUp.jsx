@@ -2,6 +2,7 @@ import { useState } from 'react'
 import { useFormik } from 'formik'
 import * as Yup from 'yup'
 import { Link, useNavigate } from 'react-router-dom'
+import { useGoogleLogin } from '@react-oauth/google'
 import axios from 'axios'
 import Cookies from 'js-cookie'
 import { useToast } from '../context/ToastContext'
@@ -11,6 +12,30 @@ const SignUp = () => {
     const { showToast } = useToast()
     const [loader, setloader] = useState(false)
     const [showPassword, setshowPassword] = useState(false)
+
+    const googleLogin = useGoogleLogin({
+        onSuccess: async (tokenResponse) => {
+            setloader(true)
+            try {
+                const result = await axios.post(`${import.meta.env.VITE_API_URL}/api/v1/google-auth`, {
+                    access_token: tokenResponse.access_token,
+                })
+                if (result.status === 200 || result.status === 201) {
+                    Cookies.set('token', result.data.token, { expires: 1 })
+                    showToast({ type: 'success', title: 'Welcome', description: 'Signed in with Google.' })
+                    navigate('/create/count-down')
+                }
+            } catch (error) {
+                console.error('Google sign-in error:', error.response?.data || error.message)
+                showToast({ type: 'error', title: 'Google sign-in failed', description: 'Something went wrong. Please try again.' })
+            } finally {
+                setloader(false)
+            }
+        },
+        onError: () => {
+            showToast({ type: 'error', title: 'Google sign-in failed', description: 'Could not connect to Google. Please try again.' })
+        },
+    })
     let signUpArea = useFormik({
         initialValues: {
             fullName: '',
@@ -192,7 +217,7 @@ const SignUp = () => {
                                 </div>
                             </div>
                             <div className="mt-8 grid grid-cols-2 gap-4 mb-6">
-                                <button className="flex items-center justify-center gap-3 py-3 px-4 glass-panel hover:scale-[1.02] border border-amber-500 rounded-full transition-all duration-500">
+                                <button type="button" onClick={() => googleLogin()} disabled={loader} className="flex items-center justify-center gap-3 py-3 px-4 glass-panel hover:scale-[1.02] border border-amber-500 rounded-full transition-all duration-500 disabled:opacity-70 disabled:hover:scale-100 disabled:cursor-not-allowed">
                                     <svg className="w-5 h-5" viewBox="0 0 24 24">
                                         <path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" fill="#4285F4"></path>
                                         <path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" fill="#34A853"></path>

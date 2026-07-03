@@ -1,157 +1,108 @@
-import { useState, useRef, useEffect, useLayoutEffect, useCallback } from 'react';
+import { useState, useRef, useEffect, useCallback } from 'react';
 import './BottomDrawer.css';
 
 const BottomDrawer = ({ isOpen, onClose, children, activeTab, onTabChange }) => {
-    const [height, setHeight] = useState(() => (isOpen ? 50 : 0)); // 50vh default
+    const HALF_HEIGHT = 55;      // default resting height (vh)
+    const EXPANDED_HEIGHT = 90;  // max height — never covers the full screen (PRD 9.4)
+    const CLOSE_THRESHOLD = 28;  // drag below this to dismiss
+    const DRAG_THRESHOLD = 4;    // min movement before we treat it as a drag
+
+    // Resting position ('half' | 'full') and a live height while dragging (null otherwise).
+    const [snapState, setSnapState] = useState('half');
+    const [dragHeight, setDragHeight] = useState(null);
     const [isDragging, setIsDragging] = useState(false);
-    const [startY, setStartY] = useState(0);
-    const [snapState, setSnapState] = useState(() => (isOpen ? 'half' : 'closed')); // 'half', 'full', 'closed'
-    const drawerRef = useRef(null);
-    const contentRef = useRef(null);
+    const startY = useRef(0);
+    const startHeight = useRef(0);
 
-    const HALF_HEIGHT = 50; // 50vh
-    const FULL_HEIGHT = 100; // 100dvh
-    const CLOSE_THRESHOLD = 15; // threshold to close drawer
-    const DRAG_THRESHOLD = 5; // minimum drag distance to register
+    const restingHeight = snapState === 'full' ? EXPANDED_HEIGHT : HALF_HEIGHT;
+    const height = dragHeight ?? restingHeight;
 
-    // Handle touch start
+    const beginDrag = (clientY) => {
+        startY.current = clientY;
+        startHeight.current = restingHeight;
+        setDragHeight(restingHeight);
+        setIsDragging(true);
+    };
+
+    // Track the pointer 1:1 from where the drag began (no cumulative drift).
+    const moveDrag = useCallback((clientY) => {
+        const deltaY = startY.current - clientY; // drag up = positive
+        if (Math.abs(deltaY) < DRAG_THRESHOLD) return;
+        let next = startHeight.current + (deltaY / window.innerHeight) * 100;
+        next = Math.max(0, Math.min(EXPANDED_HEIGHT, next));
+        setDragHeight(next);
+    }, []);
+
+    // Snap to the nearest resting point when a drag ends.
+    const settle = useCallback((h) => {
+        setIsDragging(false);
+        setDragHeight(null);
+        if (h < CLOSE_THRESHOLD) {
+            onClose?.();               // dismiss — parent unmounts us, no spring-back
+        } else if (h < (HALF_HEIGHT + EXPANDED_HEIGHT) / 2) {
+            setSnapState('half');
+        } else {
+            setSnapState('full');
+        }
+    }, [onClose]);
+
+    // Touch: only start a drag from the handle so scrolling the content never fights the sheet.
     const handleTouchStart = (e) => {
-        setIsDragging(true);
-        setStartY(e.touches[0].clientY);
+        if (!e.target.closest('.drawer-handle')) return;
+        beginDrag(e.touches[0].clientY);
     };
-
-    // Handle touch move
     const handleTouchMove = (e) => {
-        if (!isDragging) return;
-
-        const currentY = e.touches[0].clientY;
-        const deltaY = startY - currentY; // positive = drag up, negative = drag down
-
-        // Only update if we've dragged more than threshold
-        if (Math.abs(deltaY) < DRAG_THRESHOLD) return;
-
-        const viewportHeight = window.innerHeight;
-        let newHeight = (height * viewportHeight + deltaY) / viewportHeight;
-
-        // Clamp between 0 and 100vh
-        newHeight = Math.max(0, Math.min(FULL_HEIGHT, newHeight));
-        setHeight(newHeight);
-        setSnapState(null); // Indicate we're in a dragging state (not snapped)
+        if (isDragging) moveDrag(e.touches[0].clientY);
     };
-
-    // Handle touch end with snapping logic
     const handleTouchEnd = () => {
-        setIsDragging(false);
-
-        // Determine snap position based on current height
-        if (height < CLOSE_THRESHOLD) {
-            setHeight(0);
-            setSnapState('closed');
-        } else if (height < HALF_HEIGHT - 10) {
-            setHeight(HALF_HEIGHT);
-            setSnapState('half');
-        } else if (height < HALF_HEIGHT + 10) {
-            setHeight(HALF_HEIGHT);
-            setSnapState('half');
-        } else if (height < 75) {
-            // Snap to half or full depending on momentum/position
-            setHeight(HALF_HEIGHT);
-            setSnapState('half');
-        } else {
-            setHeight(FULL_HEIGHT);
-            setSnapState('full');
-        }
+        if (isDragging) settle(height);
     };
 
-    // Handle mouse events for desktop testing
+    // Mouse (desktop testing): drag from the handle only.
     const handleMouseDown = (e) => {
-        setIsDragging(true);
-        setStartY(e.clientY);
+        if (!e.target.closest('.drawer-handle')) return;
+        e.preventDefault();
+        beginDrag(e.clientY);
     };
-
-    const handleMouseMove = useCallback((e) => {
-        if (!isDragging) return;
-
-        const currentY = e.clientY;
-        const deltaY = startY - currentY;
-
-        if (Math.abs(deltaY) < DRAG_THRESHOLD) return;
-
-        let newHeight = height + (deltaY / window.innerHeight) * 100;
-        newHeight = Math.max(0, Math.min(FULL_HEIGHT, newHeight));
-        setHeight(newHeight);
-        setSnapState(null);
-    }, [isDragging, startY, height]);
-
-    const handleMouseUp = useCallback(() => {
-        if (!isDragging) return;
-        setIsDragging(false);
-
-        if (height < CLOSE_THRESHOLD) {
-            setHeight(0);
-            setSnapState('closed');
-        } else if (height < HALF_HEIGHT - 10) {
-            setHeight(HALF_HEIGHT);
-            setSnapState('half');
-        } else if (height < HALF_HEIGHT + 10) {
-            setHeight(HALF_HEIGHT);
-            setSnapState('half');
-        } else if (height < 75) {
-            setHeight(HALF_HEIGHT);
-            setSnapState('half');
-        } else {
-            setHeight(FULL_HEIGHT);
-            setSnapState('full');
-        }
-    }, [isDragging, height]);
 
     useEffect(() => {
-        if (isDragging) {
-            window.addEventListener('mousemove', handleMouseMove);
-            window.addEventListener('mouseup', handleMouseUp);
-            return () => {
-                window.removeEventListener('mousemove', handleMouseMove);
-                window.removeEventListener('mouseup', handleMouseUp);
-            };
-        }
-    }, [isDragging, handleMouseMove, handleMouseUp]);
+        if (!isDragging) return;
+        const onMove = (e) => moveDrag(e.clientY);
+        const onUp = () => settle(dragHeight ?? restingHeight);
+        window.addEventListener('mousemove', onMove);
+        window.addEventListener('mouseup', onUp);
+        return () => {
+            window.removeEventListener('mousemove', onMove);
+            window.removeEventListener('mouseup', onUp);
+        };
+    }, [isDragging, moveDrag, settle, dragHeight, restingHeight]);
 
-    useLayoutEffect(() => {
-        if (!isOpen && snapState !== 'closed') {
-            setHeight(0);
-            setSnapState('closed');
-        } else if (isOpen && snapState === 'closed') {
-            setHeight(HALF_HEIGHT);
+    // Reset to the half position each time the sheet is opened.
+    useEffect(() => {
+        if (isOpen) {
             setSnapState('half');
+            setDragHeight(null);
+            document.body.classList.add('drawer-open');
+            return () => document.body.classList.remove('drawer-open');
         }
-    }, [isOpen, snapState]);
+    }, [isOpen]);
 
-    if (!isOpen && snapState === 'closed') {
-        return null;
-    }
+    if (!isOpen) return null;
 
-    const drawerHeightClass = snapState === 'full' ? 'snap-full' : 
-                               snapState === 'half' ? 'snap-half' : 
-                               snapState === 'closed' ? 'snap-closed' : '';
+    const drawerHeightClass = snapState === 'full' ? 'snap-full' : 'snap-half';
 
     return (
         <>
-            {/* Backdrop overlay */}
-            {height > 10 && (
-                <div
-                    className="fixed inset-0 bg-black/40 z-30 transition-opacity duration-300"
-                    style={{
-                        opacity: Math.min(1, height / FULL_HEIGHT) * 0.4,
-                        pointerEvents: height > 10 ? 'auto' : 'none',
-                    }}
-                    onClick={onClose}
-                />
-            )}
-
-            {/* Drawer container */}
+            {/* Backdrop */}
             <div
-                ref={drawerRef}
-                className={`fixed bottom-0 left-0 right-0 bg-gradient-to-t from-stone-900 to-stone-800 z-40 rounded-t-3xl shadow-2xl ${!isDragging ? 'transition-all duration-500 ease-out' : ''} ${drawerHeightClass}`}
+                className="fixed inset-0 bg-black/50 z-30"
+                style={{ opacity: Math.min(1, height / EXPANDED_HEIGHT) }}
+                onClick={onClose}
+            />
+
+            {/* Drawer */}
+            <div
+                className={`fixed bottom-0 left-0 right-0 bg-gradient-to-t from-stone-900 to-stone-800 z-40 rounded-t-3xl shadow-2xl flex flex-col ${!isDragging ? 'transition-all duration-500 ease-out' : ''} ${drawerHeightClass}`}
                 style={{
                     height: `${height}dvh`,
                     boxShadow: isDragging ? '0 -4px 20px rgba(0,0,0,0.5)' : '0 -4px 16px rgba(0,0,0,0.3)',
@@ -159,19 +110,15 @@ const BottomDrawer = ({ isOpen, onClose, children, activeTab, onTabChange }) => 
                 onTouchStart={handleTouchStart}
                 onTouchMove={handleTouchMove}
                 onTouchEnd={handleTouchEnd}
-                onMouseDown={(e) => {
-                    if (e.target === e.currentTarget || e.target.closest('.drawer-handle')) {
-                        handleMouseDown(e);
-                    }
-                }}
+                onMouseDown={handleMouseDown}
             >
-                {/* Drag Handle */}
-                <div className="drawer-handle sticky top-0 flex items-center justify-center pt-3 pb-4 cursor-grab active:cursor-grabbing bg-gradient-to-b from-stone-800 to-transparent rounded-t-3xl">
-                    <div className="w-12 h-1 bg-orange-200/40 rounded-full"></div>
+                {/* Drag handle — the only draggable zone */}
+                <div className="drawer-handle shrink-0 flex items-center justify-center pt-3 pb-4 cursor-grab active:cursor-grabbing rounded-t-3xl">
+                    <div className="w-12 h-1.5 bg-orange-200/40 rounded-full"></div>
                 </div>
 
-                {/* Tab Navigation */}
-                <div className="sticky top-12 bg-stone-800/95 backdrop-blur-sm border-b border-white/10 px-4 z-10">
+                {/* Tab navigation */}
+                <div className="shrink-0 bg-stone-800/95 backdrop-blur-sm border-b border-white/10 px-4">
                     <div className="flex gap-4">
                         {['Basics', 'Look', 'Moment'].map((tab) => (
                             <button
@@ -189,16 +136,9 @@ const BottomDrawer = ({ isOpen, onClose, children, activeTab, onTabChange }) => 
                     </div>
                 </div>
 
-                {/* Content Area */}
-                <div
-                    ref={contentRef}
-                    className="overflow-y-auto h-full custom-scrollbar"
-                    style={{
-                        paddingTop: '1rem',
-                        maxHeight: `calc(${height}dvh - 80px)`,
-                    }}
-                >
-                    <div className="px-4 pb-10">
+                {/* Scrollable content */}
+                <div className="flex-1 min-h-0 overflow-y-auto overscroll-contain custom-scrollbar">
+                    <div className="px-4 pt-4 pb-10">
                         {children}
                     </div>
                 </div>

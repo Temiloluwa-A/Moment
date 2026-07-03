@@ -10,7 +10,7 @@ import MomentTab from './MomentTab';
 import BottomDrawer from './BottomDrawer';
 import './Customize.css';
 
-const Customize = () => {
+const Customize = ({ isCompleted = false }) => {
     const { config } = useTimer();
     const location = useLocation();
     const [isSaving, setIsSaving] = useState(false);
@@ -27,6 +27,9 @@ const Customize = () => {
     }, []);
 
     const { showToast } = useToast();
+
+    // A completed countdown is view-only: hide all editing UI (desktop panel + mobile drawer).
+    if (isCompleted) return null;
 
     const handleSave = async () => {
         setIsSaving(true);

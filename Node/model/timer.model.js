@@ -39,7 +39,7 @@ const customizationSchema = new mongoose.Schema({
     borderRadius: {type:Number, default:15},
     borderStyle: {type:borderStyleSchema, default:{}}, //empty {} allows to use default settings already made n borderstyleschema
     mood: {type:String, default:null}, //should i add enum for hopeful and the others and have an empty string
-    moodNote: {type:String, default:'', maxlength:280},
+    moodNote: {type:String, default:'', maxlength:400},
     trigger: {type:triggerSchema, default: {
         type:'preset',
         preset:'confetti',

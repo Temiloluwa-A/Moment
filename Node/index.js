@@ -6,7 +6,7 @@ const dotenv = require("dotenv")
 const cors = require('cors')
 dotenv.config()
 app.use(cors({
-    origin: 'https://moment-pink.vercel.app',
+    origin: ['https://moment-pink.vercel.app', 'http://localhost:5173'],
     credentials: true,
     methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'OPTIONS'],
     allowedHeaders: ['Content-Type', 'Authorization'],

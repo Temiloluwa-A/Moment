@@ -4,7 +4,7 @@ import { useTimer } from '../context/TimerContext';
 import { FONTS, MOOD } from '../registry';
 import { triggerCelebration } from './celebration';
 
-const Timer = ({ isPanelOpen }) => {
+const Timer = ({ isPanelOpen, readOnly = false }) => {
     const location = useLocation();
     const { config, update } = useTimer();
     
@@ -41,7 +41,14 @@ const Timer = ({ isPanelOpen }) => {
                     setTimeDiff(0);
                     // If we hit 0 AND we were previously counting down, CELEBRATE!
                     if (wasCountingRef.current) {
-                        triggerCelebration(config.customization.trigger.preset || 'confetti', config.customization.trigger.custom);
+                        const triggerType = config.customization.trigger.type;
+                        const triggerPreset = config.customization.trigger.preset;
+                        const customVideoUrl = config.customization.trigger.media?.secure_url;
+                        if (triggerType === 'custom' && customVideoUrl) {
+                            triggerCelebration('custom', { type: 'video', url: customVideoUrl });
+                        } else {
+                            triggerCelebration(triggerPreset || 'confetti');
+                        }
                         wasCountingRef.current = false;
                     }
                 }
@@ -52,7 +59,7 @@ const Timer = ({ isPanelOpen }) => {
         const interval = setInterval(calculateTime, 1000); // Then run every second
 
         return () => clearInterval(interval);
-    }, [targetDate, startDate, isCountUp, config.customization.trigger.preset, config.customization.trigger.custom]);
+    }, [targetDate, startDate, isCountUp, config.customization.trigger.type, config.customization.trigger.preset, config.customization.trigger.media?.secure_url]);
 
     let days, hours, minutes, seconds;
 
@@ -79,7 +86,7 @@ const Timer = ({ isPanelOpen }) => {
         : { background: background.value };
 
     return (
-        <div className="relative flex flex-col items-center w-full min-h-screen justify-center gap-4 overflow-hidden" style={{ fontFamily: activeFont.family }}>
+        <div className="relative flex flex-col items-center w-full px-3 justify-center gap-4 overflow-hidden" style={{ fontFamily: activeFont.family }}>
             <div className="pointer-events-none fixed inset-0 -z-20" style={bgStyle} />
             <div className={`relative z-10 glass-panel w-full flex flex-col items-center justify-center border border-white/5 shadow-2xl transition-all duration-500 ${isPanelOpen ? 'max-w-2xl' : 'max-w-4xl'}`} style={{ borderRadius: `${config.customization.borderRadius}px` }}>
                 <span className="font-label text-dark-cofee-900 uppercase tracking-[0.2em] text-xs md:text-lg mb-8 mt-4">{config.title || 'untitled moment'}</span>
@@ -135,7 +142,7 @@ const Timer = ({ isPanelOpen }) => {
                 </div>
                 <div className="h-px w-24 bg-outline-variant/30 mb-8"></div>
                 <p className="noto-serif-italic text-2xl md:text-3xl text-orange-100/90 text-center max-w-md leading-relaxed mb-3">
-                    "waiting has value"
+                    {activeMood?.ambient || 'Every second counts.'}
                 </p>
                 {/* <p className="font-body text-orange-100/40 mt-6 text-sm">Parisian Summer '24</p> */}
             </div >
@@ -144,7 +151,7 @@ const Timer = ({ isPanelOpen }) => {
                 {activeMood && (
                     <div className='w-full flex flex-col m-4'>
                         <div><span className='pb-2'>{activeMood.emoji}</span></div>
-                        <textarea value={config.customization.moodNote} onChange={(e) => update('customization.moodNote', e.target.value)} className='text-center bg-transparent resize-none focus:outline-none w-full'></textarea>
+                        <textarea value={config.customization.moodNote} onChange={readOnly ? undefined : (e) => update('customization.moodNote', e.target.value)} readOnly={readOnly} maxLength={400} className={`text-center bg-transparent resize-none focus:outline-none w-full ${readOnly ? 'cursor-default' : ''}`}></textarea>
                         <div>
                             <span className=' border px-4 py-1 mb-2 rounded-3xl bg-amber-200/20 border-amber-500'>{activeMood.tag}</span>
                         </div>

@@ -27,6 +27,8 @@ const showCustomVideo = (videoUrl) => {
 
     const cleanup = () => {
         video.pause();
+        // Free the local preview URL created for not-yet-uploaded videos.
+        if (videoUrl.startsWith('blob:')) URL.revokeObjectURL(videoUrl);
         if (overlay.parentNode) overlay.parentNode.removeChild(overlay);
     };
 
@@ -56,6 +58,26 @@ export const triggerCelebration = (preset, custom = {}) => {
             confetti({ ...defaults, particleCount, origin: { x: Math.random() * 0.2 + 0.1, y: Math.random() - 0.2 } });
             confetti({ ...defaults, particleCount, origin: { x: Math.random() * 0.2 + 0.7, y: Math.random() - 0.2 } });
         }, 250);
+    } else if (preset === 'balloons') {
+        // Floating balloons: emoji shapes drifting upward from the bottom of the screen.
+        const scalar = 3;
+        const balloon = confetti.shapeFromText({ text: '🎈', scalar });
+        const animationEnd = Date.now() + 2500;
+        const floatUp = () => {
+            confetti({
+                particleCount: 2,
+                startVelocity: 0,
+                gravity: -0.4, // negative gravity makes them rise
+                ticks: 300,
+                decay: 0.98,
+                spread: 40,
+                scalar,
+                shapes: [balloon],
+                origin: { x: Math.random(), y: 1.1 },
+            });
+            if (Date.now() < animationEnd) requestAnimationFrame(floatUp);
+        };
+        floatUp();
     } else if (preset === 'stars') {
         const defaults = { spread: 360, ticks: 50, gravity: 0, decay: 0.94, startVelocity: 30, colors: ['FFE400', 'FFBD00', 'E89400', 'FFCA6C', 'FDFFB8'] };
         const shoot = () => {

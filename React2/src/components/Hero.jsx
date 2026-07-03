@@ -13,7 +13,7 @@ const Hero = () => {
         {/* <div className="absolute inset-0 sunset-gradient opacity-40"></div> */}
 
         <div className="px-6 w-full lg:w-1/2 mx-auto md:mt-10">
-          <span className="inline-block font-label text-sm uppercase tracking-[0.3em] text-tertiary mb-6 animate-pulse">A Sense of Presence</span>
+          <span className="inline-block font-label text-sm uppercase tracking-[0.3em] text-tertiary mb-6 animate-pulse mt-2">A Sense of Presence</span>
           <h1 className="font-headline italic text-5xl md:text-6xl text-on-surface tracking-tight leading-tight mb-8 text-glow text-amber-300">
             Your time,<br /> beautifully held.
           </h1>

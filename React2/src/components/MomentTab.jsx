@@ -16,11 +16,11 @@ const MomentTab = () => {
                     placeholder="What's this moment about?"
                     value={config.customization.moodNote || ''}
                     onChange={handleMoodNoteChange}
-                    maxLength={500}
+                    maxLength={400}
                     className="bg-white/5 border border-white/10 rounded-lg px-4 py-3 focus:outline-none focus:border-orange-200/50 transition-colors text-orange-50 resize-none h-32"
                 />
                 <p className="text-[10px] opacity-50">
-                    {(config.customization.moodNote || '').length}/500 characters
+                    {(config.customization.moodNote || '').length}/400 characters
                 </p>
             </div>
 

@@ -55,6 +55,21 @@ const BasicsTab = () => {
         triggerCelebration(trigger.key, config.customization.trigger.media);
     };
 
+    // Play whatever celebration is currently selected: the chosen preset, or the
+    // uploaded gift video (using a local preview URL before it's saved to Cloudinary).
+    const handlePreviewCelebration = () => {
+        const trigger = config.customization.trigger;
+        if (trigger.type === 'custom') {
+            const media = trigger.media || {};
+            const url = media.file ? URL.createObjectURL(media.file) : media.secure_url;
+            if (url) {
+                triggerCelebration('custom', { type: 'video', url });
+            }
+            return;
+        }
+        triggerCelebration(trigger.preset || 'confetti');
+    };
+
     return (
         <div className="tab-content space-y-6">
             <div className="flex flex-col gap-2">
@@ -279,6 +294,14 @@ const BasicsTab = () => {
                         </button>
                     ))}
                 </div>
+                <button
+                    type="button"
+                    onClick={handlePreviewCelebration}
+                    className="mt-1 w-full py-3 rounded-xl border border-orange-300/40 bg-orange-200/10 hover:bg-orange-200/20 transition-all text-xs font-label uppercase tracking-widest text-orange-100 flex items-center justify-center gap-2"
+                >
+                    <span className="material-symbols-outlined text-sm">play_arrow</span>
+                    Preview celebration
+                </button>
             </div>
         </div>
     );

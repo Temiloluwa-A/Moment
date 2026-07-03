@@ -1,15 +1,18 @@
 const jwt = require('jsonwebtoken');
 
 const authMiddleware = (req, res, next) => {
-    // // === DEV MODE: Bypass Authentication ===
-    // // We assign a dummy user ID so the database doesn't complain about a missing user!
-    // req.user = { id: "000000000000000000000000" };
-    // return next();
-    // // =======================================
+    app.get('/auth/google',
+        passport.authenticate('google', { scope: ['profile'] }));
 
+    app.get('/auth/google/callback',
+        passport.authenticate('google', { failureRedirect: '/login' }),
+        function (req, res) {
+            // Successful authentication, redirect home.
+            res.redirect('/');
+        });
     // Get the token from the request headers
     const token = req.headers.authorization?.split(' ')[1];
-    
+
     if (!token) {
         return res.status(401).send({ message: "Access Denied. No token provided." });
     }

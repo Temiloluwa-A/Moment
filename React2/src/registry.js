@@ -11,21 +11,22 @@ export const FONTS = [
 ];
 
 export const MOOD = [
-    {key: 'hopeful', tag: 'Hopeful', emoji:'🍀', description:'Something worth waiting for....'},
-    {key: 'hype', tag: 'Hype', emoji:'🔥', description: "Let's go.This is it."},
-    {key: 'bittersweet', tag: 'Bittersweet', emoji:'🍂', description: 'Every ending holds a beginning.'},
-    {key: 'nervous', tag: 'Nervous', emoji:'😩',description: 'A quiet storm of what-ifs'},
-    {key: 'peaceful', tag: 'Peaceful', emoji:'🕊',description: 'The world slows down, and for once everything feels enough'},
-    {key: 'grateful', tag: 'Grateful', emoji:'🙏',description: "Appreciating what is and what's to come"},
-    {key: 'determined', tag: 'Determined', emoji:'💪',description: "I'm locked in an focused on what matters"},
-    {key: 'proud', tag: 'Proud', emoji:'🤭',description: " Owning how far i've come"},
-    {key: 'excited', tag: 'Excited', emoji:'🤩',description: 'Something amazing is about to happen.'},
-    {key: 'chill', tag: 'Chill', emoji:'😎',description: 'Just going with the flow'},
+    {key: 'hopeful', tag: 'Hopeful', emoji:'🍀', description:'Something worth waiting for....', ambient: 'Still becoming.'},
+    {key: 'hype', tag: 'Hype', emoji:'🔥', description: "Let's go.This is it.", ambient: 'The best is almost here.'},
+    {key: 'bittersweet', tag: 'Bittersweet', emoji:'🍂', description: 'Every ending holds a beginning.', ambient: 'Holding on and letting go.'},
+    {key: 'nervous', tag: 'Nervous', emoji:'😩',description: 'A quiet storm of what-ifs', ambient: "Breathe. It's almost time."},
+    {key: 'peaceful', tag: 'Peaceful', emoji:'🕊',description: 'The world slows down, and for once everything feels enough', ambient: 'Everything in its time.'},
+    {key: 'grateful', tag: 'Grateful', emoji:'🙏',description: "Appreciating what is and what's to come", ambient: 'Every second, a gift.'},
+    {key: 'determined', tag: 'Determined', emoji:'💪',description: "I'm locked in an focused on what matters", ambient: 'Every second counts.'},
+    {key: 'proud', tag: 'Proud', emoji:'🤭',description: " Owning how far i've come", ambient: 'Look how far you have come.'},
+    {key: 'excited', tag: 'Excited', emoji:'🤩',description: 'Something amazing is about to happen.', ambient: 'Something wonderful is coming.'},
+    {key: 'chill', tag: 'Chill', emoji:'😎',description: 'Just going with the flow', ambient: 'No rush. Just now.'},
 ];
 
 export const TRIGGER = [
     {key: 'confetti', tag: 'Confetti', emoji:'🎉'},
     {key: 'fireworks', tag: 'Fireworks', emoji:'🎆'},
+    {key: 'balloons', tag: 'Balloons', emoji:'🎈'},
     {key: 'stars', tag: 'Stars', emoji:'⭐'},
     {key: 'emoji', tag: 'Emoji', emoji:'✨'},
 ]

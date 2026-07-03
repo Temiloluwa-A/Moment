@@ -1,6 +1,5 @@
 import axios from "axios";
-import { useState } from "react";
-import { useEffect } from "react";
+import { useState, useEffect } from "react";
 import { useParams } from "react-router-dom";
 import { useTimer } from "../context/TimerContext";
 import Timer from "../components/Timer";
@@ -29,7 +28,7 @@ const SharedMoment = () => {
   return (
     <div className="min-h-screen flex items-center justify-center pt-16 px-4 md:px-8">
         {momentData ? (
-            <Timer isPanelOpen={false} />
+            <Timer isPanelOpen={false} readOnly />
         ) : (
             <div className="text-orange-50/50 uppercase tracking-widest text-sm animate-pulse">Loading moment...</div>
         )}
