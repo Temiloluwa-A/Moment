@@ -62,7 +62,7 @@ const Create = () => {
       )}
 
       {/* Main Content Area (Where the Timers will show up) */}
-      <div className={`flex-1 flex justify-center items-center transition-all duration-500 ease-in-out pb-10 ${isPanelOpen ? 'w-full lg:w-[60%]' : 'w-full'}`}>
+      <div className={`flex-1 flex justify-center items-start lg:items-center transition-all duration-500 ease-in-out pt-6 lg:pt-0 pb-10 ${isPanelOpen ? 'w-full lg:w-[60%]' : 'w-full'}`}>
         <Outlet context={{ isPanelOpen, isCompleted }} />
       </div>
 
