@@ -8,7 +8,11 @@ const userSchema = new mongoose.Schema({
     email:{type: String, required: true, unique: true, lowercase: true},
     googleId:{type: String},
     avatarStyle:{type: String, default:'lorelei'},
-   
+    // Password reset: hashed token + expiry. Required as real schema paths
+    // because the schema is strict:"throw" — otherwise setting them would throw.
+    resetPasswordToken:{type: String},
+    resetPasswordExpires:{type: Date},
+
 }, {timestamps: true, strict: "throw"})
 
 
