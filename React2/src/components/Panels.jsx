@@ -4,7 +4,7 @@ const Panels = ({ children, className}) => { //children for any nested elements 
     //classname in div conatiner appends any other styling
   return (
     <div tabIndex={0} className={`
-        focus:outline-none focus:border *:rounded-full px-4 py-3 focus:border-amber-950 border focus:text-amber-400
+        focus:outline-none focus:border *:rounded-full px-4 py-3 focus:border-primary-subtle border focus:text-primary
         ${className} 
     `}>
 

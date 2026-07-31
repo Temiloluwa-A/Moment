@@ -89,62 +89,62 @@ const Timer = ({ isPanelOpen, readOnly = false }) => {
         <div className="relative flex flex-col items-center w-full px-3 justify-center gap-4 overflow-hidden" style={{ fontFamily: activeFont.family }}>
             <div className="pointer-events-none fixed inset-0 -z-20" style={bgStyle} />
             <div className={`relative z-10 glass-panel w-full flex flex-col items-center justify-center border border-white/5 shadow-2xl transition-all duration-500 ${isPanelOpen ? 'max-w-2xl' : 'max-w-4xl'}`} style={{ borderRadius: `${config.customization.borderRadius}px` }}>
-                <span className="font-label text-dark-cofee-900 uppercase tracking-[0.2em] text-xs md:text-lg mb-8 mt-4">{config.title || 'untitled moment'}</span>
+                <span className="font-label text-text-muted uppercase tracking-[0.2em] text-xs md:text-lg mb-8 mt-4">{config.title || 'untitled moment'}</span>
 
                 <div className="flex items-center gap-3 md:gap-6 mt-4">
                     
                     {/* DAYS */}
                     {config.units.days && (
                         <div className="flex flex-col items-center">
-                            <span className="text-5xl md:text-7xl font-headline font-bold tracking-tighter text-orange-50">{pad(days)}</span>
-                            <span className="font-label text-xs md:text-[15px] uppercase tracking-widest text-orange-100/40 mt-1">Days</span>
+                            <span className="text-5xl md:text-7xl font-headline font-bold tracking-tighter text-text">{pad(days)}</span>
+                            <span className="font-label text-xs md:text-[15px] uppercase tracking-widest text-text/40 mt-1">Days</span>
                         </div>
                     )}
 
                     {/* COLON (If Days exists AND another unit exists after it) */}
                     {config.units.days && (config.units.hours || config.units.minutes || config.units.seconds) && (
-                        <span className="text-4xl md:text-6xl font-headline text-orange-100/30 pb-4 md:pb-6">:</span>
+                        <span className="text-4xl md:text-6xl font-headline text-text/30 pb-4 md:pb-6">:</span>
                     )}
 
                     {/* HOURS */}
                     {config.units.hours && (
                         <div className="flex flex-col items-center">
-                            <span className="text-5xl md:text-7xl font-headline font-bold tracking-tighter text-orange-50">{pad(hours)}</span>
-                            <span className="font-label text-xs md:text-[15px] uppercase tracking-widest text-orange-100/40 mt-1">Hours</span>
+                            <span className="text-5xl md:text-7xl font-headline font-bold tracking-tighter text-text">{pad(hours)}</span>
+                            <span className="font-label text-xs md:text-[15px] uppercase tracking-widest text-text/40 mt-1">Hours</span>
                         </div>
                     )}
 
                     {/* COLON (If Hours exists AND another unit exists after it) */}
                     {config.units.hours && (config.units.minutes || config.units.seconds) && (
-                        <span className="text-4xl md:text-6xl font-headline text-orange-100/30 pb-4 md:pb-6">:</span>
+                        <span className="text-4xl md:text-6xl font-headline text-text/30 pb-4 md:pb-6">:</span>
                     )}
 
                     {/* MINUTES */}
                     {config.units.minutes && (
                         <div className="flex flex-col items-center">
-                            <span className="text-5xl md:text-7xl font-headline font-bold tracking-tighter text-orange-50">{pad(minutes)}</span>
-                            <span className="font-label text-xs md:text-[15px] uppercase tracking-widest text-orange-100/40 mt-1">Mins</span>
+                            <span className="text-5xl md:text-7xl font-headline font-bold tracking-tighter text-text">{pad(minutes)}</span>
+                            <span className="font-label text-xs md:text-[15px] uppercase tracking-widest text-text/40 mt-1">Mins</span>
                         </div>
                     )}
 
                     {/* COLON (If Minutes exists AND Seconds exists after it) */}
                     {config.units.minutes && config.units.seconds && (
-                        <span className="text-4xl md:text-6xl font-headline text-orange-100/30 pb-4 md:pb-6">:</span>
+                        <span className="text-4xl md:text-6xl font-headline text-text/30 pb-4 md:pb-6">:</span>
                     )}
 
                     {/* SECONDS */}
                     {config.units.seconds && (
                         <div className="flex flex-col items-center">
-                            <span className="text-5xl md:text-7xl font-headline font-bold tracking-tighter text-orange-50">{pad(seconds)}</span>
-                            <span className="font-label text-xs md:text-[15px] uppercase tracking-widest text-orange-100/40 mt-1">Secs</span>
+                            <span className="text-5xl md:text-7xl font-headline font-bold tracking-tighter text-text">{pad(seconds)}</span>
+                            <span className="font-label text-xs md:text-[15px] uppercase tracking-widest text-text/40 mt-1">Secs</span>
                         </div>
                     )}
                 </div>
-                <div className="h-px w-24 bg-outline-variant/30 mb-8"></div>
-                <p className="noto-serif-italic text-2xl md:text-3xl text-orange-100/90 text-center max-w-md leading-relaxed mb-3">
+                <div className="h-px w-24 bg-border-mid/30 mb-8"></div>
+                <p className="noto-serif-italic text-2xl md:text-3xl text-text/90 text-center max-w-md leading-relaxed mb-3">
                     {activeMood?.ambient || 'Every second counts.'}
                 </p>
-                {/* <p className="font-body text-orange-100/40 mt-6 text-sm">Parisian Summer '24</p> */}
+                {/* <p className="font-body text-text/40 mt-6 text-sm">Parisian Summer '24</p> */}
             </div >
                     
             <div className={`relative z-10 glass-panel p-4 w-full flex flex-col items-center justify-center border border-white/5 shadow-2xl transition-all duration-500 ${isPanelOpen ? 'max-w-2xl' : 'max-w-4xl'}`} style={{ borderRadius: `${config.customization.borderRadius}px` }}>
@@ -153,7 +153,7 @@ const Timer = ({ isPanelOpen, readOnly = false }) => {
                         <div><span className='pb-2'>{activeMood.emoji}</span></div>
                         <textarea value={config.customization.moodNote} onChange={readOnly ? undefined : (e) => update('customization.moodNote', e.target.value)} readOnly={readOnly} maxLength={400} className={`text-center bg-transparent resize-none focus:outline-none w-full ${readOnly ? 'cursor-default' : ''}`}></textarea>
                         <div>
-                            <span className=' border px-4 py-1 mb-2 rounded-3xl bg-amber-200/20 border-amber-500'>{activeMood.tag}</span>
+                            <span className=' border px-4 py-1 mb-2 rounded-3xl bg-primary/20 border-primary'>{activeMood.tag}</span>
                         </div>
 
                     </div>

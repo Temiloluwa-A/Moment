@@ -102,7 +102,7 @@ const BottomDrawer = ({ isOpen, onClose, children, activeTab, onTabChange }) => 
 
             {/* Drawer */}
             <div
-                className={`fixed bottom-0 left-0 right-0 bg-gradient-to-t from-stone-900 to-stone-800 z-40 rounded-t-3xl shadow-2xl flex flex-col ${!isDragging ? 'transition-all duration-500 ease-out' : ''} ${drawerHeightClass}`}
+                className={`fixed bottom-0 left-0 right-0 bg-gradient-to-t from-surface to-surface-high z-40 rounded-t-3xl shadow-2xl flex flex-col ${!isDragging ? 'transition-all duration-500 ease-out' : ''} ${drawerHeightClass}`}
                 style={{
                     height: `${height}dvh`,
                     boxShadow: isDragging ? '0 -4px 20px rgba(0,0,0,0.5)' : '0 -4px 16px rgba(0,0,0,0.3)',
@@ -114,11 +114,11 @@ const BottomDrawer = ({ isOpen, onClose, children, activeTab, onTabChange }) => 
             >
                 {/* Drag handle — the only draggable zone */}
                 <div className="drawer-handle shrink-0 flex items-center justify-center pt-3 pb-4 cursor-grab active:cursor-grabbing rounded-t-3xl">
-                    <div className="w-12 h-1.5 bg-orange-200/40 rounded-full"></div>
+                    <div className="w-12 h-1.5 bg-primary/40 rounded-full"></div>
                 </div>
 
                 {/* Tab navigation */}
-                <div className="shrink-0 bg-stone-800/95 backdrop-blur-sm border-b border-white/10 px-4">
+                <div className="shrink-0 bg-surface-high/95 backdrop-blur-sm border-b border-border px-4">
                     <div className="flex gap-4">
                         {['Basics', 'Look', 'Moment'].map((tab) => (
                             <button
@@ -126,8 +126,8 @@ const BottomDrawer = ({ isOpen, onClose, children, activeTab, onTabChange }) => 
                                 onClick={() => onTabChange(tab.toLowerCase())}
                                 className={`py-3 px-4 text-sm font-label uppercase tracking-widest transition-all border-b-2 ${
                                     activeTab === tab.toLowerCase()
-                                        ? 'text-orange-300 border-orange-300'
-                                        : 'text-orange-100/60 border-transparent hover:text-orange-100/80'
+                                        ? 'text-primary border-primary'
+                                        : 'text-text/60 border-transparent hover:text-text/80'
                                 }`}
                             >
                                 {tab}

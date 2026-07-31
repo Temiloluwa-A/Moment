@@ -59,20 +59,20 @@ const JoinMoment = () => {
     };
 
     if (loading) {
-        return <div className="min-h-screen flex items-center justify-center text-orange-50/50 uppercase tracking-widest text-sm animate-pulse">Loading invitation...</div>;
+        return <div className="min-h-screen flex items-center justify-center text-text/50 uppercase tracking-widest text-sm animate-pulse">Loading invitation...</div>;
     }
 
     return (
-        <div className="min-h-screen flex items-center justify-center pt-16 px-4 md:px-8 text-orange-50">
+        <div className="min-h-screen flex items-center justify-center pt-16 px-4 md:px-8 text-text">
             <div className="glass-panel p-8 rounded-2xl border border-white/10 shadow-lg max-w-lg text-center flex flex-col items-center">
                 {error ? (
-                    <p className="text-red-400">{error}</p>
+                    <p className="text-error">{error}</p>
                 ) : (
                     <>
                         <Avatar seed={moment.userId.userName} className="w-20 h-20 rounded-full mb-4" />
-                        <p className="text-orange-100/60 mb-2">You've been invited by <span className="font-bold text-orange-100">{moment.userId.userName}</span> to collaborate on:</p>
-                        <h1 className="text-4xl font-headline italic text-amber-300 mb-8">"{moment.title}"</h1>
-                        <button onClick={handleJoin} disabled={isJoining} className="w-full max-w-xs py-4 bg-amber-400 text-espresso-900 font-bold tracking-widest uppercase text-sm rounded-full shadow-lg hover:bg-amber-300 hover:scale-[1.02] active:scale-95 transition-all duration-300 disabled:opacity-70 disabled:cursor-not-allowed">
+                        <p className="text-text/60 mb-2">You've been invited by <span className="font-bold text-text">{moment.userId.userName}</span> to collaborate on:</p>
+                        <h1 className="text-4xl font-headline italic text-primary mb-8">"{moment.title}"</h1>
+                        <button onClick={handleJoin} disabled={isJoining} className="w-full max-w-xs py-4 bg-primary text-on-primary font-bold tracking-widest uppercase text-sm rounded-full shadow-lg hover:bg-primary-hover hover:scale-[1.02] active:scale-95 transition-all duration-300 disabled:opacity-70 disabled:cursor-not-allowed">
                             {isJoining ? "Joining..." : "Accept Invitation"}
                         </button>
                     </>

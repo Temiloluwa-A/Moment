@@ -6,6 +6,7 @@ import { useGoogleLogin } from '@react-oauth/google'
 import axios from 'axios'
 import Cookies from 'js-cookie'
 import { useToast } from '../context/ToastContext'
+import TimeSky from './TimeSky'
 
 const Login = () => {
   const navigate = useNavigate()
@@ -89,38 +90,38 @@ const Login = () => {
       <div className="flex min-h-screen w-full relative">
 
         {/* <!-- Right Side: Sign-up Form --> */}
-        <section className="w-full lg:w-1/2 flex flex-col justify-center items-center p-6 md:p-12 lg:p-24 relative form border border-tawny-800">
+        <section className="w-full lg:w-1/2 flex flex-col justify-center items-center p-6 md:p-12 lg:p-24 relative form border border-border">
           <div className="w-full max-w-md space-y-10 relative z-10 ">
             <header className="text-center ">
               <div className="inline-flex items-center justify-center mb-3">
                 <span className="font-serif italic text-4xl tracking-[-0.02em]">Moments</span>
               </div>
-              <h2 className="font-display text-3xl italic text-amber-500">Welcome Back</h2>
-              <p className="font-light text-parchment-500">Sign in to your account to continue.</p>
+              <h2 className="font-display text-3xl italic text-primary">Welcome Back</h2>
+              <p className="font-light text-text-muted">Sign in to your account to continue.</p>
               <div className="text-center space-y-4">
-              <p className="font-light text-parchment-500 text-sm">
-                Don't have an account? <Link to='/sign-up'><span className='text-amber-500 font-medium text-md'>Sign Up</span></Link>
+              <p className="font-light text-text-muted text-sm">
+                Don't have an account? <Link to='/sign-up'><span className='text-primary font-medium text-md'>Sign Up</span></Link>
               </p>
 
             </div>
             </header>
-            <div className="glass-panel p-4 md:p-4 shadow-2xl border rounded-3xl border-tawny-800">
+            <div className="glass-panel p-4 md:p-4 shadow-2xl border rounded-3xl border-border">
               <form className="form" onSubmit={loginForm.handleSubmit}>
                 <div>
 
                   {/* <!-- Username or Email Field --> */}
                   <div className="space-y-1.5 mb-1">
                     <label className="font-label text-xs uppercase tracking-widest ml-1" htmlFor="identifier">Username or Email</label>
-                    <input className="w-full border py-3 px-4 rounded-lg border-tawny-700 outline-none text-parchment-300 focus:ring-1 focus:ring-amber-500/20 bg-espresso-950 placeholder:text-tawny-500" id="identifier" name="identifier" placeholder="T3miii or temiade@gmail.com" type="text" onChange={loginForm.handleChange} onBlur={loginForm.handleBlur} value={loginForm.values.identifier} />
-                    {(loginForm.touched.identifier && loginForm.errors.identifier) && <small className='text-danger'>{loginForm.errors.identifier}</small>}
+                    <input className="w-full border py-3 px-4 rounded-lg border-input-border outline-none text-text focus:ring-1 focus:ring-focus/20 bg-input-bg placeholder:text-text-subtle" id="identifier" name="identifier" placeholder="T3miii or temiade@gmail.com" type="text" onChange={loginForm.handleChange} onBlur={loginForm.handleBlur} value={loginForm.values.identifier} />
+                    {(loginForm.touched.identifier && loginForm.errors.identifier) && <small className='text-error'>{loginForm.errors.identifier}</small>}
 
                   </div>
                   {/* <!-- Password Field --> */}
                   <div className="space-y-1.5 relative">
                     <label className="font-label text-xs uppercase tracking-widest ml-1" htmlFor="password">Password</label>
                     <div className="relative flex items-center">
-                      <input className='w-full border-2 py-3 px-4 rounded-lg outline-none text-parchment-300 border-tawny-700 focus:ring-1 focus:ring-amber-500/20 bg-espresso-950 placeholder:text-tawny-500' type={showPassword ? "text" : "password"} name='password' onChange={loginForm.handleChange} onBlur={loginForm.handleBlur} value={loginForm.values.password} />
-                      <button type="button" className="absolute right-3 text-gray-500 hover:text-gray-700 " onClick={() => setshowPassword(!showPassword)}>
+                      <input className='w-full border-2 py-3 px-4 rounded-lg outline-none text-text border-input-border focus:ring-1 focus:ring-focus/20 bg-input-bg placeholder:text-text-subtle' type={showPassword ? "text" : "password"} name='password' onChange={loginForm.handleChange} onBlur={loginForm.handleBlur} value={loginForm.values.password} />
+                      <button type="button" className="absolute right-3 text-text-subtle hover:text-text-muted " onClick={() => setshowPassword(!showPassword)}>
                         {showPassword ? (
                           <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" className="bi bi-eye" viewBox="0 0 16 16">
                             <path d="M16 8s-3-5.5-8-5.5S0 8 0 8s3 5.5 8 5.5S16 8 16 8M1.173 8a13 13 0 0 1 1.66-2.043C4.12 4.668 5.88 3.5 8 3.5s3.879 1.168 5.168 2.457A13 13 0 0 1 14.828 8q-.086.13-.195.288c-.335.48-.83 1.12-1.465 1.755C11.879 11.332 10.119 12.5 8 12.5s-3.879-1.168-5.168-2.457A13 13 0 0 1 1.172 8z" />
@@ -136,10 +137,13 @@ const Login = () => {
                         )}
                       </button>
                     </div>
-                    {(loginForm.touched.password && loginForm.errors.password) && <small className='text-danger'>{loginForm.errors.password}</small>}<br />
+                    {(loginForm.touched.password && loginForm.errors.password) && <small className='text-error'>{loginForm.errors.password}</small>}<br />
 
                   </div>
-                  <button className="w-full flex items-center justify-center gap-3 text-lg py-4 bg-amber-500 hover:bg-amber-400 font-semibold rounded-full shadow-lg hover:scale-[1.02] disabled:opacity-70 disabled:hover:scale-100 disabled:cursor-not-allowed active:scale-95 transition-all duration-500 tracking-wide" type="submit" disabled={loader}>
+                  <div className="flex justify-end -mt-1 mb-4">
+                    <Link to="/forgot-password" className="text-xs font-label uppercase tracking-widest text-text-subtle hover:text-primary transition-colors">Forgot password?</Link>
+                  </div>
+                  <button className="w-full flex items-center justify-center gap-3 text-lg py-4 bg-primary text-on-primary hover:bg-primary-hover font-semibold rounded-full shadow-lg hover:scale-[1.02] disabled:opacity-70 disabled:hover:scale-100 disabled:cursor-not-allowed active:scale-95 transition-all duration-500 tracking-wide" type="submit" disabled={loader}>
                     {loader ? (
                       <>
                         <svg className="animate-spin h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
@@ -157,14 +161,14 @@ const Login = () => {
 
               <div className="mt-10 relative">
                 <div className="absolute inset-0 flex items-center">
-                  <div className="w-full border-t border-tawny-700"></div>
+                  <div className="w-full border-t border-border-mid"></div>
                 </div>
                 <div className="relative flex justify-center text-xs uppercase tracking-[0.2em] font-label">
                   <span className="backdrop-blur px-4">Or continue with</span>
                 </div>
               </div>
               <div className="mt-8 flex justify-center mb-4">
-                <button type="button" onClick={() => googleLogin()} disabled={loader} className="flex items-center justify-center gap-3 py-4 px-6 glass-panel rounded-lg transition-all duration-500 border border-amber-500 hover:scale-[1.02] disabled:opacity-70 disabled:hover:scale-100 disabled:cursor-not-allowed">
+                <button type="button" onClick={() => googleLogin()} disabled={loader} className="btn-glass flex items-center justify-center gap-3 py-4 px-6 rounded-lg disabled:opacity-70 disabled:cursor-not-allowed">
                   <svg className="w-5 h-5" viewBox="0 0 24 24">
                     <path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" fill="#4285F4"></path>
                     <path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" fill="#34A853"></path>
@@ -178,12 +182,9 @@ const Login = () => {
             
           </div>
         </section>
-        {/* <!-- Left Side: Atmospheric Sunset Area --> */}
+        {/* <!-- Left Side: Atmospheric Time-of-Day Sky --> */}
         <section className="hidden lg:flex lg:w-1/2 relative overflow-hidden items-center justify-center p-20">
-          {/* <!-- Atmospheric Image with Grain Overlay --> */}
-          <div className="absolute inset-0 opacity-40 mix-blend-overlay">
-            {/* <img alt="" className="w-full h-full object-cover data-alt="A cinematic wide shot of a deep orange sunset over a vast, calm ocean horizon. The atmosphere is thick with golden haze, and the sun is a soft, glowing orb melting into the dark umber water. Soft, textured grain covers the scene to create a vintage, nostalgic film aesthetic, mimicking a cherished memory captured on old 35mm film during the golden hour." src="https://lh3.googleusercontent.com/aida-public/AB6AXuA1YKXE9XqMJNDl2YOKrcTqN9ykniY4KBj1B5UBrn1rIJkB6OoGvVljBJxx1pMDb_-FH_Vy-Avar75_UBOEaKAu-f1Et8qW9r4V8VCK7HOFZqh8fYRtbKVowzUHAXZBI2T8YDX9PFCL0VyfAcPIU9y2ICyqWYezhabR9-bROdAtlGbrfMhoGnEmBroWKJMXeUmKaMoAMUxkkRT19-5jyDRppnCjRvMGVfeMs4AN1vLGiz81kQd8TOXGO-nffPjVY6jxAXZiAb_yuxQ-" /> */}
-          </div>
+          <TimeSky />
           <div className="relative z-10 max-w-lg text-center space-y-4">
             <h1 className="font-body font-light text-7xl  tracking-tight leading-[1.1]">
               Every sunset is a unique masterpiece...
@@ -192,7 +193,7 @@ const Login = () => {
               Capture the ephemeral beauty of your life's most precious chapters. Join a community dedicated to the art of preservation and the warmth of nostalgia.
             </p>
             <div className="pt-6">
-              <div className="inline-block px-6 py-2 rounded-full border font-label text-sm tracking-[0.2em] uppercase glass-panel bg-amber-500 text-espresso-900 hover:bg-amber-400">
+              <div className="inline-block px-6 py-2 rounded-full border font-label text-sm tracking-[0.2em] uppercase glass-panel bg-primary text-on-primary hover:bg-primary-hover">
                 Moments Collective
               </div>
             </div>

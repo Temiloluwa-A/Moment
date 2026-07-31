@@ -31,12 +31,12 @@ export const ToastProvider = ({ children }) => {
         {toasts.map((toast) => {
           const toneClasses =
             toast.type === 'success'
-              ? 'border-emerald-400/25 bg-surface/95 text-emerald-100'
+              ? 'border-success/25 bg-surface/95 text-success'
               : toast.type === 'error'
-              ? 'border-primary-subtle-400/25 bg-surface/95 text-primary'
+              ? 'border-error/25 bg-surface/95 text-error'
               : toast.type === 'warning'
-              ? 'border-amber-400/25 bg-surface/95 text-primary'
-              : 'border-amber-300/25 bg-surface/95 text-sky-100';
+              ? 'border-primary/25 bg-surface/95 text-primary'
+              : 'border-primary/25 bg-surface/95 text-sky-100';
 
           const icon =
             toast.type === 'success'

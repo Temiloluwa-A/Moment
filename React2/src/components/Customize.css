@@ -85,30 +85,6 @@
 }
 
 /* Mobile drawer and floating button styles (kept for mobile view) */
-.customize-container {
-    display: flex;
-    flex-direction: column;
-    width: 100%;
-    height: 100%;
-}
-
-.timer-full-screen {
-    position: relative;
-    width: 100%;
-    height: 100dvh;
-    display: flex;
-    flex-direction: column;
-    overflow: hidden;
-}
-
-.timer-content {
-    flex: 1;
-    overflow: auto;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-}
-
 .floating-customize-btn {
     position: fixed;
     bottom: 4rem;

@@ -3,6 +3,7 @@ import { useState, useEffect } from "react";
 import { useParams } from "react-router-dom";
 import { useTimer } from "../context/TimerContext";
 import Timer from "../components/Timer";
+import { useQuery,QueryClient } from '@tanstack/react-query'
 
 const SharedMoment = () => {
     const { slug } = useParams();
@@ -30,7 +31,7 @@ const SharedMoment = () => {
         {momentData ? (
             <Timer isPanelOpen={false} readOnly />
         ) : (
-            <div className="text-orange-50/50 uppercase tracking-widest text-sm animate-pulse">Loading moment...</div>
+            <div className="text-text/50 uppercase tracking-widest text-sm animate-pulse">Loading moment...</div>
         )}
     </div>
   )

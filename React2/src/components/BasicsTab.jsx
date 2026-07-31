@@ -79,7 +79,7 @@ const BasicsTab = () => {
                     placeholder="Name this moment..."
                     defaultValue={config.title || ''}
                     onChange={(e) => update('title', e.target.value)}
-                    className="bg-white/5 border border-white/10 rounded-lg px-4 py-3 focus:outline-none focus:border-orange-200/50 transition-colors text-orange-50"
+                    className="bg-input-bg border border-input-border rounded-lg px-4 py-3 focus:outline-none focus:border-primary/50 transition-colors text-text"
                 />
             </div>
 
@@ -90,13 +90,13 @@ const BasicsTab = () => {
                 <div className="flex gap-3">
                     <input
                         type="date"
-                        className="w-1/2 bg-white/5 border border-white/10 rounded-lg px-3 py-3 focus:outline-none focus:border-orange-200/50 color-scheme-dark text-orange-50"
+                        className="w-1/2 bg-input-bg border border-input-border rounded-lg px-3 py-3 focus:outline-none focus:border-primary/50 color-scheme-dark text-text"
                         value={displayDate}
                         onChange={(e) => handleDateChange(e, isCountUp ? 'startAt' : 'endAt')}
                     />
                     <input
                         type="time"
-                        className="w-1/2 bg-white/5 border border-white/10 rounded-lg px-3 py-3 focus:outline-none focus:border-orange-200/50 color-scheme-dark text-orange-50"
+                        className="w-1/2 bg-input-bg border border-input-border rounded-lg px-3 py-3 focus:outline-none focus:border-primary/50 color-scheme-dark text-text"
                         value={displayTime}
                         onChange={(e) => handleTimeChange(e, isCountUp ? 'startAt' : 'endAt')}
                     />
@@ -111,7 +111,7 @@ const BasicsTab = () => {
                             <button
                                 type="button"
                                 onClick={() => update('endAt', null)}
-                                className="text-[10px] text-orange-200/50 hover:text-orange-200 uppercase tracking-widest transition-colors"
+                                className="text-[10px] text-primary/50 hover:text-primary uppercase tracking-widest transition-colors"
                             >
                                 Clear
                             </button>
@@ -120,13 +120,13 @@ const BasicsTab = () => {
                     <div className="flex gap-3">
                         <input
                             type="date"
-                            className="w-1/2 bg-white/5 border border-white/10 rounded-lg px-3 py-3 focus:outline-none focus:border-orange-200/50 color-scheme-dark text-orange-50"
+                            className="w-1/2 bg-input-bg border border-input-border rounded-lg px-3 py-3 focus:outline-none focus:border-primary/50 color-scheme-dark text-text"
                             value={displayMilestoneDate}
                             onChange={(e) => handleDateChange(e, 'endAt')}
                         />
                         <input
                             type="time"
-                            className="w-1/2 bg-white/5 border border-white/10 rounded-lg px-3 py-3 focus:outline-none focus:border-orange-200/50 color-scheme-dark text-orange-50"
+                            className="w-1/2 bg-input-bg border border-input-border rounded-lg px-3 py-3 focus:outline-none focus:border-primary/50 color-scheme-dark text-text"
                             value={displayMilestoneTime}
                             onChange={(e) => handleTimeChange(e, 'endAt')}
                         />
@@ -137,40 +137,40 @@ const BasicsTab = () => {
             <div className="flex flex-col gap-2">
                 <label htmlFor="units" className="text-xs uppercase tracking-widest opacity-70">Show Units</label>
                 <div className="flex flex-wrap gap-4 pt-1">
-                    <label className="flex items-center gap-2 cursor-pointer text-sm text-orange-50">
+                    <label className="flex items-center gap-2 cursor-pointer text-sm text-text">
                         <input
                             type="checkbox"
-                            className="accent-orange-400 w-4 h-4 cursor-pointer"
+                            className="accent-primary w-4 h-4 cursor-pointer"
                             value="days"
                             onChange={units}
                             checked={config.units.days}
                         />
                         Days
                     </label>
-                    <label className="flex items-center gap-2 cursor-pointer text-sm text-orange-50">
+                    <label className="flex items-center gap-2 cursor-pointer text-sm text-text">
                         <input
                             type="checkbox"
-                            className="accent-orange-400 w-4 h-4 cursor-pointer"
+                            className="accent-primary w-4 h-4 cursor-pointer"
                             value="hours"
                             onChange={units}
                             checked={config.units.hours}
                         />
                         Hours
                     </label>
-                    <label className="flex items-center gap-2 cursor-pointer text-sm text-orange-50">
+                    <label className="flex items-center gap-2 cursor-pointer text-sm text-text">
                         <input
                             type="checkbox"
-                            className="accent-orange-400 w-4 h-4 cursor-pointer"
+                            className="accent-primary w-4 h-4 cursor-pointer"
                             value="minutes"
                             onChange={units}
                             checked={config.units.minutes}
                         />
                         Minutes
                     </label>
-                    <label className="flex items-center gap-2 cursor-pointer text-sm text-orange-50">
+                    <label className="flex items-center gap-2 cursor-pointer text-sm text-text">
                         <input
                             type="checkbox"
-                            className="accent-orange-400 w-4 h-4 cursor-pointer"
+                            className="accent-primary w-4 h-4 cursor-pointer"
                             value="seconds"
                             onChange={units}
                             checked={config.units.seconds}
@@ -181,17 +181,17 @@ const BasicsTab = () => {
             </div>
 
             <div className="flex flex-col gap-2 pt-6">
-                <label className="flex items-center gap-3 cursor-pointer text-xs font-label uppercase tracking-widest text-orange-100 opacity-90 transition-opacity hover:opacity-100">
+                <label className="flex items-center gap-3 cursor-pointer text-xs font-label uppercase tracking-widest text-text opacity-90 transition-opacity hover:opacity-100">
                     <input
                         type="checkbox"
-                        className="accent-orange-400 w-4 h-4 cursor-pointer"
+                        className="accent-primary w-4 h-4 cursor-pointer"
                         checked={config.isGift}
                         onChange={(e) => update('isGift', e.target.checked)}
                     />
                     Make this a gift moment
                 </label>
                 {config.isGift && (
-                    <div className="space-y-3 bg-white/5 border border-white/10 rounded-2xl p-4">
+                    <div className="space-y-3 bg-surface-high/40 border border-border rounded-2xl p-4">
                         <div className="text-xs uppercase tracking-widest opacity-70">Gift celebration</div>
                         <div className="grid grid-cols-2 gap-2">
                             <button
@@ -202,7 +202,7 @@ const BasicsTab = () => {
                                     update('customization.trigger.media', { secure_url: null, publicId: null, resourceType: null, file: null });
                                     setSelectedVideo(null);
                                 }}
-                                className={`py-2 rounded-xl text-xs uppercase tracking-widest transition-all ${config.customization.trigger.type === 'preset' ? 'bg-orange-200/20 border border-orange-300 text-orange-100' : 'bg-white/5 border border-white/10 text-orange-50 hover:bg-white/10'}`}
+                                className={`py-2 rounded-xl text-xs uppercase tracking-widest transition-all ${config.customization.trigger.type === 'preset' ? 'bg-primary/20 border border-primary text-text' : 'bg-input-bg border border-input-border text-text hover:bg-surface-high'}`}
                             >
                                 Use preset
                             </button>
@@ -212,7 +212,7 @@ const BasicsTab = () => {
                                     update('customization.trigger.type', 'custom');
                                     update('customization.trigger.preset', 'video');
                                 }}
-                                className={`py-2 rounded-xl text-xs uppercase tracking-widest transition-all ${config.customization.trigger.type === 'custom' ? 'bg-orange-200/20 border border-orange-300 text-orange-100' : 'bg-white/5 border border-white/10 text-orange-50 hover:bg-white/10'}`}
+                                className={`py-2 rounded-xl text-xs uppercase tracking-widest transition-all ${config.customization.trigger.type === 'custom' ? 'bg-primary/20 border border-primary text-text' : 'bg-input-bg border border-input-border text-text hover:bg-surface-high'}`}
                             >
                                 Upload gift video
                             </button>
@@ -237,7 +237,7 @@ const BasicsTab = () => {
                                 <button
                                     type="button"
                                     onClick={() => videoInputRef.current.click()}
-                                    className="w-full py-3 rounded-xl border border-white/10 bg-white/5 hover:bg-white/10 transition-all text-sm text-orange-100"
+                                    className="w-full py-3 rounded-xl border border-border bg-surface-high/50 hover:bg-surface-high transition-all text-sm text-text"
                                 >
                                     {selectedVideo ? selectedVideo : 'Choose gift video'}
                                 </button>
@@ -249,7 +249,7 @@ const BasicsTab = () => {
                                             if (videoInputRef.current) videoInputRef.current.value = '';
                                             update('customization.trigger.media', { secure_url: null, publicId: null, resourceType: 'video', file: null });
                                         }}
-                                        className="text-xs text-orange-100/70 hover:text-orange-100 underline"
+                                        className="text-xs text-text/70 hover:text-text underline"
                                     >
                                         Remove uploaded video
                                     </button>
@@ -262,10 +262,10 @@ const BasicsTab = () => {
             </div>
 
             <div className="flex flex-col gap-2 pt-2">
-                <label className="flex items-center gap-3 cursor-pointer text-xs font-label uppercase tracking-widest text-orange-100 opacity-90 transition-opacity hover:opacity-100">
+                <label className="flex items-center gap-3 cursor-pointer text-xs font-label uppercase tracking-widest text-text opacity-90 transition-opacity hover:opacity-100">
                     <input
                         type="checkbox"
-                        className="accent-orange-400 w-4 h-4 cursor-pointer"
+                        className="accent-primary w-4 h-4 cursor-pointer"
                         checked={config.isPublic}
                         onChange={(e) => update('isPublic', e.target.checked)}
                     />
@@ -285,8 +285,8 @@ const BasicsTab = () => {
                             onClick={() => handleTriggerChange(trigger)}
                             className={`py-3 px-2 rounded-xl border transition-all text-xs font-label uppercase tracking-widest flex flex-col items-center gap-1 ${
                                 config.customization.trigger.preset === trigger.key
-                                    ? 'bg-orange-200/20 border-orange-300'
-                                    : 'bg-white/5 border-white/10 hover:bg-white/10'
+                                    ? 'bg-primary/20 border-primary'
+                                    : 'bg-surface-high/50 border-border hover:bg-surface-high'
                             }`}
                         >
                             <span className="text-2xl mb-1">{trigger.emoji}</span>
@@ -297,7 +297,7 @@ const BasicsTab = () => {
                 <button
                     type="button"
                     onClick={handlePreviewCelebration}
-                    className="mt-1 w-full py-3 rounded-xl border border-orange-300/40 bg-orange-200/10 hover:bg-orange-200/20 transition-all text-xs font-label uppercase tracking-widest text-orange-100 flex items-center justify-center gap-2"
+                    className="mt-1 w-full py-3 rounded-xl border border-primary/40 bg-primary/10 hover:bg-primary/20 transition-all text-xs font-label uppercase tracking-widest text-text flex items-center justify-center gap-2"
                 >
                     <span className="material-symbols-outlined text-sm">play_arrow</span>
                     Preview celebration

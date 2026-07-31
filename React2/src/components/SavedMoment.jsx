@@ -67,7 +67,7 @@ const SavedMoment = ({ moment, onClick, headerLeft, headerRight, footer, actions
                 {/* Left content column */}
                 <div className="flex flex-1 flex-col justify-between p-5 sm:p-7 min-w-0">
                     <div>
-                        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2 sm:gap-3 mb-4 text-xs uppercase tracking-[0.23em] text-orange-100/70 font-label">
+                        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2 sm:gap-3 mb-4 text-xs uppercase tracking-[0.23em] text-text/70 font-label">
                             {headerLeft ?? (
                                 <span className="inline-flex items-center gap-2 min-w-0">
                                     <Avatar className="w-9 h-9 sm:w-10 sm:h-10 rounded-full bg-white/5 border border-white/10 shrink-0 shadow-lg" />
@@ -75,7 +75,7 @@ const SavedMoment = ({ moment, onClick, headerLeft, headerRight, footer, actions
                                 </span>
                             )}
                             {headerRight ?? (
-                                <span className="inline-flex items-center gap-2 rounded-full border border-white/10 bg-white/5 px-3 py-1 text-[11px] font-bold text-orange-100 shrink-0">
+                                <span className="inline-flex items-center gap-2 rounded-full border border-white/10 bg-white/5 px-3 py-1 text-[11px] font-bold text-text shrink-0">
                                     <span className="text-base">{moment.mode === 'countup' ? '↑' : '↓'}</span>
                                     {moment.mode === 'countup' ? 'Count up' : 'Count down'}
                                 </span>
@@ -88,16 +88,16 @@ const SavedMoment = ({ moment, onClick, headerLeft, headerRight, footer, actions
 
                         {/* Inline count (larger screens only — the right panel takes over on mobile,
                             and in compact mode the panel is always shown instead) */}
-                        <p className={`${compact ? 'hidden' : 'hidden sm:block'} mt-3 text-sm text-orange-100/70`}>
+                        <p className={`${compact ? 'hidden' : 'hidden sm:block'} mt-3 text-sm text-text/70`}>
                             {dayCount.value !== null && (
-                                <span className="text-base font-bold text-orange-50">{dayCount.value} </span>
+                                <span className="text-base font-bold text-text">{dayCount.value} </span>
                             )}
                             {dayCount.label}
                         </p>
                     </div>
 
                     <div className="mt-5 flex flex-wrap items-center justify-between gap-3">
-                        <div className={`inline-flex items-center uppercase font-bold text-orange-100/80 border border-white/10 bg-white/10 ${compact ? 'gap-1.5 rounded-full px-2.5 py-1 text-[10px] tracking-[0.15em]' : 'gap-2 rounded-2xl px-3 py-2 text-[11px] tracking-[0.2em]'}`}>
+                        <div className={`inline-flex items-center uppercase font-bold text-text/80 border border-white/10 bg-white/10 ${compact ? 'gap-1.5 rounded-full px-2.5 py-1 text-[10px] tracking-[0.15em]' : 'gap-2 rounded-2xl px-3 py-2 text-[11px] tracking-[0.2em]'}`}>
                             <span className={compact ? 'text-sm' : 'text-base'}>{moment.customization?.mood === 'hopeful' ? '🍀' : '✨'}</span>
                             {moodLabel}
                         </div>
@@ -114,12 +114,12 @@ const SavedMoment = ({ moment, onClick, headerLeft, headerRight, footer, actions
                                 <span className="text-4xl font-headline font-bold leading-none tracking-tighter text-white">
                                     {dayCount.value}
                                 </span>
-                                <span className="text-[11px] uppercase tracking-[0.2em] text-orange-100/70 font-label">
+                                <span className="text-[11px] uppercase tracking-[0.2em] text-text/70 font-label">
                                     {dayCount.label}
                                 </span>
                             </>
                         ) : (
-                            <span className="text-xs uppercase tracking-[0.2em] text-orange-100/70 font-label leading-snug">
+                            <span className="text-xs uppercase tracking-[0.2em] text-text/70 font-label leading-snug">
                                 {dayCount.label}
                             </span>
                         )}

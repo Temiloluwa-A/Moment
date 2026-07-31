@@ -11,6 +11,8 @@ import { TimerProvider } from './context/TimerContext'
 import { ToastProvider } from './context/ToastContext'
 import SignUp from './components/SignUp'
 import Login from './components/Login'
+import ForgotPassword from './pages/ForgotPassword'
+import ResetPassword from './pages/ResetPassword'
 import Explore from './pages/Explore'
 import MyMoments from './pages/MyMoments'
 import SharedMoment from './pages/SharedMoment'
@@ -34,6 +36,8 @@ const App = () => {
             </Route>
             <Route path='/sign-up' element={<SignUp />} />
             <Route path='/login' element={<Login />} />
+            <Route path='/forgot-password' element={<ForgotPassword />} />
+            <Route path='/reset-password/:token' element={<ResetPassword />} />
             <Route path='/explore' element={<Explore />} />
             <Route path='/my-moments' element={<MyMoments />} /> 
             {/* dynamic routing */}

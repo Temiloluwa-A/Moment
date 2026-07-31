@@ -120,23 +120,23 @@ const Customize = ({ isCompleted = false }) => {
     // Render desktop side panel when large viewport; otherwise render mobile drawer + floating button
     if (isDesktop) {
         return (
-            <div className="customize-panel h-full flex flex-col text-orange-50">
+            <div className="customize-panel h-full flex flex-col text-text">
                 {/* Header */}
-                <div className="border-b border-white/10 pb-4 px-6 pt-6">
-                    <h2 className="text-sm font-label tracking-[0.2em] text-orange-100/50 uppercase">Create</h2>
-                    <h5 className="text-2xl font-headline italic mt-1 text-orange-100">Customize your moment</h5>
+                <div className="border-b border-border pb-4 px-6 pt-6">
+                    <h2 className="text-sm font-label tracking-[0.2em] text-text/50 uppercase">Create</h2>
+                    <h5 className="text-2xl font-headline italic mt-1 text-text">Customize your moment</h5>
                 </div>
 
                 {/* Tab Navigation */}
-                <div className="flex gap-4 border-b border-white/10 px-6 pt-4">
+                <div className="flex gap-4 border-b border-border px-6 pt-4">
                     {['Basics', 'Look', 'Moment'].map((tab) => (
                         <button
                             key={tab}
                             onClick={() => setActiveTab(tab.toLowerCase())}
                             className={`py-3 px-4 text-sm font-label uppercase tracking-widest transition-all border-b-2 ${
                                 activeTab === tab.toLowerCase()
-                                    ? 'text-orange-300 border-orange-300'
-                                    : 'text-orange-100/60 border-transparent hover:text-orange-100/80'
+                                    ? 'text-primary border-primary'
+                                    : 'text-text/60 border-transparent hover:text-text/80'
                             }`}
                         >
                             {tab}
@@ -152,11 +152,11 @@ const Customize = ({ isCompleted = false }) => {
                 </div>
 
                 {/* Save Button */}
-                <div className="border-t border-white/10 p-6">
+                <div className="border-t border-border p-6">
                     <button
                         onClick={handleSave}
                         disabled={isSaving}
-                        className="w-full py-4 bg-amber-400 text-espresso-900 font-bold tracking-widest uppercase text-sm rounded-full shadow-lg hover:bg-amber-300 hover:scale-[1.02] active:scale-95 transition-all duration-300 disabled:opacity-70 disabled:cursor-not-allowed"
+                        className="w-full py-4 bg-primary text-on-primary font-bold tracking-widest uppercase text-sm rounded-full shadow-lg hover:bg-primary hover:scale-[1.02] active:scale-95 transition-all duration-300 disabled:opacity-70 disabled:cursor-not-allowed"
                     >
                         {isSaving ? "Saving..." : "Apply Changes"}
                     </button>
@@ -167,10 +167,7 @@ const Customize = ({ isCompleted = false }) => {
 
     // Mobile / small screens: show floating button that opens BottomDrawer
     return (
-        <div className="customize-container">
-            <div className="timer-full-screen">
-                <div className="timer-content" />
-
+        <>
                 <button
                     onClick={() => setIsDrawerOpen(true)}
                     className="floating-customize-btn"
@@ -181,9 +178,8 @@ const Customize = ({ isCompleted = false }) => {
                     </svg>
                     <span>Customize</span>
                 </button>
-            </div>
 
-            <BottomDrawer
+                <BottomDrawer
                 isOpen={isDrawerOpen}
                 onClose={() => setIsDrawerOpen(false)}
                 activeTab={activeTab}
@@ -193,17 +189,17 @@ const Customize = ({ isCompleted = false }) => {
                     {renderTabContent()}
                 </div>
 
-                <div className="sticky bottom-0 bg-linear-to-t from-stone-900 via-stone-900 to-transparent pt-6 pb-8 px-4 -mx-4">
+                <div className="sticky bottom-0 bg-linear-to-t from-surface via-surface to-transparent pt-6 pb-8 px-4 -mx-4">
                     <button
                         onClick={handleSave}
                         disabled={isSaving}
-                        className="w-full py-4 bg-amber-400 text-espresso-900 font-bold tracking-widest uppercase text-sm rounded-full shadow-lg hover:bg-amber-300 hover:scale-[1.02] active:scale-95 transition-all duration-300 disabled:opacity-70 disabled:cursor-not-allowed"
+                        className="w-full py-4 bg-primary text-on-primary font-bold tracking-widest uppercase text-sm rounded-full shadow-lg hover:bg-primary hover:scale-[1.02] active:scale-95 transition-all duration-300 disabled:opacity-70 disabled:cursor-not-allowed"
                     >
                         {isSaving ? "Saving..." : "Apply Changes"}
                     </button>
                 </div>
             </BottomDrawer>
-        </div>
+        </>
     );
 };
 

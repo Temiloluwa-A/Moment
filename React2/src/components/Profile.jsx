@@ -41,7 +41,7 @@ const Profile = () => {
     }
 
     return (
-        <div className="absolute top-10 right-0 mt-2 w-64 bg-stone-900 border border-white/10 shadow-2xl rounded-2xl p-5 flex flex-col z-50">
+        <div className="absolute top-10 right-0 mt-2 w-64 bg-surface border border-white/10 shadow-2xl rounded-2xl p-5 flex flex-col z-50">
             {userData ? (
                 <>
                     <div className="flex items-center gap-3 border-b border-white/10 pb-4 mb-2">
@@ -51,9 +51,9 @@ const Profile = () => {
                             options={userData.avatarOptions}
                         />
                         <div className="flex flex-col overflow-hidden">
-                            <span className="text-sm text-orange-100/60 font-light truncate">@{userData.userName}</span>
-                            <span className="font-headline font-bold text-orange-50 text-xl truncate">{userData.fullName}</span>
-                            <span className="text-xs text-orange-100/40 mt-1 truncate">{userData.email}</span>
+                            <span className="text-sm text-text/60 font-light truncate">@{userData.userName}</span>
+                            <span className="font-headline font-bold text-text text-xl truncate">{userData.fullName}</span>
+                            <span className="text-xs text-text/40 mt-1 truncate">{userData.email}</span>
                         </div>
                         <button
                             onClick={toggleMode}
@@ -63,12 +63,12 @@ const Profile = () => {
                             {mode === 'light' ? '🌙' : '☀️'}
                         </button>
                     </div>
-                    <button onClick={handleSignOut} className="text-left text-sm font-label uppercase tracking-widest text-red-400 hover:text-red-300 hover:bg-white/5 px-3 py-3 rounded-lg transition-colors mt-2">
+                    <button onClick={handleSignOut} className="text-left text-sm font-label uppercase tracking-widest text-error hover:text-error hover:bg-white/5 px-3 py-3 rounded-lg transition-colors mt-2">
                         Sign Out
                     </button>
                 </>
             ) : (
-                <div className="text-center text-sm text-orange-100/50 py-4 animate-pulse">Loading...</div>
+                <div className="text-center text-sm text-text/50 py-4 animate-pulse">Loading...</div>
             )}
         </div>
     )

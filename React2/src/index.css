@@ -2,148 +2,104 @@
 
 @theme {
   /* ═══════════════════════════════════
-     PALETTE — Raw colors
-  ═══════════════════════════════════ */
-
-  /* Amber — primary accent */
-  --color-amber-100: #F5DEB8;
-  --color-amber-200: #E8C48A;
-  --color-amber-300: #DBA85C;
-  --color-amber-400: #D4924A;
-  --color-amber-500: #C9873A;
-  --color-amber-600: #A06928;
-  --color-amber-700: #7A4E1E;
-  --color-amber-800: #523414;
-  --color-amber-900: #2E1D0A;
-
-  /* Parchment — text and light mode */
-  --color-parchment-50:  #FDFAF5;
-  --color-parchment-100: #FAF5EE;
-  --color-parchment-200: #F5ECD9;
-  --color-parchment-300: #F2E8D9;
-  --color-parchment-400: #E8D9C0;
-  --color-parchment-500: #D4C4A8;
-  --color-parchment-600: #B8A484;
-
-  /* Tawny — secondary text and borders */
-  --color-tawny-300: #C4A882;
-  --color-tawny-400: #A8896A;
-  --color-tawny-500: #8C7355;
-  --color-tawny-600: #705C42;
-  --color-tawny-700: #5C4A35;
-  --color-tawny-800: #3D3020;
-
-  /* Espresso — backgrounds */
-  --color-espresso-700: #3D2B1A;
-  --color-espresso-800: #2E2016;
-  --color-espresso-900: #1C1410;
-  --color-espresso-950: #0D0A08;
-
-  /* ═══════════════════════════════════
-     SEMANTIC TOKENS
+     SEMANTIC COLOR TOKENS
+     Warm duotone palette. Values here are the dark-theme
+     defaults; the :root and :root[data-theme="light"] blocks
+     below override each token per theme.
+     Only tokens actually used in the app are kept.
   ═══════════════════════════════════ */
 
   /* Backgrounds */
-  --color-bg:              var(--color-espresso-900);
-  --color-bg-deep:         var(--color-espresso-950);
-  --color-surface:         var(--color-espresso-800);
-  --color-surface-high:    var(--color-espresso-700);
+  --color-bg:              #441004;
+  --color-bg-deep:         #3a0e04;
+  --color-surface:         #4c1707;
+  --color-surface-high:    #79380b;
 
   /* Primary */
-  --color-primary:         var(--color-amber-500);
-  --color-primary-hover:   var(--color-amber-400);
-  --color-primary-pressed: var(--color-amber-600);
-  --color-primary-subtle:  var(--color-amber-900);
-  --color-on-primary:      var(--color-espresso-900);
+  --color-primary:         #efbb55;
+  --color-primary-hover:   #ffc270;
+  --color-primary-subtle:  #5e2a0d;
+  --color-on-primary:      #441004;
 
   /* Text */
-  --color-text:            var(--color-parchment-300);
-  --color-text-muted:      var(--color-parchment-500);
-  --color-text-subtle:     var(--color-tawny-500);
+  --color-text:            #fbf5d2;
+  --color-text-muted:      #f3d99e;
+  --color-text-subtle:     #c99a55;
 
   /* Borders */
-  --color-border:          var(--color-tawny-800);
-  --color-border-mid:      var(--color-tawny-700);
-  --color-border-strong:   var(--color-tawny-600);
-  --color-focus:           var(--color-amber-500);
+  --color-border:          #5e2a0d;
+  --color-border-mid:      #79380b;
+  --color-focus:           #efbb55;
 
   /* Inputs */
-  --color-input-bg:        var(--color-espresso-950);
-  --color-input-border:    var(--color-tawny-700);
-  --color-input-text:      var(--color-parchment-300);
-  --color-placeholder:     var(--color-tawny-500);
+  --color-input-bg:        #300b02;
+  --color-input-border:    #79380b;
+  --color-input-text:      #fbf5d2;
+  --color-placeholder:     #b98a4f;
 
   /* Status */
   --color-error:           #C0392B;
-  --color-error-subtle:    #2E0D0A;
   --color-success:         #7A9B7A;
-  --color-success-subtle:  #0D2010;
 
-  /* Light mode */
-  --color-bg-light:         var(--color-parchment-100);
-  --color-surface-light:    var(--color-parchment-200);
-  --color-text-light:       var(--color-espresso-900);
-  --color-text-muted-light: var(--color-tawny-600);
-  --color-border-light:     var(--color-tawny-400);
-}
-
-:root {
-  --color-bg: var(--color-espresso-900);
-  --color-bg-deep: var(--color-espresso-950);
-  --color-surface: var(--color-espresso-800);
-  --color-surface-high: var(--color-espresso-700);
-  --color-text: var(--color-parchment-300);
-  --color-text-muted: var(--color-parchment-500);
-  --color-text-subtle: var(--color-tawny-500);
-  --color-border: var(--color-tawny-800);
-  --color-border-mid: var(--color-tawny-700);
-  --color-focus: var(--color-amber-500);
-  --color-primary: var(--color-amber-300);
-  --color-primary-hover: var(--color-amber-400);
-  --color-on-primary: var(--color-espresso-900);
-  --color-input-bg: var(--color-espresso-950);
-  --color-input-border: var(--color-tawny-700);
-  --color-input-text: var(--color-parchment-300);
-  --color-placeholder: var(--color-tawny-500);
-}
-
-:root[data-theme="light"] {
-  --color-bg: var(--color-parchment-100);
-  --color-bg-deep: var(--color-parchment-100);
-  --color-surface: var(--color-parchment-200);
-  --color-surface-high: var(--color-parchment-300);
-  --color-text: var(--color-espresso-900);
-  --color-text-muted: var(--color-tawny-600);
-  --color-text-subtle: var(--color-tawny-500);
-  --color-border: var(--color-tawny-400);
-  --color-border-mid: var(--color-tawny-700);
-  --color-focus: var(--color-amber-500);
-  --color-primary: var(--color-amber-300);
-  --color-primary-hover: var(--color-amber-400);
-  --color-on-primary: var(--color-espresso-900);
-  --color-input-bg: var(--color-parchment-100);
-  --color-input-border: var(--color-tawny-400);
-  --color-input-text: var(--color-espresso-900);
-  --color-placeholder: var(--color-tawny-500);
-
-
-/* ═══════════════════════════════════
+  /* ═══════════════════════════════════
      TYPOGRAPHY
   ═══════════════════════════════════ */
 
-  --font-headline: "Cormorant Garamond", serif;
-  --font-body:     "DM Sans", sans-serif;
+  --font-headline: "Cormorant Garamond", serif;   /* headlines */
+  --font-body:     "Lora", Georgia, serif;         /* body text */
+  --font-label:    "DM Sans", sans-serif;          /* UI, buttons, tags */
+  --font-display:  "Fraunces", serif;              /* italic accents */
 
   /* ═══════════════════════════════════
      BORDER RADIUS
   ═══════════════════════════════════ */
 
-    --border-radius-default: 1rem;
-    --border-radius-lg: 2rem;
-    --border-radius-xl: 3rem;
-    --border-radius-full: 9999px;
+  --border-radius-default: 1rem;
+  --border-radius-lg: 2rem;
+  --border-radius-xl: 3rem;
+  --border-radius-full: 9999px;
+}
 
-   
+/* ── DARK (default) ── warm charcoal + cream, amber accent ── */
+:root {
+  --color-bg: #441004;            /* Espresso */
+  --color-bg-deep: #3a0e04;       /* deeper bands / footer — gentle step from bg */
+  --color-surface: #4c1707;       /* cards above bg — close to bg so section seams stay soft */
+  --color-surface-high: #79380b;  /* Umber — raised surfaces */
+  --color-text: #fbf5d2;          /* Cream */
+  --color-text-muted: #f3d99e;
+  --color-text-subtle: #c99a55;
+  --color-border: #5e2a0d;
+  --color-border-mid: #79380b;
+  --color-focus: #efbb55;
+  --color-primary: #efbb55;       /* Amber */
+  --color-primary-hover: #ffc270; /* Peach */
+  --color-on-primary: #441004;
+  --color-input-bg: #300b02;
+  --color-input-border: #79380b;
+  --color-input-text: #fbf5d2;
+  --color-placeholder: #b98a4f;
+}
+
+/* ── LIGHT ── warm latte/parchment, not clinical white; keeps personality ── */
+:root[data-theme="light"] {
+  --color-bg: #fbf5d2;          /* Cream */
+  --color-bg-deep: #f3e3a8;     /* footer / deep bands */
+  --color-surface: #fdeeb8;     /* cards sit just above bg */
+  --color-surface-high: #fee39f;/* Honey */
+  --color-text: #441004;        /* Espresso, not black */
+  --color-text-muted: #79380b;  /* Umber */
+  --color-text-subtle: #ad6d15; /* Bronze */
+  --color-border: #ecd9a0;
+  --color-border-mid: #e2b45f;
+  --color-focus: #79380b;
+  --color-primary: #79380b;     /* Umber — holds strong on cream */
+  --color-primary-hover: #441004;
+  --color-on-primary: #fbf5d2;
+  --color-input-bg: #fdf6da;
+  --color-input-border: #e2b45f;
+  --color-input-text: #441004;
+  --color-placeholder: #a98a5f;
 }
 
 /* ═══════════════════════════════════
@@ -151,17 +107,35 @@
 ═══════════════════════════════════ */
 
 html body {
-    background: #2f1e16;
-    font-family: 'Manrope', sans-serif;
+    background: var(--color-bg);
+    font-family: "Lora", Georgia, serif;
 
-    color: #F2E8D9;
+    color: var(--color-text);
     overflow-x: hidden !important;
-    
+
+}
+
+/* UI face — buttons, inputs, tags — DM Sans.
+   Bare elements only; any explicit font-* utility class still wins. */
+button, input, textarea, select {
+    font-family: var(--font-label);
+}
+
+/* Light mode base: the sunset gradient IS the background. Fixed so it stays
+   put as a warm wash behind the whole page while you scroll. */
+:root[data-theme="light"] body {
+    background-color: #fbf5d2;   /* warm cream foundation */
+    background-image:
+        radial-gradient(60% 55% at 18% 12%, rgba(255,194,112,0.28) 0%, transparent 60%),
+        radial-gradient(55% 55% at 88% 16%, rgba(254,227,159,0.42) 0%, transparent 55%),
+        radial-gradient(95% 75% at 50% 108%, rgba(239,187,85,0.20) 0%, transparent 78%);
+    background-attachment: fixed;
+    background-repeat: no-repeat;
 }
 /* Text selection */
 ::selection {
-  background: rgba(201, 135, 58, 0.3);
-  color: #F2E8D9;
+  background: color-mix(in srgb, var(--color-primary) 30%, transparent);
+  color: var(--color-text);
 }
 
 /* ═══════════════════════════════════
@@ -171,14 +145,53 @@ html body {
 
 /* Glass effect — used on cards and panels */
 .glass {
-  backdrop-filter: blur(20px);
-  background: rgba(46, 32, 22, 0.6);
-  border: 1px solid rgba(93, 74, 53, 0.25);
+  background: linear-gradient(155deg, rgba(255,255,255,0.10), rgba(255,255,255,0.035));
+  backdrop-filter: blur(20px) saturate(135%);
+  -webkit-backdrop-filter: blur(20px) saturate(135%);
+  box-shadow: 0 10px 30px -14px rgba(0,0,0,0.30), inset 0 1px 0 rgba(255,255,255,0.22);
+  transition: transform .4s ease, box-shadow .4s ease, background .4s ease;
+}
+.glass:hover {
+  box-shadow: 0 24px 48px -18px rgba(0,0,0,0.42), inset 0 1px 0 rgba(255,255,255,0.28);
+  background: linear-gradient(155deg, rgba(255,255,255,0.13), rgba(255,255,255,0.05));
+}
+
+/* Hero background wash — theme-aware warm glow, no dark scrim.
+   Dark: amber/peach glow on espresso. Light: honey/peach glow on cream. */
+.hero-wash {
+  background:
+    radial-gradient(58% 52% at 22% 16%, color-mix(in srgb, var(--color-primary) 20%, transparent) 0%, transparent 62%),
+    radial-gradient(55% 55% at 84% 82%, color-mix(in srgb, var(--color-primary-hover) 16%, transparent) 0%, transparent 60%);
+}
+:root[data-theme="light"] .hero-wash {
+  background:
+    radial-gradient(58% 52% at 22% 16%, rgba(255,194,112,0.38) 0%, transparent 62%),
+    radial-gradient(55% 55% at 84% 82%, rgba(254,227,159,0.50) 0%, transparent 60%);
+}
+
+/* Light mode: white-on-cream glass disappears. Give the glass family a warm
+   frosted fill, a soft bronze hairline, and a warm shadow so cards, orbs and
+   buttons read as raised instead of blending into the cream. */
+:root[data-theme="light"] .glass,
+:root[data-theme="light"] .glass-bubble,
+:root[data-theme="light"] .glass-panel,
+:root[data-theme="light"] .btn-glass {
+  background: linear-gradient(155deg, rgba(255,251,240,0.72), rgba(255,247,225,0.42));
+  border: 1px solid rgba(173,109,21,0.20);
+  box-shadow: 0 16px 38px -18px rgba(121,56,11,0.28), inset 0 1px 0 rgba(255,255,255,0.85);
+}
+:root[data-theme="light"] .glass:hover {
+  background: linear-gradient(155deg, rgba(255,252,244,0.82), rgba(255,248,230,0.50));
+  box-shadow: 0 24px 46px -18px rgba(121,56,11,0.34), inset 0 1px 0 rgba(255,255,255,0.90);
+}
+:root[data-theme="light"] .btn-glass:hover {
+  background: linear-gradient(155deg, rgba(255,252,244,0.90), rgba(255,248,230,0.60));
+  box-shadow: 0 18px 34px -14px rgba(121,56,11,0.34), inset 0 1px 0 rgba(255,255,255,0.90);
 }
 
 /* Text glow for headlines */
 .text-glow {
-  text-shadow: 0 0 40px rgba(201, 135, 58, 0.25);
+  text-shadow: 0 0 40px color-mix(in srgb, var(--color-primary) 25%, transparent);
 }
 
 /* Scrollbar */
@@ -186,14 +199,14 @@ html body {
   width: 4px;
 }
 ::-webkit-scrollbar-track {
-  background: #1C1410;
+  background: var(--color-bg-deep);
 }
 ::-webkit-scrollbar-thumb {
-  background: #3D3020;
+  background: var(--color-border);
   border-radius: 9999px;
 }
 ::-webkit-scrollbar-thumb:hover {
-  background: #8C7355;
+  background: var(--color-text-subtle);
 }
  
 /* Hide scrollbar but keep scroll */
@@ -242,14 +255,25 @@ html body {
     background: linear-gradient(180deg rgba(23 16 11 0) 0% rgba(25 18 13 1) 100%);
 }
 
+
+/* Gentle vertical float — for the hero glow blobs */
+@keyframes float {
+    0%, 100% { transform: translateY(0); }
+    50%      { transform: translateY(-18px); }
+}
+.animate-float {
+    animation: float 9s ease-in-out infinite;
+}
+
 .text-glow {
     text-shadow: 0 0 20px rgba(255 181 160 0.3);
 }
 
 .glass-bubble {
-  background: rgba(60, 51, 45, 0.4);
-  backdrop-filter: blur(24px);
-  border: 1px solid rgba(164, 140, 122, 0.15);
+  background: linear-gradient(155deg, rgba(255,255,255,0.14), rgba(255,255,255,0.05));
+  backdrop-filter: blur(24px) saturate(100%);
+  -webkit-backdrop-filter: blur(24px) saturate(135%);
+  box-shadow: 0 26px 60px -24px rgba(0,0,0,0.45), inset 0 1px 0 rgba(255,255,255,0.30), inset 0 -30px 50px -30px rgba(0,0,0,0.16);
     /* background: rgba(255 255 255 0.05);
     backdrop-filter: blur(24px);
     border: 2px solid rgba(255 255 255 0.1);
@@ -257,19 +281,33 @@ html body {
 } 
 
 .glass-panel {
-    background: rgb(255 255 255 / 0.05);
-    backdrop-filter: blur(16px);
-    -webkit-backdrop-filter: blur(20px);
-    border: 1px solid rgba(255, 255, 255, 0.15);
+    background: linear-gradient(155deg, rgba(255,255,255,0.11), rgba(255,255,255,0.045));
+    backdrop-filter: blur(18px) saturate(135%);
+    -webkit-backdrop-filter: blur(18px) saturate(135%);
     border-radius: 1.5rem;
-    box-shadow: 0 4px 30px rgb(0, 0, 0 / 0.25);
+    box-shadow: 0 18px 44px -18px rgba(0,0,0,0.35), inset 0 1px 0 rgba(255,255,255,0.24);
 }
 
-.ethereal-glow {
+/* Reusable frosted-glass button with a soft 3-D lift — for ghost/secondary CTAs */
+.btn-glass {
+    background: linear-gradient(155deg, rgba(255,255,255,0.12), rgba(255,255,255,0.05));
+    backdrop-filter: blur(14px) saturate(135%);
+    -webkit-backdrop-filter: blur(14px) saturate(135%);
+    box-shadow: 0 8px 22px -12px rgba(0,0,0,0.40), inset 0 1px 0 rgba(255,255,255,0.26);
+    transition: transform .25s ease, box-shadow .25s ease, background .25s ease, color .25s ease;
+}
+.btn-glass:hover {
+    transform: translateY(-2px);
+    background: linear-gradient(155deg, rgba(255,255,255,0.17), rgba(255,255,255,0.07));
+    box-shadow: 0 16px 32px -12px rgba(0,0,0,0.45), inset 0 1px 0 rgba(255,255,255,0.30);
+}
+.btn-glass:active { transform: translateY(0) scale(0.98); }
+
+/* .ethereal-glow {
     filter: blur(60px);
     opacity: 0.12;
     pointer-events: none;
-}
+} */
 
 
 
@@ -312,4 +350,88 @@ html body {
 
 .form {
     padding: 20px 30px;
+}
+
+/* ═══════════════════════════════════
+   TIME-OF-DAY SKY  (see components/TimeSky.jsx)
+   Full-bleed ambient background driven by the viewer's local time.
+   Colour values arrive as CSS vars set per mood/theme by the component.
+═══════════════════════════════════ */
+.timesky {
+    position: absolute;
+    inset: 0;
+    z-index: 0;
+    overflow: hidden;
+    pointer-events: none;
+}
+.timesky__sky {
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(to bottom, var(--ts-top) 0%, var(--ts-mid) 52%, var(--ts-bot) 100%);
+    transition: background 900ms ease;
+}
+.timesky__haze {
+    position: absolute;
+    inset: 0;
+    mix-blend-mode: screen;
+    background: radial-gradient(120% 60% at var(--ts-glow-x, 50%) 100%, var(--ts-haze, #E0883A) 0%, transparent 62%);
+    opacity: var(--ts-haze-o, 0.3);
+    transition: opacity 900ms ease, background 900ms ease;
+}
+.timesky__stars {
+    position: absolute;
+    inset: 0;
+    transition: opacity 900ms ease;
+}
+.timesky__star {
+    position: absolute;
+    width: 2px;
+    height: 2px;
+    border-radius: 50%;
+    background: #fff;
+    opacity: 0.85;
+}
+.timesky__clouds {
+    position: absolute;
+    inset: 0;
+    opacity: var(--ts-cloud-o, 0);
+    transition: opacity 900ms ease;
+}
+.timesky__cloud {
+    position: absolute;
+    border-radius: 50%;
+    filter: blur(24px);
+    background: var(--ts-cloud, #fff);
+    opacity: 0.6;
+    mix-blend-mode: screen;
+}
+.timesky__birds {
+    position: absolute;
+    top: 26%;
+    left: 0;
+    color: var(--ts-bird, #3a2a20);
+    opacity: var(--ts-bird-o, 0);
+    transition: opacity 900ms ease;
+}
+.timesky__grain {
+    position: absolute;
+    inset: 0;
+    opacity: 0.045;
+    mix-blend-mode: overlay;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='120'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+}
+
+/* Motion — only when the component opts in AND the OS allows it */
+.timesky--live .timesky__star { animation: ts-twinkle var(--ts-dur, 4s) ease-in-out infinite; }
+.timesky--live .timesky__cloud { animation: ts-drift var(--ts-cd, 120s) linear infinite; }
+.timesky--live .timesky__birds { animation: ts-fly var(--ts-bd, 70s) linear infinite; }
+
+@keyframes ts-twinkle { 0%, 100% { opacity: 0.12; } 50% { opacity: 0.95; } }
+@keyframes ts-drift { from { transform: translateX(-18vw); } to { transform: translateX(118vw); } }
+@keyframes ts-fly { from { transform: translate(-10vw, 0); } to { transform: translate(108vw, -3vh); } }
+
+@media (prefers-reduced-motion: reduce) {
+    .timesky__star,
+    .timesky__cloud,
+    .timesky__birds { animation: none !important; }
 }

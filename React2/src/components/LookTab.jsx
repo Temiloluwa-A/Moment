@@ -2,14 +2,17 @@ import { useState, useRef } from 'react';
 import { useTimer } from '../context/TimerContext';
 import { FONTS, MOOD } from '../registry';
 
+// A moment's background is content: it's stored and shown identically to every
+// viewer, so these are absolute colors — never theme tokens (which shift or go
+// transparent with the viewer's light/dark mode and wash the swatches out).
 const PRESET_BACKGROUNDS = [
-    { key: 'espresso', label: 'Espresso', type: 'solid', value: 'var(--color-espresso-950)' },
-    { key: 'surface', label: 'Surface', type: 'solid', value: 'var(--color-surface)' },
-    { key: 'bg', label: 'Background', type: 'solid', value: 'var(--color-bg)' },
-    { key: 'parchment', label: 'Parchment', type: 'solid', value: 'var(--color-parchment-100)' },
-    { key: 'dawn', label: 'Dawn', type: 'gradient', value: 'linear-gradient(135deg, var(--color-amber-400) 0%, var(--color-espresso-900) 100%)' },
-    { key: 'twilight', label: 'Twilight', type: 'gradient', value: 'linear-gradient(135deg, var(--color-surface-high) 0%, var(--color-amber-500) 100%)' },
-    { key: 'ember', label: 'Ember', type: 'gradient', value: 'linear-gradient(135deg, var(--color-amber-500) 0%, var(--color-tawny-700) 100%)' }
+    { key: 'espresso', label: 'Espresso', type: 'solid', value: '#441004' },
+    { key: 'umber', label: 'Umber', type: 'solid', value: '#79380b' },
+    // { key: 'cream', label: 'Cream', type: 'solid', value: '#fbf5d2' },
+    { key: 'honey', label: 'Honey', type: 'solid', value: '#ad6d15' },
+    { key: 'peach', label: 'Peach', type: 'solid', value: '#ffc270' },
+    { key: 'dawn', label: 'Dawn', type: 'gradient', value: 'linear-gradient(135deg, #efbb55 0%, #441004 100%)' },
+    { key: 'ember', label: 'Ember', type: 'gradient', value: 'linear-gradient(135deg, #ffc270 0%, #79380b 100%)' }
 ];
 
 const LookTab = () => {
@@ -44,8 +47,8 @@ const LookTab = () => {
                             style={{ fontFamily: font.family }}
                             className={`py-3 px-2 rounded-full border transition-all text-sm ${
                                 config.customization.font === font.key
-                                    ? 'bg-orange-200/20 border-orange-300'
-                                    : 'bg-white/5 border-white/10 hover:bg-white/10'
+                                    ? 'bg-primary/20 border-primary'
+                                    : 'bg-surface-high/50 border-border hover:bg-surface-high'
                             }`}
                         >
                             {font.family.split(' ')[0]}
@@ -54,13 +57,13 @@ const LookTab = () => {
 
                     <select
                         name="others"
-                        className="col-span-2 bg-white/5 border border-white/10 rounded-lg px-3 py-3 focus:outline-none focus:border-orange-200/50 text-sm mt-2 text-orange-50"
+                        className="col-span-2 bg-input-bg border border-input-border rounded-lg px-3 py-3 focus:outline-none focus:border-primary/50 text-sm mt-2 text-text"
                         onChange={(e) => update('customization.font', e.target.value)}
                         value={otherFonts.find(f => f.key === config.customization.font) ? config.customization.font : ''}
                     >
-                        <option value='' disabled className="text-stone-900">Select other font</option>
+                        <option value='' disabled className="text-on-primary">Select other font</option>
                         {otherFonts.map((font) => (
-                            <option key={font.key} value={font.key} className="text-stone-900">{font.family}</option>
+                            <option key={font.key} value={font.key} className="text-on-primary">{font.family}</option>
                         ))}
                     </select>
                 </div>
@@ -96,7 +99,7 @@ const LookTab = () => {
                     <button
                         type="button"
                         onClick={() => fileInputRef.current.click()}
-                        className="flex-1 py-3 px-4 rounded-xl border border-white/10 bg-white/5 hover:bg-white/10 transition-all text-sm flex items-center justify-center gap-2 text-orange-100"
+                        className="flex-1 py-3 px-4 rounded-xl border border-border bg-surface-high/50 hover:bg-surface-high transition-all text-sm flex items-center justify-center gap-2 text-text"
                     >
                         <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" className="bi bi-camera" viewBox="0 0 16 16">
                             <path d="M15 12a1 1 0 0 1-1 1H2a1 1 0 0 1-1-1V6a1 1 0 0 1 1-1h1.172a3 3 0 0 0 2.12-.879l.83-.828A1 1 0 0 1 6.827 3h2.344a1 1 0 0 1 .707.293l.828.828A3 3 0 0 0 12.828 5H14a1 1 0 0 1 1 1zM2 4a2 2 0 0 0-2 2v6a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V6a2 2 0 0 0-2-2h-1.172a2 2 0 0 1-1.414-.586l-.828-.828A2 2 0 0 0 9.172 2H6.828a2 2 0 0 0-1.414.586l-.828.828A2 2 0 0 1 3.172 4z" />
@@ -115,7 +118,7 @@ const LookTab = () => {
                                 update('customization.background.type', 'solid');
                                 update('customization.background.value', config.customization.background?.value || 'var(--color-bg)');
                             }}
-                            className="p-3 rounded-xl border border-white/10 bg-red-500/10 hover:bg-red-500/20 text-red-400 transition-all flex items-center justify-center"
+                            className="p-3 rounded-xl border border-border bg-error/10 hover:bg-error/20 text-error transition-all flex items-center justify-center"
                             title="Remove Image"
                         >
                             <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" className="bi bi-x-lg" viewBox="0 0 16 16">
@@ -139,7 +142,7 @@ const LookTab = () => {
                                         update('customization.background.value', preset.value);
                                         update('customization.background.file', null);
                                     }}
-                                    className={`h-20 rounded-3xl border transition-all duration-300 overflow-hidden ${active ? 'border-orange-300 shadow-xl' : 'border-white/10 hover:border-white/20'}`}
+                                    className={`h-20 rounded-3xl border transition-all duration-300 overflow-hidden ${active ? 'border-primary shadow-xl' : 'border-border hover:border-border-mid'}`}
                                     style={{ background: preset.value }}
                                 >
                                     <span className="sr-only">{preset.label}</span>
@@ -161,7 +164,7 @@ const LookTab = () => {
                     max="400"
                     value={config.customization.borderRadius}
                     onChange={(e) => update('customization.borderRadius', Number(e.target.value))}
-                    className="w-full h-2 bg-white/10 rounded-lg appearance-none cursor-pointer accent-orange-400 mt-2"
+                    className="w-full h-2 bg-surface-high rounded-lg appearance-none cursor-pointer accent-primary mt-2"
                 />
             </div>
 
@@ -174,8 +177,8 @@ const LookTab = () => {
                             onClick={() => handleMoodChange(mood)}
                             className={`py-3 px-2 rounded-full border transition-all text-xs flex items-center justify-center gap-1 ${
                                 config.customization.mood === mood.key
-                                    ? 'bg-orange-200/20 border-orange-300'
-                                    : 'bg-white/5 border-white/10 hover:bg-white/10'
+                                    ? 'bg-primary/20 border-primary'
+                                    : 'bg-surface-high/50 border-border hover:bg-surface-high'
                             }`}
                         >
                             <span>{mood.emoji}</span>
