@@ -65,7 +65,7 @@ const Hero = () => {
         <div className="relative z-10 w-full lg:w-1/2 hidden lg:flex justify-center lg:justify-end mt-16 lg:mt-0">
           {/* Relative frame so the orbs position within the right column only,
               never drifting onto the copy. Stacks vertically on mobile. */}
-          <div className="relative flex flex-col items-center gap-10 lg:block lg:w-full lg:max-w-xl lg:h-[\540px]\">
+          <div className="relative flex flex-col items-center gap-10 lg:block lg:w-full lg:max-w-xl lg:h-[540px]">
             {/* Count-up — upper right */}
             <div
               className="glass-bubble lg:absolute lg:top-4 lg:right-8 w-60 h-60 md:w-72 md:h-72 rounded-full flex flex-col items-center justify-center p-8 text-center cursor-pointer group transition-all duration-700 hover:scale-110 hover:shadow-[0_0_50px_rgba(201,136,58,0.2)] animate-breathing"

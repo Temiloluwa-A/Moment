@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import axios from 'axios'
 import Cookies from 'js-cookie'
 import { useQueryClient } from '@tanstack/react-query'
@@ -20,8 +20,10 @@ const ProfileModal = ({ open, onClose, userData }) => {
     const [newPassword, setNewPassword] = useState('')
     const [savingProfile, setSavingProfile] = useState(false)
     const [savingPassword, setSavingPassword] = useState(false)
+    const [showPasswordFields, setShowPasswordFields] = useState(false)
     const [confirmDelete, setConfirmDelete] = useState(false)
     const [deleting, setDeleting] = useState(false)
+    const passwordSectionRef = useRef(null)
 
     // Sync local edit state whenever the modal opens with fresh data.
     useEffect(() => {
@@ -31,6 +33,7 @@ const ProfileModal = ({ open, onClose, userData }) => {
             setCurrentPassword('')
             setNewPassword('')
             setConfirmDelete(false)
+            setShowPasswordFields(false)
         }
     }, [open, userData])
 
@@ -41,6 +44,20 @@ const ProfileModal = ({ open, onClose, userData }) => {
         window.addEventListener('keydown', onKey)
         return () => window.removeEventListener('keydown', onKey)
     }, [open, onClose])
+
+    // Auto-close the password section when clicking anywhere else in the modal.
+    useEffect(() => {
+        if (!showPasswordFields) return
+        const onMouseDown = (e) => {
+            if (passwordSectionRef.current && !passwordSectionRef.current.contains(e.target)) {
+                setShowPasswordFields(false)
+                setCurrentPassword('')
+                setNewPassword('')
+            }
+        }
+        document.addEventListener('mousedown', onMouseDown)
+        return () => document.removeEventListener('mousedown', onMouseDown)
+    }, [showPasswordFields])
 
     if (!open) return null
 
@@ -55,6 +72,9 @@ const ProfileModal = ({ open, onClose, userData }) => {
             showToast({ type: 'error', title: 'Username required', description: 'Your username can’t be empty.' })
             return
         }
+        setShowPasswordFields(false)
+        setCurrentPassword('')
+        setNewPassword('')
         setSavingProfile(true)
         try {
             await axios.patch(`${API}/api/v1/profile`, { userName: userName.trim(), avatarStyle }, authHeader())
@@ -78,6 +98,7 @@ const ProfileModal = ({ open, onClose, userData }) => {
             await axios.patch(`${API}/api/v1/profile/password`, { currentPassword, newPassword }, authHeader())
             setCurrentPassword('')
             setNewPassword('')
+            setShowPasswordFields(false)
             showToast({ type: 'success', title: 'Password changed', description: 'Use your new password next time you sign in.' })
         } catch (error) {
             const msg = error.response?.data?.message || 'Could not change your password. Please try again.'
@@ -198,24 +219,51 @@ const ProfileModal = ({ open, onClose, userData }) => {
                         </button>
                     </div>
 
-                    {/* Password */}
-                    <div className="space-y-4">
-                        <p className={labelClass}>Change password</p>
-                        <div className="space-y-1.5">
-                            <label htmlFor="pm-current" className="font-body text-text-muted text-xs">Current password</label>
-                            <input id="pm-current" type="password" className={inputClass} value={currentPassword} onChange={(e) => setCurrentPassword(e.target.value)} placeholder="••••••••" autoComplete="current-password" />
+                    {/* Password — collapsible */}
+                    <div ref={passwordSectionRef} className="space-y-4">
+                        <div className="flex items-center justify-between">
+                            <p className={labelClass}>Change password</p>
+                            {showPasswordFields && (
+                                <button
+                                    onClick={() => {
+                                        setShowPasswordFields(false)
+                                        setCurrentPassword('')
+                                        setNewPassword('')
+                                    }}
+                                    aria-label="Close password fields"
+                                    className="w-7 h-7 rounded-full flex items-center justify-center text-text-muted hover:text-primary hover:bg-primary/10 transition-colors"
+                                >
+                                    <span className="material-symbols-outlined text-base">close</span>
+                                </button>
+                            )}
                         </div>
-                        <div className="space-y-1.5">
-                            <label htmlFor="pm-new" className="font-body text-text-muted text-xs">New password</label>
-                            <input id="pm-new" type="password" className={inputClass} value={newPassword} onChange={(e) => setNewPassword(e.target.value)} placeholder="At least 6 characters" autoComplete="new-password" />
-                        </div>
-                        <button
-                            onClick={changePassword}
-                            disabled={savingPassword || !newPassword}
-                            className="w-full py-3 rounded-full btn-glass text-text font-label text-sm uppercase tracking-widest hover:text-primary disabled:opacity-50 disabled:cursor-not-allowed"
-                        >
-                            {savingPassword ? 'Updating…' : 'Update password'}
-                        </button>
+
+                        {!showPasswordFields ? (
+                            <button
+                                onClick={() => setShowPasswordFields(true)}
+                                className="w-full py-3 rounded-full btn-glass text-text font-label text-sm uppercase tracking-widest hover:text-primary"
+                            >
+                                Change password
+                            </button>
+                        ) : (
+                            <>
+                                <div className="space-y-1.5">
+                                    <label htmlFor="pm-current" className="font-body text-text-muted text-xs">Current password</label>
+                                    <input id="pm-current" type="password" className={inputClass} value={currentPassword} onChange={(e) => setCurrentPassword(e.target.value)} placeholder="••••••••" autoComplete="current-password" />
+                                </div>
+                                <div className="space-y-1.5">
+                                    <label htmlFor="pm-new" className="font-body text-text-muted text-xs">New password</label>
+                                    <input id="pm-new" type="password" className={inputClass} value={newPassword} onChange={(e) => setNewPassword(e.target.value)} placeholder="At least 6 characters" autoComplete="new-password" />
+                                </div>
+                                <button
+                                    onClick={changePassword}
+                                    disabled={savingPassword || !newPassword}
+                                    className="w-full py-3 rounded-full btn-glass text-text font-label text-sm uppercase tracking-widest hover:text-primary disabled:opacity-50 disabled:cursor-not-allowed"
+                                >
+                                    {savingPassword ? 'Updating…' : 'Update password'}
+                                </button>
+                            </>
+                        )}
                     </div>
 
                     {/* Account actions */}
