@@ -161,7 +161,7 @@ const ProfileModal = ({ open, onClose, userData }) => {
                             className="w-16 h-16 rounded-2xl bg-bg border border-border shrink-0 shadow-lg"
                         />
                         <div className="min-w-0">
-                            <h2 className="font-headline italic text-2xl text-text leading-tight truncate">{userData?.fullName}</h2>
+                            {/* <h2 className="font-headline italic text-2xl text-text leading-tight truncate">{userData?.fullName}</h2> */}
                             <p className="text-sm text-text-muted truncate">@{userData?.userName}</p>
                             {memberSince && (
                                 <p className="font-label text-[10px] uppercase tracking-[0.2em] text-text-subtle mt-1">Keeping time since {memberSince}</p>
