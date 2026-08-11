@@ -309,7 +309,8 @@ const ProfileModal = ({ open, onClose, userData }) => {
                     </div>
                 </div>
             </div>
-        </div>
+        </div>,
+        document.getElementById('modal-root')
     )
 }
 
