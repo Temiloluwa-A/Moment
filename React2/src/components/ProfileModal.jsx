@@ -141,7 +141,7 @@ const ProfileModal = ({ open, onClose, userData }) => {
             aria-label="Account settings"
         >
             <div
-                className="relative w-full max-w-md max-h-[88vh] overflow-y-auto custom-scrollbar bg-surface border border-border rounded-3xl shadow-2xl"
+                className="relative w-full max-w-md top-5 max-h-[88vh] overflow-y-auto custom-scrollbar bg-surface border border-border rounded-3xl shadow-2xl"
                 onClick={(e) => e.stopPropagation()}
             >
                 {/* Header */}
@@ -222,7 +222,7 @@ const ProfileModal = ({ open, onClose, userData }) => {
                     {/* Password — collapsible */}
                     <div ref={passwordSectionRef} className="space-y-4">
                         <div className="flex items-center justify-between">
-                            <p className={labelClass}>Change password</p>
+                            {/* <p className={labelClass}>Change password</p> */}
                             {showPasswordFields && (
                                 <button
                                     onClick={() => {
