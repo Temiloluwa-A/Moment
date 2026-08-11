@@ -1,6 +1,7 @@
 import { useState, useEffect, useRef } from 'react'
 import axios from 'axios'
 import Cookies from 'js-cookie'
+import { createPortal } from 'react-dom'
 import { useQueryClient } from '@tanstack/react-query'
 import { useMode } from '../context/ModeContext'
 import { useToast } from '../context/ToastContext'
@@ -132,7 +133,7 @@ const ProfileModal = ({ open, onClose, userData }) => {
     const inputClass = 'w-full border py-2.5 px-3.5 rounded-xl border-input-border bg-input-bg text-input-text outline-none focus:border-primary transition-colors placeholder:text-placeholder text-sm'
     const labelClass = 'font-label text-[11px] uppercase tracking-[0.18em] text-text-subtle'
 
-    return (
+    return createPortal(
         <div
             className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-black/45 backdrop-blur-sm"
             onClick={onClose}
@@ -141,7 +142,7 @@ const ProfileModal = ({ open, onClose, userData }) => {
             aria-label="Account settings"
         >
             <div
-                className="relative w-full max-w-md top-5 max-h-[88vh] overflow-y-auto custom-scrollbar bg-surface border border-border rounded-3xl shadow-2xl"
+                className="relative w-full max-w-md max-h-[88vh] overflow-y-auto custom-scrollbar bg-surface border border-border rounded-3xl shadow-2xl"
                 onClick={(e) => e.stopPropagation()}
             >
                 {/* Header */}
@@ -181,7 +182,7 @@ const ProfileModal = ({ open, onClose, userData }) => {
                             className="btn-glass px-4 py-2 rounded-full text-sm text-text flex items-center gap-2"
                         >
                             <span>{mode === 'light' ? '🌙' : '☀️'}</span>
-                            Switch to {mode === 'light' ? 'dark' : 'light'}
+                             {mode === 'light' ? 'dark' : 'light'}
                         </button>
                     </div>
 
