@@ -1,6 +1,6 @@
-import axios from 'axios';
 import Cookies from 'js-cookie';
-import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
+import { useInfiniteQuery, useMutation, useQueryClient } from '@tanstack/react-query';
+import api from '../api/client';
 import { useToast } from '../context/ToastContext';
 import SavedMoment from '../components/SavedMoment';
 
@@ -10,22 +10,22 @@ const Explore = () => {
   const queryClient = useQueryClient();
 
   // Public moments are viewable without an account:
-  // no `enabled` gate, no auth header, no redirect side effect.
-  const { data, isLoading } = useQuery({
+  // no `enabled` gate, no redirect side effect (the shared client only
+  // attaches an auth header when a token exists).
+  const { data, isLoading, fetchNextPage, hasNextPage, isFetchingNextPage } = useInfiniteQuery({
     queryKey: ['moments', 'public'],
-    queryFn: async () => {
-      const response = await axios.get(`${import.meta.env.VITE_API_URL}/api/v1/moments/public`);
-      return response.data;               // { message, data: [...] }
+    initialPageParam: 1,
+    queryFn: async ({ pageParam }) => {
+      const response = await api.get('/moments/public', { params: { page: pageParam } });
+      return response.data;               // { message, data: [...], hasMore }
     },
+    getNextPageParam: (lastPage, allPages) => (lastPage.hasMore ? allPages.length + 1 : undefined),
   });
-  const publicMoments = data?.data || [];
+  const publicMoments = data?.pages.flatMap((p) => p.data) || [];
 
   const rootMoment = useMutation({
-    // The root route is a POST; axios.post needs a body (`{}`) before the config.
-    mutationFn: (momentId) =>
-      axios.post(`${import.meta.env.VITE_API_URL}/api/v1/moments/${momentId}/root`, {}, {
-        headers: { Authorization: `Bearer ${token}` }
-      }),
+    // The root route is a POST; needs a body (`{}`) since there's nothing to send.
+    mutationFn: (momentId) => api.post(`/moments/${momentId}/root`, {}),
     onSuccess: (res) => {
       // The toggle endpoint tells us whether we just rooted or unrooted.
       const didRoot = res.data.rooted;
@@ -81,6 +81,18 @@ const Explore = () => {
                       }
                   />
               )})}
+          </div>
+      )}
+
+      {hasNextPage && (
+          <div className="flex justify-center pb-20 -mt-12">
+              <button
+                  onClick={() => fetchNextPage()}
+                  disabled={isFetchingNextPage}
+                  className="px-6 py-2.5 rounded-full border border-white/15 text-text/80 font-label text-xs uppercase tracking-widest hover:border-primary hover:text-primary transition-colors disabled:opacity-50"
+              >
+                  {isFetchingNextPage ? 'Loading...' : 'Load more'}
+              </button>
           </div>
       )}
     </div>

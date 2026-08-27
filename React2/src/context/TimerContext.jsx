@@ -20,7 +20,10 @@ export function TimerProvider({children}) {
         notify: true,
         customization: {
             font: 'noto',
-            background: { type: 'solid', value: '', publicId: null, format: null },
+            // A real value here matters: the backend's background schema requires
+            // one, so an empty default makes "create a moment" 500 for anyone who
+            // never opens the Look tab.
+            background: { type: 'solid', value: '#1a2b3c', publicId: null, format: null },
             timerSize: 80,
             borderRadius: 50,
             borderStyle: { width: 1, color: 'transparent', style: 'solid' },

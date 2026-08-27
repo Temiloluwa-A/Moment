@@ -1,13 +1,12 @@
 import { useState, useEffect, useRef } from 'react'
-import axios from 'axios'
 import Cookies from 'js-cookie'
 import { createPortal } from 'react-dom'
 import { useQueryClient } from '@tanstack/react-query'
 import { useMode } from '../context/ModeContext'
 import { useToast } from '../context/ToastContext'
+import api from '../api/client'
 import Avatar from './Avatar'
 
-const API = import.meta.env.VITE_API_URL
 const AVATAR_STYLES = ['lorelei', 'notionists', 'avataaars', 'funEmoji', 'adventurer', 'micah', 'thumbs', 'bottts']
 
 const ProfileModal = ({ open, onClose, userData }) => {
@@ -62,7 +61,6 @@ const ProfileModal = ({ open, onClose, userData }) => {
 
     if (!open) return null
 
-    const authHeader = () => ({ headers: { Authorization: `Bearer ${Cookies.get('token')}` } })
     const dirty = userData && (userName !== userData.userName || avatarStyle !== userData.avatarStyle)
     const memberSince = userData?.createdAt
         ? new Date(userData.createdAt).toLocaleDateString(undefined, { month: 'short', year: 'numeric' })
@@ -78,7 +76,7 @@ const ProfileModal = ({ open, onClose, userData }) => {
         setNewPassword('')
         setSavingProfile(true)
         try {
-            await axios.patch(`${API}/api/v1/profile`, { userName: userName.trim(), avatarStyle }, authHeader())
+            await api.patch('/profile', { userName: userName.trim(), avatarStyle })
             await queryClient.invalidateQueries({ queryKey: ['profile'] })
             showToast({ type: 'success', title: 'Saved', description: 'Your profile has been updated.' })
         } catch (error) {
@@ -96,7 +94,7 @@ const ProfileModal = ({ open, onClose, userData }) => {
         }
         setSavingPassword(true)
         try {
-            await axios.patch(`${API}/api/v1/profile/password`, { currentPassword, newPassword }, authHeader())
+            await api.patch('/profile/password', { currentPassword, newPassword })
             setCurrentPassword('')
             setNewPassword('')
             setShowPasswordFields(false)
@@ -118,7 +116,7 @@ const ProfileModal = ({ open, onClose, userData }) => {
     const deleteAccount = async () => {
         setDeleting(true)
         try {
-            await axios.delete(`${API}/api/v1/profile`, authHeader())
+            await api.delete('/profile')
             Cookies.remove('token')
             queryClient.clear()
             showToast({ type: 'success', title: 'Account deleted', description: 'Your account has been removed. Take care.' })
@@ -163,7 +161,7 @@ const ProfileModal = ({ open, onClose, userData }) => {
                         <div className="min-w-0">
                             {/* <h2 className="font-headline italic text-2xl text-text leading-tight truncate">{userData?.fullName}</h2> */}
                             <p className="text-sm text-text-muted truncate">@{userData?.userName}</p>
-                            {memberSince && (
+                            {memberSince && ( 
                                 <p className="font-label text-[10px] uppercase tracking-[0.2em] text-text-subtle mt-1">Keeping time since {memberSince}</p>
                             )}
                         </div>
