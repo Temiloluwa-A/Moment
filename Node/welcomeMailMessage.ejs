@@ -1,14 +1,19 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Welcome to Moment</title>
 </head>
 <body>
-    <h1>Moments </h1>
-    <p>Hello, [UserName]!</p>
-    <p>Thank you for signing up</p>
-    <p>i hope you have a wonderful experience</p>
+    <div style="font-family: Arial, sans-serif; max-width: 480px; margin: 0 auto; color: #2E241A;">
+        <h2 style="font-style: italic; color: #A9631E;">Moment</h2>
+        <p>Hi <%= fullName %>,</p>
+        <p>Welcome — Moment is a place to gather the countdowns, milestones, and memories that matter to you, and share them with the people who should be counting down alongside you.</p>
+        <p style="text-align: center; margin: 32px 0;">
+            <a href="<%= clientUrl %>" style="background: #A9631E; color: #F7EFE0; padding: 12px 28px; border-radius: 999px; text-decoration: none; font-weight: bold;">Create your first moment</a>
+        </p>
+        <p style="font-size: 12px; color: #6E6050;">We're glad you're here.</p>
+    </div>
 </body>
 </html>

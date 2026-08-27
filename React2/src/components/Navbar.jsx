@@ -5,7 +5,7 @@ import { useQuery } from '@tanstack/react-query'
 import { useMode } from '../context/ModeContext'
 import Avatar from './Avatar'
 import Cookies from 'js-cookie'
-import axios from 'axios'
+import api from '../api/client'
 
 // Mobile speed-dial items — labels kept short so the circles stay small.
 const MOBILE_NAV = [
@@ -25,9 +25,7 @@ const Navbar = () => {
      queryKey: ['profile'],
      enabled: !!token, // Only fetch if token exists
      queryFn: async () => {
-      const response = await axios.get(`${import.meta.env.VITE_API_URL}/api/v1/profile`, {
-            headers: { Authorization: `Bearer ${token}` }
-        })
+      const response = await api.get('/profile')
         return response.data.data
      }
   })

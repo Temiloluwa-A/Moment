@@ -1,8 +1,8 @@
 import { useState, useEffect } from 'react';
-import axios from 'axios';
 import Cookies from 'js-cookie';
-import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
+import { useInfiniteQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { useNavigate } from 'react-router-dom';
+import api from '../api/client';
 import ShareModal from '../components/ShareModal';
 import SavedMoment from '../components/SavedMoment';
 import { useToast } from '../context/ToastContext';
@@ -11,18 +11,18 @@ const MyMoments = () => {
   const [shareSlug, setShareSlug] = useState(null);
   const token = Cookies.get('token');
   const queryClient = useQueryClient();
-  const { data, isLoading } = useQuery({
+  const { data, isLoading, fetchNextPage, hasNextPage, isFetchingNextPage } = useInfiniteQuery({
     queryKey: ['moments'],
     enabled: !!token,
-    queryFn: async () => {
-      const response = await axios.get(`${import.meta.env.VITE_API_URL}/api/v1/moments`, {
-        headers: { Authorization: `Bearer ${token}` }
-      });
+    initialPageParam: 1,
+    queryFn: async ({ pageParam }) => {
+      const response = await api.get('/moments', { params: { page: pageParam } });
       return response.data;
-    }
+    },
+    getNextPageParam: (lastPage, allPages) => (lastPage.hasMore ? allPages.length + 1 : undefined),
   });
-  const moments = data?.data || [];
-  const currentUserId = data?.currentUserId || null;
+  const moments = data?.pages.flatMap((p) => p.data) || [];
+  const currentUserId = data?.pages[0]?.currentUserId || null;
   const navigate = useNavigate();
   const { showToast } = useToast();
 
@@ -34,18 +34,12 @@ const MyMoments = () => {
   }, [token, navigate, showToast]);
 
   const deleteMoment = useMutation({
-    mutationFn: (momentId) =>
-      axios.delete(`${import.meta.env.VITE_API_URL}/api/v1/moments/${momentId}`, {
-        headers: { Authorization: `Bearer ${token}` }
-      }),
+    mutationFn: (momentId) => api.delete(`/moments/${momentId}`),
     onSuccess: () => queryClient.invalidateQueries({ queryKey: ['moments'] }),
     onError: () => showToast({ type: 'error', title: 'Delete failed', description: 'Failed to delete moment. Please try again.' }),
   });
   const LeaveSharedMoment = useMutation({
-    mutationFn: (slug) =>
-      axios.delete(`${import.meta.env.VITE_API_URL}/api/v1/moments/${slug}/members/${currentUserId}`, {
-        headers: { Authorization: `Bearer ${token}` }
-      }),
+    mutationFn: (slug) => api.delete(`/moments/${slug}/members/${currentUserId}`),
     onSuccess: () => queryClient.invalidateQueries({ queryKey: ['moments'] }),
     onError: () => showToast({ type: 'error', title: 'Leave failed', description: 'Failed to leave moment. Please try again.' }),
   });
@@ -144,6 +138,18 @@ const MyMoments = () => {
                     }
                   />
               )})}
+          </div>
+      )}
+
+      {hasNextPage && (
+          <div className="flex justify-center pb-20 -mt-12">
+              <button
+                  onClick={() => fetchNextPage()}
+                  disabled={isFetchingNextPage}
+                  className="px-6 py-2.5 rounded-full border border-border-mid text-text/80 font-label text-xs uppercase tracking-widest hover:border-primary hover:text-primary transition-colors disabled:opacity-50"
+              >
+                  {isFetchingNextPage ? 'Loading...' : 'Load more'}
+              </button>
           </div>
       )}
 

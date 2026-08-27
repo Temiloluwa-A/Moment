@@ -3,8 +3,8 @@ import { useFormik } from 'formik'
 import * as Yup from 'yup'
 import { Link, useNavigate } from 'react-router-dom'
 import { useGoogleLogin } from '@react-oauth/google'
-import axios from 'axios'
 import Cookies from 'js-cookie'
+import api from '../api/client'
 import { useToast } from '../context/ToastContext'
 import TimeSky from './TimeSky'
 
@@ -18,7 +18,7 @@ const SignUp = () => {
         onSuccess: async (tokenResponse) => {
             setloader(true)
             try {
-                const result = await axios.post(`${import.meta.env.VITE_API_URL}/api/v1/google-auth`, {
+                const result = await api.post('/google-auth', {
                     access_token: tokenResponse.access_token,
                 })
                 if (result.status === 200 || result.status === 201) {
@@ -49,17 +49,14 @@ const SignUp = () => {
 
         onSubmit: async(values, { setSubmitting, setFieldError }) => {
             setloader(true);
-            console.log(values)
             try {
-                const result = await axios.post(`${import.meta.env.VITE_API_URL}/api/v1/signup`, values)
-                console.log(result.status);
+                const result = await api.post('/signup', values)
 
                 if(result.status == 201 || result.status == 200){
                     showToast({ type: 'success', title: 'Welcome', description: 'Account created successfully.' });
                     // Automatically log the user in by saving the token!
                     Cookies.set('token', result.data.token, { expires: 1 });
                     navigate('/create/count-down')
-                    console.log(result.data);
                 }
             }
             catch (error) {

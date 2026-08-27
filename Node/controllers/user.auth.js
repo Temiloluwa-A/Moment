@@ -1,5 +1,8 @@
 const bcrypt = require('bcryptjs')
+const path = require('path')
+const ejs = require('ejs')
 const User = require('../model/user.model')
+const Timer = require('../model/timer.model')
 const jwt = require('jsonwebtoken')
 const crypto = require('crypto')
 const sendEmail = require('../utils/sendEmail')
@@ -9,8 +12,12 @@ const sendEmail = require('../utils/sendEmail')
 const register = async (req, res) => {
     const { fullName, userName, email, password, gender } = req.body
     try {
+        if (!password || password.length < 6) {
+            return res.status(400).send({
+                message: "Password must be at least 6 characters."
+            })
+        }
 
-        console.log(req.body);
         const salt = await bcrypt.genSalt(10)
         const hashedPassword = await bcrypt.hash(password, salt)
 
@@ -30,6 +37,19 @@ const register = async (req, res) => {
         })
 
         const token = await jwt.sign({ id: user._id }, process.env.APP_TOKEN, { expiresIn: "5hr" })
+
+        // Best-effort welcome email — don't fail signup if mail delivery breaks.
+        try {
+            const clientUrl = req.headers.origin || process.env.CLIENT_URL || "http://localhost:5173";
+            const html = await ejs.renderFile(path.join(__dirname, '../welcomeMailMessage.ejs'), {
+                fullName: user.fullName,
+                clientUrl,
+            });
+            await sendEmail({ to: user.email, subject: "Welcome to Moment", html });
+        } catch (mailErr) {
+            console.error("Failed to send welcome email:", mailErr.message);
+        }
+
         res.status(200).send({
             message: "User added successfully",
             Data: user, token
@@ -246,29 +266,6 @@ const resetPassword = async (req, res) => {
 };
 
 
-const deleteUser = async (req, res) => {
-    const { id } = req.params
-    try {
-        const user = await User.findByIdAndDelete(id)
-
-        if (!user) {
-            return res.status(404).send({
-                message: "User not found"
-            })
-        }
-        res.status(200).send({
-            message: "User deleted successfully"
-        })
-
-
-    } catch (error) {
-        console.log(error);
-        res.status(400).send({
-            message: "Unable to delete user, try again"
-        })
-    }
-}
-
 const logoutUser = async (req, res) => {
     try {
         res.status(200).send({ message: "Logged out successfully" });
@@ -352,6 +349,12 @@ const changePassword = async (req, res) => {
 // Delete the signed-in user's own account (uses the id from the token, not a URL param).
 const deleteAccount = async (req, res) => {
     try {
+        // Orphan their moments rather than deleting them — a collaborator
+        // shouldn't lose a shared moment just because the owner left — but hide
+        // them from Explore and from members' listings since no one can manage
+        // them anymore.
+        await Timer.updateMany({ userId: req.user.id }, { isPublic: false, ownerDeleted: true });
+
         const user = await User.findByIdAndDelete(req.user.id);
         if (!user) {
             return res.status(404).send({ message: "User not found" });
@@ -364,4 +367,4 @@ const deleteAccount = async (req, res) => {
 };
 
 // Export the new controller
-module.exports = { register, loginUser, googleAuth, deleteUser, logoutUser, getUserProfile, forgotPassword, resetPassword, updateProfile, changePassword, deleteAccount }
+module.exports = { register, loginUser, googleAuth, logoutUser, getUserProfile, forgotPassword, resetPassword, updateProfile, changePassword, deleteAccount }

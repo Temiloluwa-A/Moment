@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import axios from 'axios';
 import Cookies from 'js-cookie';
+import api from '../api/client';
 import Avatar from '../components/Avatar';
 import { useToast } from '../context/ToastContext';
 
@@ -24,7 +24,7 @@ const JoinMoment = () => {
             }
 
             try {
-                const res = await axios.get(`${import.meta.env.VITE_API_URL}/api/v1/moments/shared/${slug}`);
+                const res = await api.get(`/moments/shared/${slug}`);
                 setMoment(res.data.data);
             } catch (err) {
                 setError(err.response?.data?.message || "Could not find this moment. The link may be invalid or the moment is no longer public.");
@@ -38,11 +38,8 @@ const JoinMoment = () => {
     const handleJoin = async () => {
         setIsJoining(true);
         try {
-            const token = Cookies.get('token');
-            await axios.post(`${import.meta.env.VITE_API_URL}/api/v1/moments/${slug}/join`, {}, {
-                headers: { Authorization: `Bearer ${token}` }
-            });
-            
+            await api.post(`/moments/${slug}/join`, {});
+
             showToast({ type: 'success', title: 'Joined', description: 'Successfully joined the moment!' });
             navigate('/my-moments'); // Redirect them to their moments where it will now appear
         } catch (err) {

@@ -1,6 +1,5 @@
 import { useState, useEffect } from 'react';
-import axios from 'axios';
-import Cookies from 'js-cookie';
+import api from '../api/client';
 import Avatar from './Avatar';
 import { useToast } from '../context/ToastContext';
 
@@ -10,9 +9,10 @@ const ShareModal = ({ isOpen, onClose, slug, isOwner }) => {
     const [collabCopied, setCollabCopied] = useState(false);
     const [members, setMembers] = useState([]);
 
-    // Construct the live link
-    const shareLink = `${import.meta.env.VITE_API_URL}/moment/${slug}`;
-    const collabLink = `${import.meta.env.VITE_API_URL}/join/${slug}`; // Special route for adding members!
+    // These are pages on this site (App.jsx), not API endpoints — build them
+    // off the site's own origin, not the backend's.
+    const shareLink = `${window.location.origin}/moment/${slug}`;
+    const collabLink = `${window.location.origin}/join/${slug}`; // Special route for adding members!
 
     const handleCopy = () => {
         navigator.clipboard.writeText(shareLink);
@@ -30,11 +30,8 @@ const ShareModal = ({ isOpen, onClose, slug, isOwner }) => {
         const confirmRemove = window.confirm(`Remove ${memberName} from this moment?`);
         if (!confirmRemove) return;
 
-        const token = Cookies.get('token');
         try {
-            await axios.delete(`${import.meta.env.VITE_API_URL}/api/v1/moments/${slug}/members/${memberId}`, {
-                headers: { Authorization: `Bearer ${token}` }
-            });
+            await api.delete(`/moments/${slug}/members/${memberId}`);
             setMembers(prev => prev.filter(m => m._id !== memberId));
             showToast({ type: 'success', title: 'Member removed', description: `${memberName} was removed from this moment.` });
         } catch (err) {
@@ -46,7 +43,7 @@ const ShareModal = ({ isOpen, onClose, slug, isOwner }) => {
     // Fetch the latest members when the modal opens!
     useEffect(() => {
         if (isOpen && slug) {
-            axios.get(`${import.meta.env.VITE_API_URL}/api/v1/moments/shared/${slug}`)
+            api.get(`/moments/shared/${slug}`)
                 .then(res => {
                     setMembers(res.data.data.members || []);
                 })
@@ -68,7 +65,7 @@ const ShareModal = ({ isOpen, onClose, slug, isOwner }) => {
 
                 <h2 className="text-2xl font-headline italic font-bold text-text mb-2">Share Moment</h2>
                 <p className="text-text/60 font-light text-sm mb-6">
-                    Anyone with this link can view this moment in real-time.
+                    Anyone with this link can view this moment. Reload the page to see the latest updates.
                 </p>
 
                 <div className="flex items-center bg-black/30 border border-white/10 rounded-lg p-2 mb-4">

@@ -1,12 +1,19 @@
 const Timer = require('../model/timer.model');
 const { Root, Shared } = require('../model/shared.model');
+const User = require('../model/user.model');
 const crypto = require('crypto');
 const { cloudinary } = require('../middleware/cloudinary');
+const sendEmail = require('../utils/sendEmail');
 
 const uploadBufferToCloudinary = async (file, options = {}) => {
     const dataUri = `data:${file.mimetype};base64,${file.buffer.toString('base64')}`;
     return await cloudinary.uploader.upload(dataUri, options);
 };
+
+// Fields the owner is actually allowed to change from the edit form. Keeps
+// server-managed fields (userId, slug, rootCount, members, _id, ...) out of
+// reach even though the request is scoped to a moment the caller owns.
+const EDITABLE_MOMENT_FIELDS = ['title', 'mode', 'startAt', 'endAt', 'timeZone', 'units', 'isGift', 'isPublic', 'notify', 'customization'];
 
 const createMoment = async (req, res) => {
     try {
@@ -59,12 +66,35 @@ const createMoment = async (req, res) => {
     }
 };
 
+// Keeps listing responses bounded regardless of how many moments exist.
+// Fetches one extra document to know whether another page exists without a
+// separate count query.
+const DEFAULT_PAGE_SIZE = 24;
+const parsePagination = (req) => {
+    const page = Math.max(1, parseInt(req.query.page, 10) || 1);
+    const limit = Math.min(100, Math.max(1, parseInt(req.query.limit, 10) || DEFAULT_PAGE_SIZE));
+    return { page, limit, skip: (page - 1) * limit };
+};
+
 const getMoments = async (req, res) => {
     try {
-        // Fetch moments where the user is the owner OR a collaborator (in the members array)
+        const { page, limit, skip } = parsePagination(req);
+        // Fetch moments where the user is the owner OR a collaborator (in the members array).
+        // Excludes moments whose owner deleted their account — no one can manage
+        // them anymore, so they're hidden rather than shown as a dead end.
         // .sort({ createdAt: -1 }) ensures the newest moments appear first!
-        const moments = await Timer.find({ $or: [{ userId: req.user.id }, { members: req.user.id }] }).sort({ createdAt: -1 });
-        res.status(200).send({ message: "Moments fetched successfully", data: moments, currentUserId: req.user.id });
+        const moments = await Timer.find({ $or: [{ userId: req.user.id }, { members: req.user.id }], ownerDeleted: { $ne: true } })
+            .sort({ createdAt: -1 })
+            .skip(skip)
+            .limit(limit + 1);
+        const hasMore = moments.length > limit;
+        res.status(200).send({
+            message: "Moments fetched successfully",
+            data: moments.slice(0, limit),
+            currentUserId: req.user.id,
+            page,
+            hasMore,
+        });
     } catch (error) {
         console.log(error);
         res.status(500).send({ message: "Failed to fetch moments" });
@@ -73,11 +103,23 @@ const getMoments = async (req, res) => {
 
 const getPublicMoments = async (req, res) => {
     try {
-        // Fetch all moments that are marked public.
+        const { page, limit, skip } = parsePagination(req);
+        // Fetch moments that are marked public (the owner-deleted flag also forces
+        // isPublic to false, so this filter alone keeps orphaned moments out —
+        // the explicit check here is just defense in depth).
         // .populate() fetches the linked User document so we can display their userName!
-        const publicMoments = await Timer.find({ isPublic: true }).populate('userId', 'userName').sort({ createdAt: -1 });
-
-        res.status(200).send({ message: "Public moments fetched successfully", data: publicMoments });
+        const publicMoments = await Timer.find({ isPublic: true, ownerDeleted: { $ne: true } })
+            .populate('userId', 'userName')
+            .sort({ createdAt: -1 })
+            .skip(skip)
+            .limit(limit + 1);
+        const hasMore = publicMoments.length > limit;
+        res.status(200).send({
+            message: "Public moments fetched successfully",
+            data: publicMoments.slice(0, limit),
+            page,
+            hasMore,
+        });
     } catch (error) {
         console.log(error);
         res.status(500).send({ message: "Failed to fetch public moments" });
@@ -111,10 +153,10 @@ const deleteMoment = async (req, res) => {
 const updateMoment = async (req, res) => {
     try {
         const momentId = req.params.id;
-        const updateData = { ...req.body };
-
-        // Prevent MongoDB crash: We cannot update the immutable _id field!
-        delete updateData._id;
+        const updateData = {};
+        for (const key of EDITABLE_MOMENT_FIELDS) {
+            if (req.body[key] !== undefined) updateData[key] = req.body[key];
+        }
 
         // When uploading files, other form fields are strings.
         if (updateData.customization && typeof updateData.customization === 'string') {
@@ -186,7 +228,7 @@ const getSharedMoment = async (req, res) => {
     try {
         const slug = req.params.slug;
         // Removed isPublic: true so that anyone with the direct link can view and join!
-        const moment = await Timer.findOne({ slug }).populate('userId', 'userName').populate('members', 'userName email avatarStyle avatarOptions');
+        const moment = await Timer.findOne({ slug }).populate('userId', 'userName').populate('members', 'userName avatarStyle avatarOptions');
 
         if (!moment) {
             return res.status(404).send({ message: "Shared moment not found" });
@@ -220,6 +262,35 @@ const joinMoment = async (req, res) => {
         moment.members = moment.members || [];
         moment.members.push(userId);
         await moment.save();
+
+        // Best-effort: let the owner know someone joined. Never blocks the join itself.
+        try {
+            const [owner, joiner] = await Promise.all([
+                User.findById(moment.userId).select('fullName email'),
+                User.findById(userId).select('fullName userName'),
+            ]);
+            if (owner?.email) {
+                const clientUrl = req.headers.origin || process.env.CLIENT_URL || "http://localhost:5173";
+                const momentUrl = `${clientUrl}/moment/${moment.slug}`;
+                const joinerName = joiner?.fullName || joiner?.userName || 'Someone';
+                await sendEmail({
+                    to: owner.email,
+                    subject: `${joinerName} joined "${moment.title || 'your moment'}"`,
+                    html: `
+                        <div style="font-family: Arial, sans-serif; max-width: 480px; margin: 0 auto; color: #2E241A;">
+                            <h2 style="font-style: italic; color: #A9631E;">Moment</h2>
+                            <p>Hi ${owner.fullName || 'there'},</p>
+                            <p><strong>${joinerName}</strong> just joined "<strong>${moment.title || 'your moment'}</strong>".</p>
+                            <p style="text-align: center; margin: 32px 0;">
+                                <a href="${momentUrl}" style="background: #A9631E; color: #F7EFE0; padding: 12px 28px; border-radius: 999px; text-decoration: none; font-weight: bold;">View your moment</a>
+                            </p>
+                        </div>
+                    `,
+                });
+            }
+        } catch (mailErr) {
+            console.error('Failed to send join notification email:', mailErr.message);
+        }
 
         res.status(200).send({ message: "Successfully joined the moment", data: moment });
     } catch (error) {

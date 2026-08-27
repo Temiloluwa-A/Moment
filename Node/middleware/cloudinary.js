@@ -10,8 +10,16 @@ cloudinary.config({
 const upload = multer({
     storage: multer.memoryStorage(),
     limits: {
-        fileSize: 100 * 1024 * 1024, // 100 MB max for uploads
-    }
+        fileSize: 25 * 1024 * 1024, // 25 MB max per file
+    },
+    fileFilter: (req, file, cb) => {
+        const isBackgroundImage = file.fieldname === 'backgroundImage' && file.mimetype.startsWith('image/');
+        const isGiftVideo = file.fieldname === 'giftVideo' && file.mimetype.startsWith('video/');
+        if (isBackgroundImage || isGiftVideo) {
+            return cb(null, true);
+        }
+        cb(new Error(`Invalid file type for ${file.fieldname}: expected ${file.fieldname === 'giftVideo' ? 'a video' : 'an image'}.`));
+    },
 });
 
 module.exports = { cloudinary, upload };

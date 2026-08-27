@@ -70,7 +70,16 @@ const timerSchema = new mongoose.Schema ({
     rootCount: {type:Number, default: 0},
     notify: {type:Boolean, default:true},
     members: [{ type: mongoose.Schema.Types.ObjectId, ref: 'User', default: [] }],
-    customization: {type:customizationSchema, default:{}}
+    customization: {type:customizationSchema, default:{}},
+    // Set when the owner's account is deleted. The moment isn't deleted — a
+    // collaborator shouldn't lose it just because the owner left — but it's
+    // hidden from Explore and from members' listings since no one can manage
+    // it anymore.
+    ownerDeleted: {type:Boolean, default:false},
+    // Timestamps guard the notification sweep against sending the same email
+    // twice — null means "not sent yet".
+    reminderSentAt: {type:Date, default:null},
+    completionNotifiedAt: {type:Date, default:null}
 }, {timestamps:true})
  
 // timerSchema.index({userId: 1}) //creates an index on userId field in ascending order,it

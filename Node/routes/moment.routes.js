@@ -20,13 +20,4 @@ router.post('/moments/:slug/join', authMiddleware, joinMoment); // Route for acc
 router.delete('/moments/:slug/members/:memberId', authMiddleware, removeMember); // Route for leaving/removing a member
 router.post('/moments/:timerId/root', authMiddleware, toggleRoot); // Route for toggling root status
 
-// Route for uploading images/videos to Cloudinary
-// router.post('/upload', authMiddleware, upload.single('media'), (req, res) => {
-//     if (!req.file) {
-//         return res.status(400).send({ message: "No file uploaded" });
-//     }
-//     // Cloudinary automatically attaches the secure URL to req.file.path
-//     res.status(200).send({ message: "File uploaded successfully", url: req.file.path });
-// });
-
 module.exports = router;

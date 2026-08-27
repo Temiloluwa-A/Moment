@@ -1,22 +1,20 @@
-import axios from "axios";
 import { useState, useEffect } from "react";
 import { useParams } from "react-router-dom";
 import { useTimer } from "../context/TimerContext";
 import Timer from "../components/Timer";
-import { useQuery,QueryClient } from '@tanstack/react-query'
+import api from "../api/client";
 
 const SharedMoment = () => {
     const { slug } = useParams();
-    const [momentData, setmomentData] = useState(null);
+    const [momentData, setMomentData] = useState(null);
     const { loadConfig } = useTimer();
 
-    console.log("Slug from URL:", slug); // Debugging line to check the slug value
     // Use the slug to fetch the shared moment's configuration from the backend and display it
     useEffect(() => {
         const fetchSharedMoment = async () => {
             try {
-                const response = await axios.get(`${import.meta.env.VITE_API_URL}/api/v1/moments/shared/${slug}`);
-                setmomentData(response.data.data);
+                const response = await api.get(`/moments/shared/${slug}`);
+                setMomentData(response.data.data);
                 loadConfig(response.data.data); // Inject the database config into the context!
             } catch (error) {
                 console.error("Error fetching shared moment:", error);

@@ -3,8 +3,8 @@ import { useFormik } from 'formik'
 import * as Yup from 'yup'
 import { Link, useNavigate } from 'react-router-dom'
 import { useGoogleLogin } from '@react-oauth/google'
-import axios from 'axios'
 import Cookies from 'js-cookie'
+import api from '../api/client'
 import { useToast } from '../context/ToastContext'
 import TimeSky from './TimeSky'
 
@@ -18,7 +18,7 @@ const Login = () => {
     onSuccess: async (tokenResponse) => {
       setloader(true)
       try {
-        const result = await axios.post(`${import.meta.env.VITE_API_URL}/api/v1/google-auth`, {
+        const result = await api.post('/google-auth', {
           access_token: tokenResponse.access_token,
         })
         if (result.status === 200 || result.status === 201) {
@@ -45,10 +45,8 @@ const Login = () => {
 
     onSubmit: async (values) => {
       setloader(true);
-      console.log(values);
       try {
-        const response = await axios.post(`${import.meta.env.VITE_API_URL}/api/v1/login`, values)
-        console.log(response.data);
+        const response = await api.post('/login', values)
         if (response.status === 200 || response.status === 201) {
           Cookies.set('token', response.data.Data.token, { expires: 5 / 24 }); // Expires in 5 hours
           showToast({ type: 'success', title: 'Signed in', description: 'Logged in successfully.' });

@@ -2,7 +2,7 @@ import { useState } from 'react'
 import { useFormik } from 'formik'
 import * as Yup from 'yup'
 import { Link } from 'react-router-dom'
-import axios from 'axios'
+import api from '../api/client'
 import { useToast } from '../context/ToastContext'
 
 const ForgotPassword = () => {
@@ -18,7 +18,7 @@ const ForgotPassword = () => {
     onSubmit: async (values) => {
       setLoader(true)
       try {
-        await axios.post(`${import.meta.env.VITE_API_URL}/api/v1/forgot-password`, values)
+        await api.post('/forgot-password', values)
         // The API always responds the same way (it won't reveal whether the email exists).
         setSent(true)
         showToast({ type: 'success', title: 'Check your inbox', description: 'If that email is registered, a reset link is on its way.' })

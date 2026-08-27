@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
-import axios from 'axios';
 import Cookies from 'js-cookie';
 import { useLocation } from 'react-router-dom';
+import api from '../api/client';
 import { useTimer } from '../context/TimerContext';
 import { useToast } from '../context/ToastContext';
 import BasicsTab from './BasicsTab';
@@ -70,27 +70,22 @@ const Customize = ({ isCompleted = false }) => {
                 formData.append('customization', JSON.stringify(customizationCopy));
 
                 if (config._id) {
-                    await axios.patch(`${import.meta.env.VITE_API_URL}/api/v1/moments/${config._id}`, formData, {
-                        headers: { Authorization: `Bearer ${token}`, 'Content-Type': 'multipart/form-data' }
-                    });
+                    // No explicit Content-Type here on purpose: the browser needs to set
+                    // multipart/form-data itself so it can attach the boundary — setting
+                    // it manually strips the boundary and breaks upload parsing server-side.
+                    await api.patch(`/moments/${config._id}`, formData);
                     showToast({ type: 'success', title: 'Saved', description: 'Moment updated successfully!' });
                 } else {
-                    await axios.post(`${import.meta.env.VITE_API_URL}/api/v1/moments`, formData, {
-                        headers: { Authorization: `Bearer ${token}`, 'Content-Type': 'multipart/form-data' }
-                    });
+                    await api.post('/moments', formData);
                     showToast({ type: 'success', title: 'Saved', description: 'Moment created successfully!' });
                 }
             } else {
                 let dataToSend = payload;
                 if (config._id) {
-                    await axios.patch(`${import.meta.env.VITE_API_URL}/api/v1/moments/${config._id}`, dataToSend, {
-                        headers: { Authorization: `Bearer ${token}` }
-                    });
+                    await api.patch(`/moments/${config._id}`, dataToSend);
                     showToast({ type: 'success', title: 'Saved', description: 'Moment updated successfully!' });
                 } else {
-                    await axios.post(`${import.meta.env.VITE_API_URL}/api/v1/moments`, dataToSend, {
-                        headers: { Authorization: `Bearer ${token}` }
-                    });
+                    await api.post('/moments', dataToSend);
                     showToast({ type: 'success', title: 'Saved', description: 'Moment created successfully!' });
                 }
             }

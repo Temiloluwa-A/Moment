@@ -2,7 +2,7 @@ import { useState } from 'react'
 import { useFormik } from 'formik'
 import * as Yup from 'yup'
 import { Link, useNavigate, useParams } from 'react-router-dom'
-import axios from 'axios'
+import api from '../api/client'
 import { useToast } from '../context/ToastContext'
 
 const ResetPassword = () => {
@@ -23,7 +23,7 @@ const ResetPassword = () => {
     onSubmit: async (values) => {
       setLoader(true)
       try {
-        await axios.post(`${import.meta.env.VITE_API_URL}/api/v1/reset-password/${token}`, {
+        await api.post(`/reset-password/${token}`, {
           password: values.password,
         })
         showToast({ type: 'success', title: 'Password reset', description: 'You can now sign in with your new password.' })
