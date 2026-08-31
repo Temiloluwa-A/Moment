@@ -1,7 +1,8 @@
 import { useState, useEffect } from 'react';
-import Cookies from 'js-cookie';
+import { useQueryClient, useMutation } from '@tanstack/react-query';
 import { useLocation } from 'react-router-dom';
 import api from '../api/client';
+import { useAuth } from '../context/AuthContext';
 import { useTimer } from '../context/TimerContext';
 import { useToast } from '../context/ToastContext';
 import BasicsTab from './BasicsTab';
@@ -10,10 +11,11 @@ import MomentTab from './MomentTab';
 import BottomDrawer from './BottomDrawer';
 import './Customize.css';
 
-const Customize = ({ isCompleted = false }) => {
+const Customize = ({ readOnly = false }) => {
     const { config } = useTimer();
     const location = useLocation();
-    const [isSaving, setIsSaving] = useState(false);
+    const { isLoggedIn } = useAuth();
+    const queryClient = useQueryClient();
     const [activeTab, setActiveTab] = useState('basics');
     const [isDesktop, setIsDesktop] = useState(false);
     const [isDrawerOpen, setIsDrawerOpen] = useState(false);
@@ -28,19 +30,8 @@ const Customize = ({ isCompleted = false }) => {
 
     const { showToast } = useToast();
 
-    // A completed countdown is view-only: hide all editing UI (desktop panel + mobile drawer).
-    if (isCompleted) return null;
-
-    const handleSave = async () => {
-        setIsSaving(true);
-        try {
-            const token = Cookies.get('token');
-            if (!token) {
-                showToast({ type: 'warning', title: 'Login required', description: 'Please log in to save your moment!' });
-                setIsSaving(false);
-                return;
-            }
-
+    const saveMutation = useMutation({
+        mutationFn: async () => {
             const isCountUp = location.pathname.includes('count-up');
             const payload = { ...config, mode: isCountUp ? 'countup' : 'countdown' };
 
@@ -69,34 +60,43 @@ const Customize = ({ isCompleted = false }) => {
                 formData.append('units', JSON.stringify(payload.units || {}));
                 formData.append('customization', JSON.stringify(customizationCopy));
 
-                if (config._id) {
-                    // No explicit Content-Type here on purpose: the browser needs to set
-                    // multipart/form-data itself so it can attach the boundary — setting
-                    // it manually strips the boundary and breaks upload parsing server-side.
-                    await api.patch(`/moments/${config._id}`, formData);
-                    showToast({ type: 'success', title: 'Saved', description: 'Moment updated successfully!' });
-                } else {
-                    await api.post('/moments', formData);
-                    showToast({ type: 'success', title: 'Saved', description: 'Moment created successfully!' });
-                }
-            } else {
-                let dataToSend = payload;
-                if (config._id) {
-                    await api.patch(`/moments/${config._id}`, dataToSend);
-                    showToast({ type: 'success', title: 'Saved', description: 'Moment updated successfully!' });
-                } else {
-                    await api.post('/moments', dataToSend);
-                    showToast({ type: 'success', title: 'Saved', description: 'Moment created successfully!' });
-                }
+                // No explicit Content-Type here on purpose: the browser needs to set
+                // multipart/form-data itself so it can attach the boundary — setting
+                // it manually strips the boundary and breaks upload parsing server-side.
+                return config._id
+                    ? api.patch(`/moments/${config._id}`, formData)
+                    : api.post('/moments', formData);
             }
-        } catch (error) {
+
+            return config._id
+                ? api.patch(`/moments/${config._id}`, payload)
+                : api.post('/moments', payload);
+        },
+        onSuccess: () => {
+            queryClient.invalidateQueries({ queryKey: ['moments'] });
+            showToast({
+                type: 'success',
+                title: 'Saved',
+                description: config._id ? 'Moment updated successfully!' : 'Moment created successfully!',
+            });
+        },
+        onError: (error) => {
             console.error(error);
             const errorMsg = error.response?.data?.message || "Failed to save moment. Please try again.";
             showToast({ type: 'error', title: 'Save failed', description: errorMsg });
-        } finally {
-            setIsSaving(false);
+        },
+    });
+
+    const handleSave = () => {
+        if (!isLoggedIn) {
+            showToast({ type: 'warning', title: 'Login required', description: 'Please log in to save your moment!' });
+            return;
         }
+        saveMutation.mutate();
     };
+
+    // A completed countdown, or a moment you don't own, is view-only: hide all editing UI (desktop panel + mobile drawer).
+    if (readOnly) return null;
 
     // Render the appropriate tab content
     const renderTabContent = () => {
@@ -150,10 +150,10 @@ const Customize = ({ isCompleted = false }) => {
                 <div className="border-t border-border p-6">
                     <button
                         onClick={handleSave}
-                        disabled={isSaving}
+                        disabled={saveMutation.isPending}
                         className="w-full py-4 bg-primary text-on-primary font-bold tracking-widest uppercase text-sm rounded-full shadow-lg hover:bg-primary hover:scale-[1.02] active:scale-95 transition-all duration-300 disabled:opacity-70 disabled:cursor-not-allowed"
                     >
-                        {isSaving ? "Saving..." : "Apply Changes"}
+                        {saveMutation.isPending ? "Saving..." : "Apply Changes"}
                     </button>
                 </div>
             </div>
@@ -168,7 +168,7 @@ const Customize = ({ isCompleted = false }) => {
                     className="floating-customize-btn"
                     aria-label="Open customize drawer"
                 >
-                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor" className="bi bi-palette" viewBox="0 0 16 16">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" fill="currentColor" className="bi bi-palette" viewBox="0 0 16 16">
                         <path d="M6.002 1a1 1 0 1 1 2 0 1 1 0 0 1-2 0zm2.646 9l.914-2.743a1 1 0 0 0-1.872-1.086l-.914 2.743a2 2 0 1 0 1.872 1.086zM12 0a1 1 0 1 1 2 0 1 1 0 0 1-2 0zm1 11.5a1.5 1.5 0 1 1 0-3 1.5 1.5 0 0 1 0 3zM0 6.5a.5.5 0 0 0 .5.5h3a.5.5 0 0 0 0-1H.5a.5.5 0 0 0-.5.5z" />
                     </svg>
                     <span>Customize</span>
@@ -187,10 +187,10 @@ const Customize = ({ isCompleted = false }) => {
                 <div className="sticky bottom-0 bg-linear-to-t from-surface via-surface to-transparent pt-6 pb-8 px-4 -mx-4">
                     <button
                         onClick={handleSave}
-                        disabled={isSaving}
+                        disabled={saveMutation.isPending}
                         className="w-full py-4 bg-primary text-on-primary font-bold tracking-widest uppercase text-sm rounded-full shadow-lg hover:bg-primary hover:scale-[1.02] active:scale-95 transition-all duration-300 disabled:opacity-70 disabled:cursor-not-allowed"
                     >
-                        {isSaving ? "Saving..." : "Apply Changes"}
+                        {saveMutation.isPending ? "Saving..." : "Apply Changes"}
                     </button>
                 </div>
             </BottomDrawer>

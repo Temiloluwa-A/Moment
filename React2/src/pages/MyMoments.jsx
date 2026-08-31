@@ -1,19 +1,22 @@
 import { useState, useEffect } from 'react';
-import Cookies from 'js-cookie';
 import { useInfiniteQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { useNavigate } from 'react-router-dom';
 import api from '../api/client';
 import ShareModal from '../components/ShareModal';
 import SavedMoment from '../components/SavedMoment';
+import ConfirmModal from '../components/ConfirmModal';
+import { useAuth } from '../context/AuthContext';
 import { useToast } from '../context/ToastContext';
 
 const MyMoments = () => {
   const [shareSlug, setShareSlug] = useState(null);
-  const token = Cookies.get('token');
+  const [pendingLeave, setPendingLeave] = useState(null);
+  const [pendingDelete, setPendingDelete] = useState(null);
+  const { isLoggedIn } = useAuth();
   const queryClient = useQueryClient();
   const { data, isLoading, fetchNextPage, hasNextPage, isFetchingNextPage } = useInfiniteQuery({
     queryKey: ['moments'],
-    enabled: !!token,
+    enabled: isLoggedIn,
     initialPageParam: 1,
     queryFn: async ({ pageParam }) => {
       const response = await api.get('/moments', { params: { page: pageParam } });
@@ -27,11 +30,11 @@ const MyMoments = () => {
   const { showToast } = useToast();
 
   useEffect(() => {
-          if (!token) {
+          if (!isLoggedIn) {
               showToast({ type: 'warning', title: 'Login required', description: 'Please login to view your moments' });
               navigate('/login');
           }
-  }, [token, navigate, showToast]);
+  }, [isLoggedIn, navigate, showToast]);
 
   const deleteMoment = useMutation({
     mutationFn: (momentId) => api.delete(`/moments/${momentId}`),
@@ -44,20 +47,22 @@ const MyMoments = () => {
     onError: () => showToast({ type: 'error', title: 'Leave failed', description: 'Failed to leave moment. Please try again.' }),
   });
 
-  const handleLeave = async (slug, e) => {
+  const handleLeave = (slug, e) => {
       e.stopPropagation();
-      const confirmLeave = window.confirm("Are you sure you want to leave this shared moment?");
-      if (!confirmLeave) return;
-      LeaveSharedMoment.mutate(slug);
+      setPendingLeave(slug);
   };
 
-  const handleDelete = async (id, e) => {
+  const handleDelete = (id, e) => {
       e.stopPropagation(); // Prevent the card's onClick from navigating
-      
-      const confirmDelete = window.confirm("Are you sure you want to permanently delete this moment?");
-      if (!confirmDelete) return;
+      setPendingDelete(id);
+  };
 
-      deleteMoment.mutate(id);
+  const confirmLeave = () => {
+      LeaveSharedMoment.mutate(pendingLeave, { onSettled: () => setPendingLeave(null) });
+  };
+
+  const confirmDelete = () => {
+      deleteMoment.mutate(pendingDelete, { onSettled: () => setPendingDelete(null) });
   };
 
   if (isLoading) return <div className="text-text text-center mt-32 animate-pulse">Loading your moments...</div>;
@@ -87,7 +92,7 @@ const MyMoments = () => {
                     key={moment._id}
                     moment={moment}
                     compact
-                    onClick={() => navigate(`/create/${moment.mode === 'countup' ? 'count-up' : 'count-down'}`, { state: { savedConfig: moment, isCompleted } })}
+                    onClick={() => navigate(`/create/${moment.mode === 'countup' ? 'count-up' : 'count-down'}`, { state: { savedConfig: moment, isCompleted, isOwner: !isSharedWithMe } })}
                     headerLeft={
                         <span className="inline-flex flex-wrap items-center gap-2">
                             {/* Shared Badge */}
@@ -155,6 +160,26 @@ const MyMoments = () => {
 
       {/* The Share Modal */}
       <ShareModal isOpen={!!shareSlug} onClose={() => setShareSlug(null)} slug={shareSlug} isOwner={isOwner} />
+
+      <ConfirmModal
+        open={!!pendingLeave}
+        title="Leave this moment?"
+        description="You'll lose access to this shared moment unless someone invites you back."
+        confirmLabel="Leave"
+        loading={LeaveSharedMoment.isPending}
+        onConfirm={confirmLeave}
+        onCancel={() => setPendingLeave(null)}
+      />
+
+      <ConfirmModal
+        open={!!pendingDelete}
+        title="Delete this moment?"
+        description="This permanently deletes the moment and can't be undone."
+        confirmLabel="Delete forever"
+        loading={deleteMoment.isPending}
+        onConfirm={confirmDelete}
+        onCancel={() => setPendingDelete(null)}
+      />
     </div>
   )
 }

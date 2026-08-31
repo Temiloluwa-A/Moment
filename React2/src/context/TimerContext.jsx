@@ -1,4 +1,4 @@
-import { useContext, createContext, useState } from "react";
+import { useContext, createContext, useState, useCallback } from "react";
 
 const TimerContext = createContext(null)
 
@@ -22,8 +22,10 @@ export function TimerProvider({children}) {
             font: 'noto',
             // A real value here matters: the backend's background schema requires
             // one, so an empty default makes "create a moment" 500 for anyone who
-            // never opens the Look tab.
-            background: { type: 'solid', value: '#1a2b3c', publicId: null, format: null },
+            // never opens the Look tab. Using the theme token (not a hardcoded hex)
+            // means an uncustomized moment follows light/dark mode instead of
+            // always showing a fixed color.
+            background: { type: 'solid', value: 'var(--color-bg)', publicId: null, format: null },
             timerSize: 80,
             borderRadius: 50,
             borderStyle: { width: 1, color: 'transparent', style: 'solid' },
@@ -32,7 +34,7 @@ export function TimerProvider({children}) {
             trigger: { type: 'preset', preset: 'confetti', media: { secure_url: null, publicId: null, resourceType: null } }
         }
     })
-    function update(field, value){
+    const update = useCallback((field, value) => {
         setconfig(prev => {
             const next = { ...prev };
             const keys = field.split('.');
@@ -54,16 +56,20 @@ export function TimerProvider({children}) {
             next[field] = value;
             return next;
         })
-    }
+    }, [])
 
     // Allows us to load an entire saved configuration from the database at once!
-    function loadConfig(newConfig){
-        // Backwards compatibility: If we load an old moment from the DB that doesn't 
+    const loadConfig = useCallback((rawConfig) => {
+        // Clone before mutating below — callers may pass in a React Query cache
+        // entry (e.g. useSharedMoment's data), and mutating that in place would
+        // corrupt the cache for every other consumer reading the same slug.
+        const newConfig = { ...rawConfig };
+        // Backwards compatibility: If we load an old moment from the DB that doesn't
         // have the new 'customization' folder, we build it on the fly so React doesn't crash!
         if (!newConfig.customization) {
             newConfig.customization = {
                 font: newConfig.font || 'noto',
-                background: newConfig.background || { type: 'solid', value: '#2f1e16' },
+                background: newConfig.background || { type: 'solid', value: 'var(--color-bg)' },
                 timerSize: newConfig.timersize || 80,
                 borderRadius: newConfig.borderRadius || 15,
                 borderStyle: { width: 1, color: 'transparent', style: 'solid' },
@@ -73,7 +79,7 @@ export function TimerProvider({children}) {
             };
         }
         setconfig(newConfig)
-    }
+    }, [])
 
     return(
         <TimerContext.Provider value={{config, update, loadConfig}}>

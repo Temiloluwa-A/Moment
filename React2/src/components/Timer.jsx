@@ -80,7 +80,7 @@ const Timer = ({ isPanelOpen, readOnly = false }) => {
 
     const activeFont = FONTS.find(font => font.key === config.customization.font) || FONTS[0];
     const activeMood = MOOD.find(mood => mood.key === config.customization.mood);
-    const background = config.customization.background || { type: 'solid', value: '#131418' };
+    const background = config.customization.background || { type: 'solid', value: 'var(--color-bg)' };
     const bgStyle = background.type === 'image'
         ? { backgroundImage: `url(${background.value})`, backgroundSize: 'cover', backgroundPosition: 'center', backgroundRepeat: 'no-repeat' }
         : { background: background.value };
