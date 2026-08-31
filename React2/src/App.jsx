@@ -7,6 +7,7 @@ import Create from './pages/Create'
 import CreateCountUp from './pages/CreateCountUp'
 import CreateCountDown from './pages/CreateCountDown'
 import { ModeProvider } from './context/ModeContext'
+import { AuthProvider } from './context/AuthContext'
 import { TimerProvider } from './context/TimerContext'
 import { ToastProvider } from './context/ToastContext'
 import SignUp from './components/SignUp'
@@ -21,6 +22,7 @@ import JoinMoment from './pages/JoinMoment'
 const App = () => {
   return (
     <ModeProvider>
+      <AuthProvider>
       <TimerProvider>
         <ToastProvider>
           <BrowserRouter>
@@ -48,6 +50,7 @@ const App = () => {
         </BrowserRouter>
       </ToastProvider>
     </TimerProvider>
+    </AuthProvider>
   </ModeProvider>
   )
 }

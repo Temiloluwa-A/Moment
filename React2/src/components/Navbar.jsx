@@ -1,11 +1,9 @@
 import { NavLink, useLocation, useNavigate } from 'react-router-dom'
 import ProfileModal from './ProfileModal'
-import { useState, useEffect } from 'react'
-import { useQuery } from '@tanstack/react-query'
+import { useState } from 'react'
 import { useMode } from '../context/ModeContext'
+import { useAuth } from '../context/AuthContext'
 import Avatar from './Avatar'
-import Cookies from 'js-cookie'
-import api from '../api/client'
 
 // Mobile speed-dial items — labels kept short so the circles stay small.
 const MOBILE_NAV = [
@@ -20,20 +18,7 @@ const Navbar = () => {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
   const navigate = useNavigate()
   const { mode, toggleMode } = useMode()
-  const token = Cookies.get('token')
-  const { data:userData, isError} = useQuery({
-     queryKey: ['profile'],
-     enabled: !!token, // Only fetch if token exists
-     queryFn: async () => {
-      const response = await api.get('/profile')
-        return response.data.data
-     }
-  })
-
-  useEffect(() => {
-    if (isError) Cookies.remove('token') // If the token is invalid, remove it!
-  }, [isError])
-  const isloggedIn = !!token && !isError
+  const { isLoggedIn: isloggedIn, user: userData } = useAuth()
   const location = useLocation()
   const noNavBar =['/login', '/sign-up', '/forgot-password']
   if (noNavBar.includes(location.pathname) || location.pathname.startsWith('/reset-password')) {
@@ -94,7 +79,7 @@ const Navbar = () => {
           onClick={() => setMobileMenuOpen(false)}
           className={`fixed inset-0 z-40 bg-black/30 backdrop-blur-sm transition-opacity duration-300 ${mobileMenuOpen ? 'opacity-100' : 'opacity-0 pointer-events-none'}`}
         />
-        <div className="fixed top-20 right-4 z-50 flex flex-col items-center gap-3">
+        <div className="fixed top-25 right-4 z-50 flex flex-col items-center gap-3">
           {/* menu circle */}
           <button
             onClick={() => setMobileMenuOpen((v) => !v)}

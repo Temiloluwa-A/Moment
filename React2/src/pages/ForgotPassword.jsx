@@ -1,33 +1,34 @@
 import { useState } from 'react'
 import { useFormik } from 'formik'
 import * as Yup from 'yup'
+import { useMutation } from '@tanstack/react-query'
 import { Link } from 'react-router-dom'
 import api from '../api/client'
 import { useToast } from '../context/ToastContext'
 
 const ForgotPassword = () => {
   const { showToast } = useToast()
-  const [loader, setLoader] = useState(false)
   const [sent, setSent] = useState(false)
+
+  const forgotPasswordMutation = useMutation({
+    // The API always responds the same way (it won't reveal whether the email exists).
+    mutationFn: (values) => api.post('/forgot-password', values),
+    onSuccess: () => {
+      setSent(true)
+      showToast({ type: 'success', title: 'Check your inbox', description: 'If that email is registered, a reset link is on its way.' })
+    },
+    onError: () => {
+      showToast({ type: 'error', title: 'Something went wrong', description: 'Could not send the reset link. Please try again.' })
+    },
+  })
+  const loader = forgotPasswordMutation.isPending
 
   const form = useFormik({
     initialValues: { email: '' },
     validationSchema: Yup.object({
       email: Yup.string().email('Enter a valid email').required('Email is required'),
     }),
-    onSubmit: async (values) => {
-      setLoader(true)
-      try {
-        await api.post('/forgot-password', values)
-        // The API always responds the same way (it won't reveal whether the email exists).
-        setSent(true)
-        showToast({ type: 'success', title: 'Check your inbox', description: 'If that email is registered, a reset link is on its way.' })
-      } catch {
-        showToast({ type: 'error', title: 'Something went wrong', description: 'Could not send the reset link. Please try again.' })
-      } finally {
-        setLoader(false)
-      }
-    },
+    onSubmit: (values) => forgotPasswordMutation.mutate(values),
   })
 
   return (

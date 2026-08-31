@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import { useFormik } from 'formik'
 import * as Yup from 'yup'
+import { useMutation } from '@tanstack/react-query'
 import { Link, useNavigate, useParams } from 'react-router-dom'
 import api from '../api/client'
 import { useToast } from '../context/ToastContext'
@@ -9,8 +10,20 @@ const ResetPassword = () => {
   const { token } = useParams()
   const navigate = useNavigate()
   const { showToast } = useToast()
-  const [loader, setLoader] = useState(false)
   const [showPassword, setShowPassword] = useState(false)
+
+  const resetPasswordMutation = useMutation({
+    mutationFn: (password) => api.post(`/reset-password/${token}`, { password }),
+    onSuccess: () => {
+      showToast({ type: 'success', title: 'Password reset', description: 'You can now sign in with your new password.' })
+      navigate('/login')
+    },
+    onError: (error) => {
+      const message = error.response?.data?.message || 'Could not reset your password. The link may have expired.'
+      showToast({ type: 'error', title: 'Reset failed', description: message })
+    },
+  })
+  const loader = resetPasswordMutation.isPending
 
   const form = useFormik({
     initialValues: { password: '', confirmPassword: '' },
@@ -20,21 +33,7 @@ const ResetPassword = () => {
         .oneOf([Yup.ref('password')], 'Passwords must match')
         .required('Please confirm your password'),
     }),
-    onSubmit: async (values) => {
-      setLoader(true)
-      try {
-        await api.post(`/reset-password/${token}`, {
-          password: values.password,
-        })
-        showToast({ type: 'success', title: 'Password reset', description: 'You can now sign in with your new password.' })
-        navigate('/login')
-      } catch (error) {
-        const message = error.response?.data?.message || 'Could not reset your password. The link may have expired.'
-        showToast({ type: 'error', title: 'Reset failed', description: message })
-      } finally {
-        setLoader(false)
-      }
-    },
+    onSubmit: (values) => resetPasswordMutation.mutate(values.password),
   })
 
   return (

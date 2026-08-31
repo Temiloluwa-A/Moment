@@ -1,42 +1,34 @@
 import { useState } from 'react'
 import { useFormik } from 'formik'
 import * as Yup from 'yup'
+import { useMutation } from '@tanstack/react-query'
 import { Link, useNavigate } from 'react-router-dom'
 import { useGoogleLogin } from '@react-oauth/google'
-import Cookies from 'js-cookie'
 import api from '../api/client'
+import { useAuth } from '../context/AuthContext'
+import { useGoogleAuthMutation } from '../hooks/useGoogleAuthMutation'
 import { useToast } from '../context/ToastContext'
 import TimeSky from './TimeSky'
 
 const SignUp = () => {
     const navigate = useNavigate()
+    const { login } = useAuth()
     const { showToast } = useToast()
-    const [loader, setloader] = useState(false)
-    const [showPassword, setshowPassword] = useState(false)
+    const [showPassword, setShowPassword] = useState(false)
 
+    const googleAuthMutation = useGoogleAuthMutation()
     const googleLogin = useGoogleLogin({
-        onSuccess: async (tokenResponse) => {
-            setloader(true)
-            try {
-                const result = await api.post('/google-auth', {
-                    access_token: tokenResponse.access_token,
-                })
-                if (result.status === 200 || result.status === 201) {
-                    Cookies.set('token', result.data.token, { expires: 1 })
-                    showToast({ type: 'success', title: 'Welcome', description: 'Signed in with Google.' })
-                    navigate('/create/count-down')
-                }
-            } catch (error) {
-                console.error('Google sign-in error:', error.response?.data || error.message)
-                showToast({ type: 'error', title: 'Google sign-in failed', description: 'Something went wrong. Please try again.' })
-            } finally {
-                setloader(false)
-            }
-        },
+        onSuccess: (tokenResponse) => googleAuthMutation.mutate(tokenResponse.access_token),
         onError: () => {
             showToast({ type: 'error', title: 'Google sign-in failed', description: 'Could not connect to Google. Please try again.' })
         },
     })
+
+    const signUpMutation = useMutation({
+        mutationFn: (values) => api.post('/signup', values),
+    })
+    const loader = signUpMutation.isPending || googleAuthMutation.isPending
+
     let signUpArea = useFormik({
         initialValues: {
             fullName: '',
@@ -47,50 +39,41 @@ const SignUp = () => {
         },
 
 
-        onSubmit: async(values, { setSubmitting, setFieldError }) => {
-            setloader(true);
-            try {
-                const result = await api.post('/signup', values)
-
-                if(result.status == 201 || result.status == 200){
+        onSubmit: (values, { setFieldError }) => {
+            signUpMutation.mutate(values, {
+                onSuccess: (result) => {
                     showToast({ type: 'success', title: 'Welcome', description: 'Account created successfully.' });
                     // Automatically log the user in by saving the token!
-                    Cookies.set('token', result.data.token, { expires: 1 });
+                    login(result.data.token);
                     navigate('/create/count-down')
-                }
-            }
-            catch (error) {
-                const serverMessage = error.response?.data?.message;
-                const statusCode = error.response?.status;
+                },
+                onError: (error) => {
+                    const serverMessage = error.response?.data?.message;
 
-                console.error('Sign up error:', {
-                    message: error.message,
-                    statusCode,
-                    responseData: error.response?.data,
-                    responseHeaders: error.response?.headers,
-                    config: error.config,
-                });
-
-                if (typeof serverMessage === 'string' && serverMessage.toLowerCase().includes('email')) {
-                    setFieldError('email', 'Email already exists');
-                    showToast({
-                        type: 'error',
-                        title: 'Sign up failed',
-                        description: 'Email already exists. Please use a different email.',
+                    console.error('Sign up error:', {
+                        message: error.message,
+                        statusCode: error.response?.status,
+                        responseData: error.response?.data,
+                        responseHeaders: error.response?.headers,
+                        config: error.config,
                     });
-                } else {
-                    showToast({
-                        type: 'error',
-                        title: 'Sign up failed',
-                        description:'Something went wrong. Please try again.',
-                    });
-                }
-            }
-            finally {
-                setloader(false);
-                setSubmitting(false);
-            }
 
+                    if (typeof serverMessage === 'string' && serverMessage.toLowerCase().includes('email')) {
+                        setFieldError('email', 'Email already exists');
+                        showToast({
+                            type: 'error',
+                            title: 'Sign up failed',
+                            description: 'Email already exists. Please use a different email.',
+                        });
+                    } else {
+                        showToast({
+                            type: 'error',
+                            title: 'Sign up failed',
+                            description:'Something went wrong. Please try again.',
+                        });
+                    }
+                },
+            });
         },
 
 
@@ -167,7 +150,7 @@ const SignUp = () => {
                                         <label className="font-label text-xs uppercase tracking-widest ml-1" htmlFor="password">Password</label>
                                         <div className="relative flex items-center">
                                             <input className='w-full border py-3 px-4 rounded-lg border-input-border outline-none text-text focus:ring-1 focus:ring-focus/20 bg-input-bg' type={showPassword ? "text" : "password"} name='password' onChange={signUpArea.handleChange} onBlur={signUpArea.handleBlur} value={signUpArea.values.password} />
-                                            <button type="button" className="absolute right-3 text-text-subtle hover:text-text-muted " onClick={() => setshowPassword(!showPassword)}>
+                                            <button type="button" className="absolute right-3 text-text-subtle hover:text-text-muted " onClick={() => setShowPassword(!showPassword)}>
                                                 {showPassword ? (
                                                     <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" className="bi bi-eye" viewBox="0 0 16 16">
                                                         <path d="M16 8s-3-5.5-8-5.5S0 8 0 8s3 5.5 8 5.5S16 8 16 8M1.173 8a13 13 0 0 1 1.66-2.043C4.12 4.668 5.88 3.5 8 3.5s3.879 1.168 5.168 2.457A13 13 0 0 1 14.828 8q-.086.13-.195.288c-.335.48-.83 1.12-1.465 1.755C11.879 11.332 10.119 12.5 8 12.5s-3.879-1.168-5.168-2.457A13 13 0 0 1 1.172 8z" />

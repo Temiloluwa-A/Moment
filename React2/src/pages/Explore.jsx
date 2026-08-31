@@ -1,12 +1,12 @@
-import Cookies from 'js-cookie';
 import { useInfiniteQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import api from '../api/client';
+import { useAuth } from '../context/AuthContext';
 import { useToast } from '../context/ToastContext';
 import SavedMoment from '../components/SavedMoment';
 
 const Explore = () => {
   const { showToast } = useToast();
-  const token = Cookies.get('token');
+  const { isLoggedIn } = useAuth();
   const queryClient = useQueryClient();
 
   // Public moments are viewable without an account:
@@ -40,7 +40,7 @@ const Explore = () => {
   });
 
   const handleRoot = (momentId) => {
-    if (!token) {
+    if (!isLoggedIn) {
       showToast({ type: 'warning', title: 'Login required', description: 'Log in to root a moment.' });
       return;
     }

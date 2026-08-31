@@ -1,8 +1,8 @@
 import { useState, useEffect, useRef } from 'react'
-import Cookies from 'js-cookie'
 import { createPortal } from 'react-dom'
 import { useQueryClient } from '@tanstack/react-query'
 import { useMode } from '../context/ModeContext'
+import { useAuth } from '../context/AuthContext'
 import { useToast } from '../context/ToastContext'
 import api from '../api/client'
 import Avatar from './Avatar'
@@ -11,6 +11,7 @@ const AVATAR_STYLES = ['lorelei', 'notionists', 'avataaars', 'funEmoji', 'advent
 
 const ProfileModal = ({ open, onClose, userData }) => {
     const { mode, toggleMode } = useMode()
+    const { logout } = useAuth()
     const { showToast } = useToast()
     const queryClient = useQueryClient()
 
@@ -25,8 +26,12 @@ const ProfileModal = ({ open, onClose, userData }) => {
     const [deleting, setDeleting] = useState(false)
     const passwordSectionRef = useRef(null)
 
-    // Sync local edit state whenever the modal opens with fresh data.
-    useEffect(() => {
+    // Sync local edit state whenever the modal opens with fresh data. Adjusting
+    // state during render (rather than in an effect) avoids an extra cascading
+    // render — React applies this before the browser ever paints the stale values.
+    const [prevOpen, setPrevOpen] = useState(open)
+    if (open !== prevOpen) {
+        setPrevOpen(open)
         if (open && userData) {
             setUserName(userData.userName || '')
             setAvatarStyle(userData.avatarStyle || 'lorelei')
@@ -35,7 +40,7 @@ const ProfileModal = ({ open, onClose, userData }) => {
             setConfirmDelete(false)
             setShowPasswordFields(false)
         }
-    }, [open, userData])
+    }
 
     // Close on Escape.
     useEffect(() => {
@@ -108,8 +113,7 @@ const ProfileModal = ({ open, onClose, userData }) => {
     }
 
     const signOut = () => {
-        Cookies.remove('token')
-        queryClient.clear()
+        logout()
         window.location.href = '/login'
     }
 
@@ -117,8 +121,7 @@ const ProfileModal = ({ open, onClose, userData }) => {
         setDeleting(true)
         try {
             await api.delete('/profile')
-            Cookies.remove('token')
-            queryClient.clear()
+            logout()
             showToast({ type: 'success', title: 'Account deleted', description: 'Your account has been removed. Take care.' })
             window.location.href = '/sign-up'
         } catch (error) {
