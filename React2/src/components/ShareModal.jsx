@@ -1,13 +1,22 @@
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
+import { useMutation, useQueryClient } from '@tanstack/react-query';
 import api from '../api/client';
 import Avatar from './Avatar';
+import ConfirmModal from './ConfirmModal';
+import { useSharedMoment } from '../hooks/useSharedMoment';
 import { useToast } from '../context/ToastContext';
 
 const ShareModal = ({ isOpen, onClose, slug, isOwner }) => {
     const { showToast } = useToast();
+    const queryClient = useQueryClient();
     const [copied, setCopied] = useState(false);
     const [collabCopied, setCollabCopied] = useState(false);
-    const [members, setMembers] = useState([]);
+    const [pendingRemove, setPendingRemove] = useState(null);
+
+    // Refetches every time the modal opens, same as before — the query client
+    // has no custom staleTime, so `enabled` flipping true is enough.
+    const { data: moment } = useSharedMoment(slug, { enabled: isOpen });
+    const members = moment?.members || [];
 
     // These are pages on this site (App.jsx), not API endpoints — build them
     // off the site's own origin, not the backend's.
@@ -26,30 +35,28 @@ const ShareModal = ({ isOpen, onClose, slug, isOwner }) => {
         setTimeout(() => setCollabCopied(false), 2000);
     };
 
-    const handleRemoveMember = async (memberId, memberName) => {
-        const confirmRemove = window.confirm(`Remove ${memberName} from this moment?`);
-        if (!confirmRemove) return;
-
-        try {
-            await api.delete(`/moments/${slug}/members/${memberId}`);
-            setMembers(prev => prev.filter(m => m._id !== memberId));
-            showToast({ type: 'success', title: 'Member removed', description: `${memberName} was removed from this moment.` });
-        } catch (err) {
+    const removeMemberMutation = useMutation({
+        mutationFn: (memberId) => api.delete(`/moments/${slug}/members/${memberId}`),
+        onSuccess: (_data, memberId) => {
+            queryClient.invalidateQueries({ queryKey: ['shared-moment', slug] });
+            const memberName = pendingRemove?.id === memberId ? pendingRemove.name : undefined;
+            showToast({ type: 'success', title: 'Member removed', description: memberName ? `${memberName} was removed from this moment.` : 'Member removed from this moment.' });
+            setPendingRemove(null);
+        },
+        onError: (err) => {
             console.error("Failed to remove member", err);
             showToast({ type: 'error', title: 'Remove failed', description: 'Failed to remove member.' });
-        }
+            setPendingRemove(null);
+        },
+    });
+
+    const handleRemoveMember = (memberId, memberName) => {
+        setPendingRemove({ id: memberId, name: memberName });
     };
 
-    // Fetch the latest members when the modal opens!
-    useEffect(() => {
-        if (isOpen && slug) {
-            api.get(`/moments/shared/${slug}`)
-                .then(res => {
-                    setMembers(res.data.data.members || []);
-                })
-                .catch(err => console.error("Failed to fetch members", err));
-        }
-    }, [isOpen, slug]);
+    const confirmRemoveMember = () => {
+        removeMemberMutation.mutate(pendingRemove.id);
+    };
 
     if (!isOpen) return null;
 
@@ -124,6 +131,16 @@ const ShareModal = ({ isOpen, onClose, slug, isOwner }) => {
                     </div>
                 </section>
         </div>
+
+        <ConfirmModal
+            open={!!pendingRemove}
+            title="Remove member?"
+            description={pendingRemove ? `${pendingRemove.name} will lose access to this moment.` : undefined}
+            confirmLabel="Remove"
+            loading={removeMemberMutation.isPending}
+            onConfirm={confirmRemoveMember}
+            onCancel={() => setPendingRemove(null)}
+        />
         </div >
     );
 };

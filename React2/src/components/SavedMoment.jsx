@@ -4,7 +4,7 @@ const getBackgroundStyles = (background) => {
     if (!background) return { backgroundColor: '#0f172a' };
     if (background.type === 'image') {
         return {
-            backgroundImage: `linear-gradient(rgba(15,23,42,0.72), rgba(15,23,42,0.72)), url(${background.value})`,
+            backgroundImage: `linear-gradient(rgba(15,23,42,0.35), rgba(15,23,42,0.35)), url(${background.value})`,
             backgroundSize: 'cover',
             backgroundPosition: 'center',
         };
@@ -125,7 +125,7 @@ const SavedMoment = ({ moment, onClick, headerLeft, headerRight, footer, actions
                         )}
                     </div>
                     {actions && (
-                        <div className="mt-3 flex items-center justify-center gap-1">
+                        <div className="mt-3 flex items-center justify-center gap-1 ">
                             {actions}
                         </div>
                     )}
