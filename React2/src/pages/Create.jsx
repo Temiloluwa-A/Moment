@@ -11,13 +11,21 @@ const Create = () => {
   
   // Check if the router passed us an "isCompleted" flag
   const isCompleted = location.state?.isCompleted || false;
+  // Absent when creating fresh (always the owner) or viewing a public /moment/:slug
+  // link (a separate, always-read-only route). Only MyMoments passes this
+  // explicitly, for a moment that might belong to someone else.
+  const isOwner = location.state?.isOwner !== false;
+  // A group member can view but not edit someone else's moment settings —
+  // the backend already enforces owner-only writes, this just makes the UI
+  // honest about it instead of failing silently on save.
+  const isReadOnly = isCompleted || !isOwner;
 
   useEffect(() => {
     // If we navigated here by clicking a card, load that card's data into the timer!
     if (location.state?.savedConfig) {
       loadConfig(location.state.savedConfig);
     }
-  }, [location.state]);
+  }, [location.state, loadConfig]);
 
   return (
     <div className="min-h-screen relative overflow-x-hidden flex flex-col">
@@ -41,17 +49,17 @@ const Create = () => {
           </NavLink>
         </div>
 
-        {/* View-only badge: a completed countdown can no longer be edited */}
-        {isCompleted && (
+        {/* View-only badge: a completed countdown, or someone else's moment, can't be edited */}
+        {isReadOnly && (
           <span className="mb-3 bg-success/15 text-success border border-success/30 px-4 py-2 rounded-full font-label text-xs tracking-widest uppercase inline-flex items-center gap-2">
-            <span className="material-symbols-outlined text-xs">lock</span>
-            Completed · View only
+            <span className="material-symbols-outlined text-xs">{isCompleted ? 'lock' : 'group'}</span>
+            {isCompleted ? 'Completed · View only' : 'Shared · View only'}
           </span>
         )}
       </div>
 
       {/* Top Right: Desktop Customize button (visible on lg and up) */}
-      {!isCompleted && (
+      {!isReadOnly && (
         <button
           onClick={() => setisPanelOpen(!isPanelOpen)}
           className={`hidden lg:flex absolute top-24 z-[70] bg-surface-high/80 backdrop-blur-md text-primary border border-border px-6 py-2.5 rounded-full shadow-2xl hover:bg-surface-high hover:scale-105 transition-all duration-500 items-center gap-2 font-label text-sm tracking-widest uppercase ${isPanelOpen ? 'right-6 lg:right-[calc(40%+1.5rem)]' : 'right-8'}`}
@@ -63,17 +71,17 @@ const Create = () => {
 
       {/* Main Content Area (Where the Timers will show up) */}
       <div className={`flex-1 flex justify-center items-start lg:items-center transition-all duration-500 ease-in-out pt-6 lg:pt-0 pb-10 ${isPanelOpen ? 'w-full lg:w-[60%]' : 'w-full'}`}>
-        <Outlet context={{ isPanelOpen, isCompleted }} />
+        <Outlet context={{ isPanelOpen, readOnly: isReadOnly }} />
       </div>
 
       {/* Desktop: Full Screen Height Customize Panel Drawer (shown on lg and up) */}
       <div className={`hidden lg:block fixed right-0 top-0 h-screen lg:w-[40%] w-full transition-transform duration-500 ease-in-out z-[60] bg-surface/80 backdrop-blur-3xl shadow-2xl border-l border-border overflow-y-auto ${isPanelOpen ? 'translate-x-0' : 'translate-x-full'}`}>
-        <Customize isCompleted={isCompleted} />
+        <Customize readOnly={isReadOnly} />
       </div>
 
       {/* Mobile: render Customize so it can show its floating button + BottomDrawer (hidden on lg) */}
       <div className="block lg:hidden">
-        <Customize isCompleted={isCompleted} />
+        <Customize readOnly={isReadOnly} />
       </div>
     </div>
   )

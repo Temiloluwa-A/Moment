@@ -256,6 +256,11 @@ const deleteAccount = async (req, res) => {
     // them anymore.
     await Timer.updateMany({ userId: req.user.id }, { isPublic: false, ownerDeleted: true });
 
+    // Pull them out of every OTHER moment's members list too — otherwise a
+    // deleted account leaves a dangling id in someone else's group moment
+    // forever (populate() silently hides it from responses, masking the leak).
+    await Timer.updateMany({ members: req.user.id }, { $pull: { members: req.user.id } });
+
     const user = await User.findByIdAndDelete(req.user.id);
     if (!user) {
         throw new AppError(404, "User not found")
