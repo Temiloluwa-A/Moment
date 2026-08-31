@@ -14,7 +14,7 @@ const authMiddleware = (req, res, next) => {
         req.user = verified; // This contains the user's { id: ... }
         next(); // Move on to the next function
     } catch (err) {
-        res.status(400).send({ message: "Invalid Token" });
+        res.status(401).send({ message: "Invalid Token" });
     }
 };
 
