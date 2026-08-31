@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useRef, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { useMode } from '../context/ModeContext'
 
 /*
@@ -91,16 +91,18 @@ const TimeSky = ({ className = '', life = true, parallax = true }) => {
   }, [])
 
   const animate = life && !reduce
-  const stars = useMemo(
-    () =>
-      Array.from({ length: 80 }, () => ({
-        left: `${(Math.random() * 100).toFixed(2)}%`,
-        top: `${(Math.random() * 78).toFixed(2)}%`,
-        scale: (0.6 + Math.random() * 1.2).toFixed(2),
-        dur: `${(2.5 + Math.random() * 4).toFixed(1)}s`,
-        delay: `${(Math.random() * 4).toFixed(1)}s`,
-      })),
-    []
+  // A lazy useState initializer (not useMemo) is the sanctioned place for
+  // one-time impure setup like Math.random() — it runs exactly once per
+  // mount, same as the old useMemo([]) did, without flagging as an impure
+  // render call.
+  const [stars] = useState(() =>
+    Array.from({ length: 80 }, () => ({
+      left: `${(Math.random() * 100).toFixed(2)}%`,
+      top: `${(Math.random() * 78).toFixed(2)}%`,
+      scale: (0.6 + Math.random() * 1.2).toFixed(2),
+      dur: `${(2.5 + Math.random() * 4).toFixed(1)}s`,
+      delay: `${(Math.random() * 4).toFixed(1)}s`,
+    }))
   )
 
   // Gentle cursor parallax on the drifting clouds (motion-safe only).

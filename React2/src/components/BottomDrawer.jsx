@@ -77,14 +77,23 @@ const BottomDrawer = ({ isOpen, onClose, children, activeTab, onTabChange }) => 
         };
     }, [isDragging, moveDrag, settle, dragHeight, restingHeight]);
 
-    // Reset to the half position each time the sheet is opened.
-    useEffect(() => {
+    // Reset to the half position each time the sheet is opened. Adjusting state
+    // during render (rather than in an effect) avoids an extra cascading render.
+    const [prevIsOpen, setPrevIsOpen] = useState(isOpen);
+    if (isOpen !== prevIsOpen) {
+        setPrevIsOpen(isOpen);
         if (isOpen) {
             setSnapState('half');
             setDragHeight(null);
-            document.body.classList.add('drawer-open');
-            return () => document.body.classList.remove('drawer-open');
         }
+    }
+
+    // The actual external-system side effect (toggling a body class) still
+    // belongs in an effect, kept separate from the state adjustment above.
+    useEffect(() => {
+        if (!isOpen) return;
+        document.body.classList.add('drawer-open');
+        return () => document.body.classList.remove('drawer-open');
     }, [isOpen]);
 
     if (!isOpen) return null;

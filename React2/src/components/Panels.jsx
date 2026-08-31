@@ -1,5 +1,3 @@
-import React from 'react'
-
 const Panels = ({ children, className}) => { //children for any nested elements passed into it amd classname for additional styling
     //classname in div conatiner appends any other styling
   return (
