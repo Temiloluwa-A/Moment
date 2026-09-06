@@ -1,4 +1,4 @@
-import { useContext, createContext, useState, useCallback } from "react";
+import { createContext, useContext, useState, useCallback } from "react";
 
 const TimerContext = createContext(null)
 
@@ -90,7 +90,7 @@ export function TimerProvider({children}) {
 
 export function useTimer(){
     const ctx = useContext(TimerContext)
-    if(!ctx) 
+    if(!ctx)
         throw new Error("useTimer can only be used inside TimerProvider")
     return ctx
 }
