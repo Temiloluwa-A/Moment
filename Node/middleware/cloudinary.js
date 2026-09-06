@@ -15,7 +15,8 @@ const upload = multer({
     fileFilter: (req, file, cb) => {
         const isBackgroundImage = file.fieldname === 'backgroundImage' && file.mimetype.startsWith('image/');
         const isGiftVideo = file.fieldname === 'giftVideo' && file.mimetype.startsWith('video/');
-        if (isBackgroundImage || isGiftVideo) {
+        const isPinImage = file.fieldname === 'pinImage' && file.mimetype.startsWith('image/');
+        if (isBackgroundImage || isGiftVideo || isPinImage) {
             return cb(null, true);
         }
         cb(new Error(`Invalid file type for ${file.fieldname}: expected ${file.fieldname === 'giftVideo' ? 'a video' : 'an image'}.`));

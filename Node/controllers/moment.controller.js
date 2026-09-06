@@ -1,16 +1,13 @@
 const Timer = require('../model/timer.model');
-const { Root, Shared } = require('../model/shared.model');
+const { Root } = require('../model/shared.model');
 const User = require('../model/user.model');
 const crypto = require('crypto');
 const { cloudinary } = require('../middleware/cloudinary');
 const sendEmail = require('../utils/sendEmail');
 const AppError = require('../utils/AppError');
+const uploadBufferToCloudinary = require('../utils/uploadBufferToCloudinary');
+const { deleteAlbumForMoment } = require('./album.controller');
 const { createMomentSchema, updateMomentSchema } = require('../validation/moment.validation');
-
-const uploadBufferToCloudinary = async (file, options = {}) => {
-    const dataUri = `data:${file.mimetype};base64,${file.buffer.toString('base64')}`;
-    return await cloudinary.uploader.upload(dataUri, options);
-};
 
 // Fields the owner is actually allowed to change from the edit form. Keeps
 // server-managed fields (userId, slug, rootCount, members, _id, ...) out of
@@ -146,6 +143,8 @@ const deleteMoment = async (req, res) => {
     if (!deletedMoment) {
         throw new AppError(404, "Moment not found or unauthorized")
     }
+
+    await deleteAlbumForMoment(deletedMoment._id);
 
     res.status(200).send({ message: "Moment deleted successfully" });
 };

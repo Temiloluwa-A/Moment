@@ -17,9 +17,11 @@ app.use(express.urlencoded({extended:true})) //to interpret the data sent from t
 app.use(express.json())
 const UserRoutes = require("./routes/user.routes")
 const MomentRoutes = require("./routes/moment.routes")
+const AlbumRoutes = require("./routes/album.routes")
 const startNotificationScheduler = require("./jobs/scheduler")
 app.use("/api/v1", UserRoutes)
 app.use("/api/v1", MomentRoutes)
+app.use("/api/v1", AlbumRoutes)
 
 mongoose.connect(process.env.DB_URI)
 .then(() => {
