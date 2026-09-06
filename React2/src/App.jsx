@@ -18,6 +18,7 @@ import Explore from './pages/Explore'
 import MyMoments from './pages/MyMoments'
 import SharedMoment from './pages/SharedMoment'
 import JoinMoment from './pages/JoinMoment'
+import Album from './pages/Album'
 
 const App = () => {
   return (
@@ -44,6 +45,7 @@ const App = () => {
             <Route path='/my-moments' element={<MyMoments />} /> 
             {/* dynamic routing */}
             <Route path='/moment/:slug' element={<SharedMoment />} />
+            <Route path='/moment/:slug/album' element={<Album />} />
             <Route path='/join/:slug' element={<JoinMoment />} />
             <Route path="*" element={<h1>404 page not found</h1>} />
           </Routes>

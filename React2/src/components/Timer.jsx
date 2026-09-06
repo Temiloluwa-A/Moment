@@ -1,5 +1,5 @@
 import { useState, useEffect, useRef } from 'react';
-import { useLocation } from 'react-router-dom';
+import { useLocation, Link } from 'react-router-dom';
 import { useTimer } from '../context/TimerContext';
 import { FONTS, MOOD } from '../registry';
 import { triggerCelebration } from './celebration';
@@ -159,6 +159,16 @@ const Timer = ({ isPanelOpen, readOnly = false }) => {
                     </div>
                 )}
             </div>
+
+            {config.slug && (
+                <Link
+                    to={`/moment/${config.slug}/album`}
+                    className="relative z-10 inline-flex items-center gap-2 py-3 px-6 rounded-full btn-glass text-text font-label text-xs uppercase tracking-widest hover:text-primary transition-colors"
+                >
+                    <span className="material-symbols-outlined text-base">photo_library</span>
+                    View album
+                </Link>
+            )}
 
         </div >
     )

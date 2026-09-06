@@ -118,6 +118,15 @@ const MyMoments = () => {
                                 <span className="material-symbols-outlined text-base">share</span>
                             </button>
 
+                            {/* View Album Button */}
+                            <button
+                                onClick={(e) => { e.stopPropagation(); navigate(`/moment/${moment.slug}/album`); }}
+                                className="text-text/70 hover:text-primary transition-colors p-1"
+                                title="View album"
+                            >
+                                <span className="material-symbols-outlined text-base">photo_library</span>
+                            </button>
+
                             {/* Leave Button - Only show if the user is a COLLABORATOR */}
                             {isSharedWithMe && (
                                 <button
